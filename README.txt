@@ -1,92 +1,60 @@
-KH-TECH OY — STARTER DOCUMENTS v2 (5.11.2026)
-=================================================
+KH-TECH OY – VERKKOSIVU, TYÖRAPORTTI JA PELI
+Päivitetty 5.11.2026
 
-This package contains:
-  IDEA.md          Product requirements, company copy notes, design, architecture,
-                   report PDF specification, game design, safety and phases.
-  CODEX_PROMPT.md  One master instruction file for the VS Code Codex agent.
-  README.txt       This setup and deployment guide.
+SISÄLTÖ
+  Suomenkielinen KH-Tech Oy:n yrityssivusto, yhteydenottolomake,
+  paikallinen työraportin PDF-sovellus osoitteessa /report/ ja
+  putkenkorjauspeli osoitteessa /peli/. Vite, React ja TypeScript.
 
-GOAL
-  A Finnish LVI business website, /report/ PWA PDF report creator,
-  and /peli/ top-down repair game. First demo is static and free to host.
+KEHITYS
+  Asenna Node.js LTS ja npm. Projektin juuressa:
+    npm install
+    npm run dev
+    npm run build
+    npm test
 
-IMPORTANT LIMITATIONS
-  - GitHub Pages cannot directly send email or secure a staff password.
-  - The technical recipient khtech.site@gmail.com must not be published.
-  - A real private-recipient contact form requires a backend.
-  - Automatic PDF attachment email requires a tested backend; mailto cannot attach it.
-  - Password KH-Tech2026 is not safe to ship; rotate and validate on server.
-  - Codex should first produce a local demo without pretending these are live.
-  - No guarantees of perpetual free tiers; quotas and terms can change.
+PAGES-PROJEKTIPOLKU
+  Vite-konfiguraatio käyttää VITE_BASE_PATH-asetusta. GitHub Actions
+  rakentaa projektisivun repositorion nimeä vastaavalla polulla.
+  GitHubissa: Settings > Pages > Source: GitHub Actions. Tarkista
+  repositoryn nimi ja työnkulun pages/id-token-oikeudet.
+  Sivut: https://KÄYTTÄJÄ.github.io/REPOSITORY/
+  Raportti: .../REPOSITORY/report/
+  Peli: .../REPOSITORY/peli/
+  Ennen julkaisua tarkista projektipolku, suora URL-päivitys ja assetit.
+  Älä julkaise ennen omistajan hyväksyntää.
 
-CREATE GITHUB REPOSITORY
-  1. Sign in at https://github.com/ using the company account.
-  2. Click + > New repository.
-  3. Name: kh-tech-website (example; choose any available name).
-  4. Public visibility is simplest for GitHub Pages on GitHub Free.
-  5. Do NOT tick 'Add README', .gitignore or license if starting locally.
-  6. Click Create repository and copy its HTTPS URL.
+OMA VERKKOTUNNUS
+  Aseta VITE_BASE_PATH=/ ja määritä Pagesin oma verkkotunnus vasta
+  hyväksynnän jälkeen. Tarkista Zonerin DNS ja HTTPS. Älä muuta nykyisiä
+  MX/SPF/DKIM/DMARC-tietueita: sähköpostin toimivuus voi rikkoutua.
+  Varmista CNAME ja omistajan hyväksyntä ennen verkkotunnuksen vaihtoa.
 
-CONNECT VS CODE PROJECT (PowerShell terminal)
-  cd "C:\path\to\KH-Tech"
-  git init
-  git branch -M main
-  git add .
-  git commit -m "Initial KH-Tech project"
-  git remote add origin https://github.com/YOUR-USERNAME/kh-tech-website.git
-  git push -u origin main
+YHTEYDENOTTOLOMAKE
+  Staattinen demo ei lähetä lomakkeita itsestään. Ilmoita onnistumisesta
+  vain kun konfiguroitu palvelin vahvistaa vastaanoton. Julkisen
+  puhelimen/sähköpostin kautta voi ottaa yhteyttä manuaalisesti. Sisäinen
+  vastaanottaja ei kuulu julkiseen bundleen.
 
-  If the repo already has git initialized, skip 'git init'. If 'origin'
-  already exists, use 'git remote set-url origin URL' instead.
-  Never commit passwords, tokens, .env files or customer data.
+GOOGLE APPS SCRIPT -KÄYTTÖÖNOTTO
+  Lähdekoodi ja vaiheittaiset ohjeet ovat apps-script/-kansiossa.
+  Luo Apps Script -projekti yrityksen Google-tilillä, kopioi koodi ja
+  aseta vastaanottaja sekä erikseen luotu henkilöstön salasana Script
+  Properties -asetuksiin. Älä käytä keskustelussa mainittua salasanaa.
+  Julkaise web-sovelluksena ja tarkista kirjautumis-, CORS-, istunto-,
+  liitekoko-, kiintiö- ja väärinkäyttörajoitukset ennen tuotantokäyttöä.
+  GAS:n vapaat kiintiöt ja ehdot voivat muuttua. Älä julkaise salasanaa,
+  vastaanottajaa tai tokenia GitHubiin. Ilman palvelinpuolen vahvistusta
+  raportin automaattilähetys ja yhteydenottopyynnöt pysyvät pois päältä.
+  Oikeaa sähköpostitoimitusta ei ole vahvistettu ilman testiviestiä.
 
-CODEX FIRST PROMPT (paste in VS Code)
-  Read IDEA.md and CODEX_PROMPT.md completely. Implement the full local
-  demo (B001-B003), run builds/tests, and write IMPLEMENTATION_REPORT.md.
-  Do not deploy, enable paid services or pretend email delivery/login works.
+TIETOSUOJA JA TUOTANTOTARKISTUS
+  Raporttiluonnokset ja kuvat voivat sisältää henkilötietoja ja tallentua
+  käytetyn laitteen selaimeen. Poista luonnos ja kuvat laitteen käytön
+  jälkeen; älä käytä yhteiskäyttölaitteella. Tarkista tietosuojateksti,
+  säilytys, yrityksen yhteystiedot, toiminta-alue, lomakkeen suojaukset,
+  henkilöstön salasanan asetus ja ulkoinen sähköpostipalvelu ennen liveä.
+  Tuotantovalmiuden lista: PRODUCTION_CHECKLIST.md.
 
-AFTER CODEX CREATES THE PROJECT
-  npm install
-  npm run dev
-  npm run build
-  git add .
-  git commit -m "Build KH-Tech website demo"
-  git push
-
-ENABLE GITHUB PAGES
-  1. GitHub repository > Settings > Pages.
-  2. Under Build and deployment, Source: GitHub Actions.
-  3. Ensure Codex generated a working Pages workflow under
-     .github/workflows/ and Vite base is set to /kh-tech-website/
-     for a project site. Workflow may need repository permissions:
-     pages: write and id-token: write.
-  4. Push to main; check Actions for a green deployment.
-  5. Preview at https://YOUR-USERNAME.github.io/kh-tech-website/
-     Report: .../kh-tech-website/report/
-     Game: .../kh-tech-website/peli/
-  6. Test direct refresh of /report/ and /peli/ and all asset URLs.
-
-CUSTOM DOMAIN (LATER)
-  Configure the custom domain kh-tech.fi under Settings > Pages only
-  after owner approval. Update Vite base to '/' for custom domain, adjust
-  CNAME and DNS at Zoner, enable HTTPS, and preserve MX/SPF/DKIM/DMARC.
-  Back up the existing website and DNS before switching. Do not switch
-  the live domain merely to demonstrate the prototype.
-
-EMAIL INTEGRATION (LATER)
-  Investigate Google Apps Script under khtech.site@gmail.com, verify
-  current MailApp quotas, anonymous web app access model, anti-spam
-  protection, payload/attachment limits and real end-to-end tests.
-  Store recipient and staff credentials server-side, never in frontend.
-  If security or free quotas are insufficient, retain local PDF download
-  and use the company's ordinary email manually.
-
-OWNER CHECKLIST BEFORE LIVE LAUNCH
-  [ ] Confirm services, public phone, public email and coverage area.
-  [ ] Obtain official logo and approved real photos.
-  [ ] Approve privacy text and processing of customer contact details.
-  [ ] Decide secure staff authentication and rotate shared password.
-  [ ] Verify email delivery and spam protections before enabling form.
-  [ ] Check PDF on iPhone and Android, test game controls on both.
-  [ ] Approve custom domain cutover and keep existing email DNS intact.
+Peli ei kerää henkilötietoja eikä tarvitse palvelinta. Älä lisää
+tekijänoikeudella suojattuja Brawl Stars -aineistoja.
