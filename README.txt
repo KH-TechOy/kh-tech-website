@@ -90,6 +90,17 @@ PUTKIMESTARI 2.0 – PIPE RESCUE
   GAME_2_0_REPORT.md. Selainemulointi ei korvaa fyysistä puhelintestiä.
   Työ tehdään main-haaralla; älä pushaa tai deployaa ilman hyväksyntää.
 
+Perus npm.cmd komennot ja git komennot:
+
+npm.cmd run build
+npm.cmd test
+npm.cmd run dev (jos haluat testata pelin ennen git pushia)
+
+git status
+git add .
+git commit -m "commit kommentti"
+git push origin main
+
 PUTKIMESTARI 2.2 – NYKYINEN PELIVERSIO
   Edeltävä 2.0-osio kuvaa aiempaa toimitusta. Nyt käytössä ovat viralliset
   KH-Tech-logot, musta parraton maskotti, tekoihin reagoiva opastus ilman
