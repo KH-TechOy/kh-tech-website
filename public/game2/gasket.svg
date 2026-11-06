@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><defs>
+ <linearGradient id="blue" x2=".3" y2="1"><stop stop-color="#63caff"/><stop offset=".45" stop-color="#2389eb"/><stop offset="1" stop-color="#1550a2"/></linearGradient>
+ <linearGradient id="navy" x2=".7" y2="1"><stop stop-color="#416d9b"/><stop offset="1" stop-color="#122c50"/></linearGradient>
+ <linearGradient id="orange" x2=".5" y2="1"><stop stop-color="#ffd37b"/><stop offset=".45" stop-color="#ff9c36"/><stop offset="1" stop-color="#c85d23"/></linearGradient>
+ <linearGradient id="red" x2=".2" y2="1"><stop stop-color="#ffb05c"/><stop offset=".3" stop-color="#f96539"/><stop offset="1" stop-color="#b32e30"/></linearGradient>
+ <linearGradient id="skin" x2=".3" y2="1"><stop stop-color="#ffe3ae"/><stop offset=".55" stop-color="#ffc17c"/><stop offset="1" stop-color="#df8846"/></linearGradient>
+ <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f0eeff"/><stop offset=".23" stop-color="#b3b9e3"/><stop offset=".52" stop-color="#7d80ab"/><stop offset=".7" stop-color="#ced4f6"/><stop offset="1" stop-color="#575f89"/></linearGradient>
+ <linearGradient id="wood" x2=".4" y2="1"><stop stop-color="#ffcc78"/><stop offset=".5" stop-color="#e89443"/><stop offset="1" stop-color="#b35e2c"/></linearGradient>
+ <linearGradient id="green" x2=".5" y2="1"><stop stop-color="#b2e94b"/><stop offset=".45" stop-color="#5db538"/><stop offset="1" stop-color="#237357"/></linearGradient>
+ <radialGradient id="water"><stop stop-color="#8cf6ff"/><stop offset=".6" stop-color="#19c6f8"/><stop offset="1" stop-color="#148bd8"/></radialGradient>
+ <radialGradient id="light"><stop stop-color="#fff09c" stop-opacity=".75"/><stop offset=".35" stop-color="#ffb354" stop-opacity=".25"/><stop offset="1" stop-color="#ffb354" stop-opacity="0"/></radialGradient>
+ </defs><g stroke="#172c4d" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"><ellipse cx="128" cy="150" rx="88" ry="61" fill="#14283d"/><path d="M40 124v26q5 58 88 62 83-7 88-62v-26z" fill="#243d58"/><ellipse cx="128" cy="124" rx="88" ry="61" fill="url(#metal)"/><ellipse cx="128" cy="123" rx="51" ry="32" fill="#132c47"/><path d="M82 131q12 31 47 31 39-1 51-30" fill="none" stroke="#506682" stroke-width="7"/><path d="M60 106q29-38 78-30m20 5q24 7 34 24" fill="none" stroke="#e3f4ff" stroke-width="8"/><path d="M59 168q20 27 48 29" stroke="#415b78" stroke-width="6" fill="none"/></g></svg>

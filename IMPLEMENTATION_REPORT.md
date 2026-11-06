@@ -1,5 +1,7 @@
 # Toteutusraportti
 
+Peliä koskeva 5.11.2026 tilanne on historiallinen. Putkimestari on korvattu 6.11.2026 Phaser 3 -toteutuksella; ajantasainen peliraportti on [GAME_2_0_REPORT.md](GAME_2_0_REPORT.md).
+
 Päivitetty 5.11.2026. Tämä on paikallinen esittelyversio; sitä ei ole julkaistu.
 
 ## Toteutettu

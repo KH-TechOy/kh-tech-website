@@ -1,0 +1,13 @@
+{
+  "environment": "Headless Chromium on the development computer; mobile viewport emulation, not a physical phone",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "samples": 600,
+  "meanFps": 60,
+  "p95FrameMs": 17.6,
+  "renderer": "WebGL",
+  "quality": "full",
+  "implementation": "ANGLE (NVIDIA, NVIDIA RTX A2000 8GB Laptop GPU (0x000025BA) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+}

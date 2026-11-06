@@ -1,6 +1,6 @@
 # KH-Tech Oy – tuotteen määrittely
 
-Päivitetty 5.11.2026. Tämä dokumentti määrittää julkisen verkkosivuston, henkilöstön työraportti-PWA:n, putkiremonttipelin sekä sähköposti- ja kirjautumisintegraatioiden vaatimukset.
+Päivitetty 6.11.2026. Tämä dokumentti määrittää julkisen verkkosivuston, henkilöstön työraportti-PWA:n, putkiremonttipelin sekä sähköposti- ja kirjautumisintegraatioiden vaatimukset.
 
 ## Tavoite ja rajaukset
 
@@ -30,7 +30,15 @@ Paikallinen luonnos voi sisältää henkilötietoja ja valokuvia. Kerro tallennu
 
 ## Peli (`/peli/`)
 
-Itsenäinen, omaperäinen ylhäältä kuvattu putkenkorjauspeli ilman tiliä tai palvelinta. Pelaaja liikkuu proseduraalisessa, ratkaistavaksi tarkistetussa kentässä, etsii osat ja työkalut, sulkee venttiilin ja korjaa vuodon ennen ajan päättymistä. Ensimmäinen taso kestää 90 sekuntia ja vaikeus nousee maltillisesti. Uudelleenaloitus, tauko ja seuraava taso. Näppäimistö WASD/nuolet ja toimintanäppäimet; mobiilissa virtuaaliohjain ja toimintopainike. Älä käytä Brawl Starsin assetteja tai hahmoja.
+Putkimestari 2.0 – Pipe Rescue korvaa alkuperäisen ruutuprototyypin. Peli käyttää Phaser 3:a ja TypeScriptiä, yhtä hallittua peli-instanssia, jatkuvaa delta-aikaan perustuvaa liikettä, kameraseurantaa sekä erillistä testattavaa pelimallia. React hoitaa valikot ja HUD:n vain näytettävän tiedon muuttuessa. Peli ei tarvitse tiliä, palvelinta tai tietokantaa.
+
+Kuusi suunniteltua kenttää: keittiö, kellari, toimisto, pesutupa, huoltokäytävä ja tekninen tila. Ensimmäinen kenttä opastaa ja alkaa 90 sekunnista. Jokaisessa suljetaan venttiili, työnnetään laatikko painokytkimelle, avataan huolto-ovi, kerätään työkalupakki ja tiiviste sekä korjataan vuoto putkia kiertämällä. Laatikoilla on loogiset ruutuaskeleet, kulmajumiin työntäminen estetään ja siirron voi perua. Ovi lukittuu avattuun tilaan. Ratkeavuustarkistus kattaa työntämisen ja kaikkien kohteiden saavutettavuuden; virheellinen kenttä korvataan tunnetusti toimivalla opastuskentällä. Putkipulman yhteys tarkistetaan deterministisesti. Tauko, uudelleenaloitus, häviö, voitto ja seuraava kenttä ovat mukana.
+
+Ohjaus: WASD/nuolet, E vuorovaikutukseen, välilyönti työntämiseen, Escape tauolle; hiiri valikoihin ja pulmaan. Mobiilissa analoginen virtuaalijoystick, suuri toimintopainike ja erillinen työntöpainike; monikosketus, pointer capture, peruutustapahtumat, säädettävä kuollut alue ja normalisoitu vinoliike. Pysty- ja vaaka-asento, safe area ja reduced motion huomioidaan. Alkuperäiset pehmeät ääniefektit ovat oletuksena mykistettyjä.
+
+Visuaalinen referenssi avattu: `docs/putkimestari-2-consept.png`. Sitä ei käytetä taustakuvana tai spriteinä. Sinilakkinen, oransseissa työhaalareissa oleva maskotti ja ympäristökuvitus ovat alkuperäistä SVG-aineistoa `public/game2/`-hakemistossa. Sisäänrakennetun kuvageneroinnin kaksi epäonnistunutta yritystä ja vektorityylin ero maalattuun referenssiin dokumentoidaan. Ei ulkopuolisten pelien hahmoja, assetteja tai logoja. Vain ei-arkaluonteinen eteneminen ja ohjainasetus voivat tallentua paikallisesti.
+
+Selaintarkistukset 390×844, 844×390 ja 1440×900, todelliset peliruudunkaappaukset ja suorituskykymittaus kuuluvat toimitukseen. FPS-luvut ilmoitetaan vain mitattuina testiselain- ja laiteympäristöineen; mobiiliemulointi ei korvaa fyysisiä laitetestejä. Lisätiedot: `GAME_2_0_REPORT.md`. Muutokset pidetään `main`-haaralla. Ei pushia tai deployta ilman käyttäjän erillistä lupaa.
 
 ## Tietosuoja, testaus ja julkaisu
 

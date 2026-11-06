@@ -1,5 +1,5 @@
 KH-TECH OY – VERKKOSIVU, TYÖRAPORTTI JA PELI
-Päivitetty 5.11.2026
+Päivitetty 6.11.2026
 
 SISÄLTÖ
   Suomenkielinen KH-Tech Oy:n yrityssivusto, yhteydenottolomake,
@@ -58,3 +58,34 @@ TIETOSUOJA JA TUOTANTOTARKISTUS
 
 Peli ei kerää henkilötietoja eikä tarvitse palvelinta. Älä lisää
 tekijänoikeudella suojattuja Brawl Stars -aineistoja.
+
+PUTKIMESTARI 2.0 – PIPE RESCUE
+  Phaser 3 -peli /peli/-reitillä. Yksi Phaser-instanssi, erillinen
+  TypeScript-pelimalli, 6 suunniteltua kenttää (ensitaso 90 sekuntia),
+  venttiili, kytkinovelle työnnettävä laatikko, työkalujen keräily ja
+  putkien kiertopulma. Kentät tarkistetaan työntämisen ja saavutettavuuden
+  osalta. Laatikon siirron voi perua taukovalikossa. Ovi pysyy avattuna.
+
+  Työpöytä: WASD / nuolet liikkumiseen, E vuorovaikutukseen, välilyönti
+  työntämiseen, Escape tauolle. Hiiri valikoihin ja putkipulmaan.
+  Puhelin: vasemmalla joystick, oikealla käsi- ja laatikkopainike.
+  Monikosketus ja peruutustapahtumat on käsitelty. Ohjaimen kuollutta
+  aluetta voi säätää taukovalikossa. Äänet oletuksena pois päältä.
+  Eteneminen ja ohjainasetus voivat tallentua paikallisesti; ei henkilötietoja.
+
+  npm run game:art       Luo projektin alkuperäiset SVG-assetit uudelleen.
+  npm run test:game      Playwright-selaintestit kolmessa näyttökoossa.
+  Asenna testiselain ensin: npx playwright install chromium
+  Vaihtoehtoinen asennettu Chromium voidaan valita vain testejä varten
+  ympäristömuuttujalla GAME_BROWSER_EXECUTABLE (exe-tiedoston polku).
+  PowerShellissä npm:n estyessä käytä npm.cmd / npx.cmd -komentoja.
+  Pages-tarkistus: rakenna VITE_BASE_PATH=/kh-tech-website/ -asetuksella
+  ja suorita node scripts/check-pages-game.mjs samalla asetuksella.
+  Skripti käynnistää ja sulkee vain paikallisen tuotantopreviewn.
+
+  Visuaalinen referenssi: docs/putkimestari-2-consept.png. Referenssin
+  pikseleitä ei käytetä pelissä. Grafiikka: public/game2/ ja lähdekoodi
+  scripts/build-game-art.mjs. Asset-lähteet: docs/GAME_2_0_ASSETS.md.
+  Toteutus, testit, todelliset ruudunkaappaukset ja rajoitteet:
+  GAME_2_0_REPORT.md. Selainemulointi ei korvaa fyysistä puhelintestiä.
+  Työ tehdään main-haaralla; älä pushaa tai deployaa ilman hyväksyntää.
