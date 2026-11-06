@@ -1,5 +1,6 @@
-﻿// Original project artwork. No concept pixels or third-party game assets are used.
+// Original project artwork. No concept pixels or third-party game assets are used.
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
+import { characterSheet, mascotArt } from './game22-character-art.mjs';
 const out = new URL('../public/game2/', import.meta.url);
 await mkdir(out, { recursive: true });
 const defs = `<defs>
@@ -17,66 +18,14 @@ const defs = `<defs>
 const svg=(content,w=256,h=256)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${defs}${content}</svg>`;
 const save=(name,content,w=256,h=256)=>writeFile(new URL(name+'.svg',out),svg(content,w,h),'utf8');
 const stroke='stroke="#172c4d" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"';
-function front(step=0){const feet=step===1?[-6,5]:step===2?[5,-6]:[0,0];return `<g ${stroke}>
- <path d="M85 ${204+feet[0]}q-15 3-17 15l1 13q20 10 42 0l-1-29z" fill="url(#navy)"/><path d="M145 ${204+feet[1]}q-3 8-1 28 22 10 43-2l-2-13q-7-14-26-14z" fill="url(#navy)"/>
- <path d="M77 174q0 28 8 39l25 3 16-34 17 34 26-4 9-41z" fill="url(#orange)"/>
- <path d="M73 137q-26 4-30 37l15 10 28-27m88-20q25 4 34 38l-15 11-31-30" fill="url(#blue)"/>
- <path d="M47 170q-15 2-13 19l9 14q13 8 23-4l3-21zM199 172q13 0 17 13l-2 16q-12 11-23 0l-4-20z" fill="#b77437"/>
- <path d="M82 133q44-14 88 1l13 53q-54 20-109-1z" fill="url(#orange)"/>
- <path d="M92 132l8 37m55-38-6 39" fill="none" stroke="#ffe7a0" stroke-width="10"/><path d="M102 158h45v30h-45z" fill="#ed8328"/>
- <path d="M79 183q49 13 98-1v13q-50 15-98 1z" fill="#85502e"/><path d="M117 184h25v17h-25z" fill="#ffe199"/>
- <path d="M91 168l11 1m46 0 12-1" stroke="#fff1bd" stroke-width="4"/><path d="M152 203l10-12 10 10" fill="none" stroke="#a94d23" stroke-width="3"/>
- <path d="M106 122v19q23 14 43-1v-20" fill="url(#skin)"/>
- <path d="M78 78q-20-6-20 16 1 17 21 17m99-33q21-7 21 14-1 18-20 19" fill="url(#skin)"/>
- <path d="M77 64q44-31 99 0l5 37q-2 35-52 46-47-9-52-42z" fill="url(#skin)"/>
- <path d="M78 72l2 29 9-12 2-24m86 8-3 28-9-13-1-26" fill="#70432d"/>
- <path d="M89 89q12-12 25-2m29-1q13-10 24 1" fill="none" stroke="#5b352b" stroke-width="7"/>
- <path d="M92 96q10-10 21 1v13q-11 6-20-1zm50 0q12-9 22 2l-1 12q-10 5-20-1z" fill="white" stroke-width="2"/>
- <ellipse cx="105" cy="102" rx="5" ry="8" fill="#16334b" stroke="none"/><ellipse cx="150" cy="102" rx="5" ry="8" fill="#16334b" stroke="none"/>
- <path d="M123 97q-10 15-3 19l18-1" fill="url(#skin)" stroke="#cb783f" stroke-width="3"/>
- <path d="M99 120q14-17 29-4 16-13 30 3-15 11-30 3-16 9-29-2" fill="#5e392c" stroke-width="2"/>
- <path d="M108 128q20 17 40-1-20 6-40 1" fill="white" stroke-width="2"/>
- <path d="M67 69q2-42 58-47 56-1 63 46l-14 19q-47-24-99 0z" fill="url(#blue)"/>
- <path d="M78 53q7-20 37-24" fill="none" stroke="#90e4ff" stroke-width="6"/>
- <path d="M66 74q65-23 127-1l-8 13q-62-10-108 3z" fill="#1457aa"/>
- <path d="M119 36h24l4 25-28 2z" fill="#d8f9ff" stroke="#2c85d9" stroke-width="2"/>
- <path d="M132 41q-10 10-7 15 8 6 13-1 0-6-6-14" fill="#278de7" stroke="none"/>
- </g>`}
-function back(step=0){const shift=step===1?-5:step===2?5:0;return `<g ${stroke}>
- <path d="M82 ${206+shift}l-8 23q16 14 39 3l-2-27zm61 ${206-shift}v26q24 11 40-3l-9-24z" fill="url(#navy)"/>
- <path d="M77 178l7 35 29 3 14-33 16 33 30-4 5-34z" fill="url(#orange)"/>
- <path d="M79 135q-29 1-35 41l15 15 27-35m89-21q30 6 34 42l-15 12-27-34" fill="url(#blue)"/>
- <path d="M48 174q-19 4-11 27 15 13 28-3l2-20zm146 2q21-3 21 17-2 20-20 14l-9-22z" fill="#b77437"/>
- <path d="M79 135q47-21 96 0l7 53q-51 24-108-1z" fill="url(#orange)"/>
- <path d="M94 133l16 48m49-49-16 50" stroke="#ffdc87" stroke-width="13"/>
- <path d="M109 158l37 0v28h-37z" fill="#d57129"/>
- <path d="M75 187q55 16 107 0v12q-58 18-106-1z" fill="#865231"/>
- <path d="M111 116v23q21 11 39-2v-24" fill="url(#skin)"/>
- <path d="M81 66q50-32 95 1l6 41q-16 29-55 31-38-4-49-32z" fill="#70452e"/>
- <path d="M64 74q2-46 63-51 61 1 65 54l-9 27q-54 27-108-1z" fill="url(#blue)"/>
- <path d="M82 58q10-21 37-27m13 2v62" stroke="#8bddff" stroke-width="5" fill="none"/>
- <path d="M112 93h34v17h-34z" fill="#174b8c"/><path d="M122 98h14v6h-14z" fill="#d7f4ff" stroke="none"/>
- </g>`}
-function side(step=0,flip=false){return `<g transform="${flip?'translate(256 0) scale(-1 1)':''}"><g ${stroke}>
- <path d="M93 ${205+(step===1?-5:0)}l-8 21q26 15 54 2l-9-24zm49 ${201+(step===2?-5:0)}l-5 26q26 13 51-4-2-18-20-22z" fill="url(#navy)"/>
- <path d="M95 169l1 40 31 2 13-34 9 32 26-2-4-42z" fill="url(#orange)"/>
- <path d="M91 134q36-20 73 0l18 54q-42 18-88-2z" fill="url(#orange)"/>
- <path d="M105 133l9 35 32-2-2-35" fill="#2e79b6"/><path d="M103 139q-21 5-25 33l18 12 24-29" fill="url(#blue)"/>
- <path d="M82 169q-15 4-8 25l14 9q15 0 17-17l-8-13z" fill="#b77437"/>
- <path d="M97 184l78 0v13q-39 17-78-1z" fill="#82502f"/><path d="M141 183l24-1v17h-23z" fill="#ffe396"/>
- <path d="M121 114v25q23 13 40-2v-30" fill="url(#skin)"/>
- <path d="M101 66q49-21 76 9l1 20 20 15-19 12q-7 23-39 27-37-9-42-42z" fill="url(#skin)"/>
- <path d="M98 69q-21 1-17 24 4 15 23 15l8-23z" fill="#7b4a31"/><path d="M104 82q-14-7-18 5l4 18 16 0" fill="url(#skin)"/>
- <path d="M151 87q15-10 24 1" fill="none" stroke="#61392c" stroke-width="7"/>
- <path d="M151 98q9-12 20-2v17h-18z" fill="white" stroke-width="2"/><ellipse cx="165" cy="103" rx="5" ry="7" fill="#15304b" stroke="none"/>
- <path d="M155 119q16-11 29-1l-5 8-25-1z" fill="#583329" stroke-width="2"/><path d="M153 132q18 10 28-5" stroke="#69392b" stroke-width="3" fill="none"/>
- <path d="M86 68q3-41 50-44 49 0 50 47l-14 15-78-1z" fill="url(#blue)"/>
- <path d="M102 49q12-18 30-18" fill="none" stroke="#8ce0ff" stroke-width="6"/>
- <path d="M126 71q48-17 76 0l-4 15-55 1z" fill="#1763bb"/>
- </g></g>`}
-let sheet='';for(let row=0;row<4;row++)for(let col=0;col<3;col++)sheet+=`<g transform="translate(${col*256} ${row*256})">${row===0?front(col):row===1?side(col,true):row===2?side(col):back(col)}</g>`;
-await save('plumber-sheet',sheet,768,1024);
-await save('mascot',front(0));
+const logoBuffer=await readFile(new URL('../docs/kh-tech-logo-musta.png',import.meta.url));
+const iconBuffer=await readFile(new URL('../docs/favicon-kh-tech.png',import.meta.url));
+const logoData='data:image/png;base64,'+logoBuffer.toString('base64');
+const iconData='data:image/png;base64,'+iconBuffer.toString('base64');
+const brand=new URL('../public/brand/',import.meta.url);await mkdir(brand,{recursive:true});
+await writeFile(new URL('kh-tech-logo.png',brand),logoBuffer);await writeFile(new URL('kh-tech-icon.png',brand),iconBuffer);
+await writeFile(new URL('plumber-sheet.svg',out),characterSheet(logoData,iconData));
+await writeFile(new URL('mascot.svg',out),mascotArt(logoData,iconData));
 await save('crate',`<g ${stroke}><path d="M38 67l152-24 34 26-1 141-153 23-32-28z" fill="#94502d"/><path d="M38 67l151-24 35 26-150 26z" fill="#ffd18a"/><path d="M75 94l149-25-1 141-149 23z" fill="url(#wood)"/><path d="M39 68l36 26-1 139-36-29z" fill="#b96b36"/><path d="M90 107l118-20-1 108-118 18z" fill="#c87835"/><path d="M105 104v103m29-109v104m31-109v104m29-109v104" stroke="#ad5a2a" stroke-width="3"/><path d="M91 108l101 92 16-6L108 101zm0 89 14 14L208 98l-10-11z" fill="#ffbd68" stroke="#c27a39" stroke-width="3"/><path d="M80 97l136-23M82 225l132-21" stroke="#ffda91" stroke-width="5"/><g fill="#734f3d" stroke="none"><circle cx="88" cy="105" r="4"/><circle cx="209" cy="85" r="4"/><circle cx="87" cy="217" r="4"/><circle cx="211" cy="197" r="4"/></g></g>`);
 await save('valve',`<g ${stroke}><path d="M11 116h234v67H11z" fill="url(#metal)"/><path d="M23 109h23v81H23zm187 0h24v81h-24z" fill="url(#metal)"/><path d="M111 94h34v61h-34z" fill="#7e87ac"/><path d="M111 107l-5-34 48-2-10 38" fill="url(#metal)"/><circle cx="128" cy="91" r="62" fill="url(#red)"/><circle cx="128" cy="91" r="43" fill="#743d48"/><path d="M128 48v86M85 91h86m-73-30 61 61m0-61-61 61" stroke="#ff8f49" stroke-width="12"/><circle cx="128" cy="91" r="17" fill="#ffd17c"/><path d="M93 50q36-25 67 1" fill="none" stroke="#ffd18d" stroke-width="5"/><path d="M53 131h28m89 0h30" stroke="#f3f2ff" stroke-width="7"/></g>`);
 await save('toolbox',`<g ${stroke}><path d="M32 113l154-17 38 26-3 88-154 20-35-27z" fill="url(#red)"/><path d="M30 98l155-16 40 28-158 20-37-19z" fill="#ff9650"/><path d="M67 129l157-19-1 35-156 20z" fill="#ffb066"/><path d="M96 92V63q0-17 17-19l40-3q19-1 21 16v29l-20 3V64l-36 4v25z" fill="url(#navy)"/><path d="M103 52l51-5" stroke="#8dacc4" stroke-width="5"/><path d="M121 149l23-3v32l-22 3z" fill="#ffdc84"/><path d="M77 184l32-3m45-7 44-5" fill="none" stroke="#ff8d61" stroke-width="5"/><path d="M38 144l17 11v41l-17-11z" fill="#c84c32"/></g>`);
@@ -105,4 +54,18 @@ const floor=await original('floor');
 await writeFile(new URL('floor-kitchen.svg',out),floor);
 await writeFile(new URL('floor-office.svg',out),floor.replaceAll('#9ba2b7','#96b0bf').replaceAll('#a0a4b8','#9ebbc8').replaceAll('#bdc4cf','#c4d8df'));
 await writeFile(new URL('floor-basement.svg',out),floor.replaceAll('#9ba2b7','#7e9cae').replaceAll('#a0a4b8','#88a6b7').replaceAll('#bdc4cf','#a9c5d4'));
-console.log('Original game artwork written to public/game2/.');
+await writeFile(new URL('floor-bathroom.svg',out),floor.replaceAll('#9ba2b7','#a7c4c7').replaceAll('#a0a4b8','#b3d0d2').replaceAll('#bdc4cf','#def0ef'));
+await writeFile(new URL('floor-utility.svg',out),floor.replaceAll('#9ba2b7','#8eacc1').replaceAll('#a0a4b8','#9fb9cb').replaceAll('#bdc4cf','#cbdde7'));
+await writeFile(new URL('floor-technical.svg',out),floor.replaceAll('#9ba2b7','#7a91aa').replaceAll('#a0a4b8','#879db2').replaceAll('#bdc4cf','#b0c5d5'));
+const box=await original('toolbox');
+await writeFile(new URL('toolbox.svg',out),box.replace('</svg>',`<g><rect x="92" y="178" width="113" height="36" rx="4" fill="#f5f6f7" stroke="#233346" stroke-width="2"/><image href="${logoData}" x="97" y="180" width="103" height="32.6" preserveAspectRatio="xMidYMid meet"/></g></svg>`));
+await save('brand-sign',`<g ${stroke}><path d="M12 66h232v126H12z" fill="#213448"/><rect x="20" y="73" width="216" height="107" rx="7" fill="#f5f6f7" stroke="#9caeba" stroke-width="3"/><circle cx="28" cy="82" r="3" fill="#516274" stroke="none"/><circle cx="228" cy="171" r="3" fill="#516274" stroke="none"/><image href="${logoData}" x="31" y="92" width="194" height="61.4" preserveAspectRatio="xMidYMid meet"/></g>`);
+await save('spare',`<g ${stroke}><path d="M48 204v-62q0-56 58-57h58V48h48v92h-93q-22 0-22 22v42z" fill="url(#metal)"/><path d="M43 188h61v29H43zm110-145h66v24h-66z" fill="#e9b66a"/><path d="M66 171v-25q-1-42 43-44h41" stroke="#eef6ff" stroke-width="8" fill="none"/><path d="M176 69v42" stroke="#edf8ff" stroke-width="8"/></g>`);
+await save('inspection',`<g ${stroke}><path d="M55 40l133-11 14 189-133 12z" fill="url(#wood)"/><path d="M65 52l110-9 13 162-108 10z" fill="#f8f3dc"/><path d="M99 27l51-3 5 28-52 4z" fill="url(#metal)"/><image href="${iconData}" x="105" y="66" width="34" height="38.4"/><path d="M97 145l15 15 35-40m-56 65 58-5" stroke="#3eae8b" stroke-width="9" fill="none"/></g>`);
+await save('guide-arrow',`<path d="M9 24h65V8l45 28-45 27V47H9z" fill="#ffce62" stroke="#193b54" stroke-width="5" stroke-linejoin="round"/><path d="M17 30h63V19l25 16" fill="none" stroke="#fff1a9" stroke-width="4" stroke-linecap="round"/>`,128,72);
+await save('joystick',`<circle cx="128" cy="128" r="112" fill="#173d64" stroke="#62bddd" stroke-width="7"/><circle cx="128" cy="128" r="88" fill="#225e8d" stroke="#3387b1" stroke-width="5"/><path d="M128 27l-12 18h24zm0 202-12-18h24zM27 128l18-12v24zm202 0-18-12v24z" fill="#86d9f5"/><circle cx="128" cy="132" r="55" fill="#122e51"/><circle cx="128" cy="121" r="55" fill="url(#blue)" stroke="#85e4ff" stroke-width="5"/><path d="M93 93q26-23 49-12" fill="none" stroke="#c2f5ff" stroke-width="7" stroke-linecap="round"/>`);
+await save('basin',`<g ${stroke}><path d="M99 128l-9 91q30 16 63-2l-7-91z" fill="url(#metal)"/><path d="M39 92q87-42 177-3l-13 59q-74 38-152-1z" fill="#e4f3f4"/><ellipse cx="128" cy="94" rx="88" ry="35" fill="#f4ffff"/><ellipse cx="128" cy="96" rx="60" ry="21" fill="#95cbd5"/><path d="M125 86V51q0-18 19-18 18 0 18 17v9" stroke="#647d91" stroke-width="13" fill="none"/><path d="M126 82V51q0-16 17-16" stroke="#daeff6" stroke-width="6" fill="none"/><ellipse cx="130" cy="108" rx="7" ry="3" fill="#526b83" stroke="none"/></g>`);
+await save('toilet',`<g ${stroke}><path d="M91 118h69l20 99q-49 25-100-1z" fill="url(#metal)"/><path d="M73 40l117-7v80L73 119z" fill="#e4edf1"/><path d="M82 47l98-6v22l-98 7z" fill="#f7ffff"/><ellipse cx="130" cy="136" rx="76" ry="49" fill="#eff9f7"/><ellipse cx="130" cy="135" rx="48" ry="27" fill="#8bb8cb"/><ellipse cx="130" cy="132" rx="33" ry="16" fill="#4b91b3"/><path d="M151 61l21-1" stroke="#839bad" stroke-width="9"/></g>`);
+await save('washer',`<g ${stroke}><path d="M42 49l152-16 28 22-2 163-151 17-27-23z" fill="#b7c9d7"/><path d="M70 71l150-16v163l-151 17z" fill="#e2e9ed"/><path d="M42 48l151-15 29 22L70 73z" fill="#f2f7f7"/><path d="M77 79l134-15v35L77 114z" fill="#7796ae"/><circle cx="144" cy="161" r="44" fill="url(#navy)"/><circle cx="144" cy="161" r="33" fill="url(#blue)"/><path d="M119 169q22-16 48-3" stroke="#82dcf6" stroke-width="8" fill="none"/><circle cx="187" cy="85" r="8" fill="#e8f2f2"/><path d="M90 94l25-3" stroke="#ffd46c" stroke-width="6"/></g>`);
+await save('desk',`<g ${stroke}><path d="M31 128l163-21 35 26-162 25z" fill="url(#wood)"/><path d="M42 141v76m162-73v68M77 161v72" stroke="#2b465e" stroke-width="13"/><path d="M74 46l99-9 6 70-100 11z" fill="#273b51"/><path d="M83 55l81-8 4 48-81 10z" fill="url(#blue)"/><path d="M116 111v18l-23 6 65-6-23-2v-18" fill="url(#metal)"/><path d="M109 145l63-9 15 10-65 10z" fill="#59758c"/><path d="M184 122V72l-19-11" stroke="#e1ad5e" stroke-width="8" fill="none"/></g>`);
+console.log('Game 2.2 artwork and unmodified official branding written to public/.');

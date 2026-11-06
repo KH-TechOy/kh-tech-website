@@ -1,8 +1,8 @@
-﻿import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { LEVELS, TILE, center, DIRECTIONS, type Cell, type Direction } from '../src/game2/levels';
+import { TILE, center, DIRECTIONS, type Cell, type Direction } from '../src/game2/levels';
 import { solveLevel, walkPath } from '../src/game2/solver';
-const output='docs/game2-screenshots';mkdirSync(output,{recursive:true});
+const output='docs/game22-screenshots';mkdirSync(output,{recursive:true});
 const snapshot=(page:Page)=>page.evaluate(()=>window.__PIPE_RESCUE__!.snapshot());
 let errors:string[]=[];
 test.beforeEach(async({page})=>{errors=[];page.on('pageerror',error=>errors.push(error.message));await page.goto(`/peli/${process.env.GAME_RENDERER==='canvas'?'?renderer=canvas':''}`);await page.waitForFunction(()=>window.__PIPE_RESCUE__&&document.querySelector('.pr-title-card'))});
@@ -15,41 +15,107 @@ async function moveTo(page:Page,point:Cell){
 async function walkTo(page:Page,target:Cell){const state=await snapshot(page),current={x:Math.floor(state.player.x/TILE),y:Math.floor(state.player.y/TILE)};const path=walkPath(state.level,current,target,state.crate,state.gateOpen);expect(path,'target must have a path').not.toBeNull();await page.locator('.pr-page').focus();for(const cell of path!.slice(1))await moveTo(page,center(cell))}
 const arrow:Record<Direction,string>={up:'ArrowUp',right:'ArrowRight',down:'ArrowDown',left:'ArrowLeft'};
 
-test('frame delivery measurement without tracing or screenshot capture',async({page})=>{await begin(page);await page.waitForTimeout(6000);const state=await snapshot(page);const data={environment:'Headless Chromium on the development computer; actual graphics implementation is recorded below. Mobile viewport emulation, not a physical phone.',browserVersion:page.context().browser()?.version(),viewport:page.viewportSize(),...state.metrics};console.log(JSON.stringify(data));writeFileSync(`${output}/${test.info().project.name}-benchmark-${state.metrics.renderer.toLowerCase()}.json`,JSON.stringify(data,null,2));expect(state.remaining).toBeLessThan(85);expect(state.remaining).toBeGreaterThan(81)});
-
-test('orientation changes, reduced motion and opt-in sound keep one game instance',async({page,context})=>{
-  test.skip(test.info().project.name!=='portrait','One live orientation / preference check is sufficient.');
-  await begin(page);await page.setViewportSize({width:844,height:390});await expect(page.locator('.pr-canvas canvas')).toHaveCount(1);await expect.poll(async()=>Math.round((await page.locator('.pr-canvas canvas').boundingBox())!.width)).toBeGreaterThan(800);
-  await page.setViewportSize({width:390,height:844});await expect.poll(async()=>Math.round((await page.locator('.pr-canvas canvas').boundingBox())!.width)).toBeLessThan(390);await expect(page.locator('.pr-canvas canvas')).toHaveCount(1);
-  const cdp=await context.newCDPSession(page);await cdp.send('Emulation.setSafeAreaInsetsOverride',{insets:{top:44,bottom:34,left:0,right:0}});await expect.poll(async()=>Math.round((await page.locator('.pr-topbar').boundingBox())!.height)).toBe(93);const joystick=await page.getByRole('button',{name:'Liikeohjain',exact:true}).boundingBox();expect(joystick!.y+joystick!.height).toBeLessThan(810);const action=await page.getByRole('button',{name:'Vuorovaikuta tai korjaa',exact:true}).boundingBox();expect(action!.y+action!.height).toBeLessThanOrEqual(810);expect(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+1)).toBe(true);await screenshot(page,'safe-area');await cdp.send('Emulation.setSafeAreaInsetsOverride',{insets:{top:0,bottom:0,left:0,right:0}});
-  await page.emulateMedia({reducedMotion:'reduce'});await page.reload();await page.locator('.pr-title-card').waitFor();expect(await page.locator('.pr-title-art>img').evaluate(element=>getComputedStyle(element).animationName)).toBe('none');await begin(page);await expect(page.getByRole('button',{name:'Äänet päälle',exact:true})).toBeVisible();
-  await page.getByRole('button',{name:'Äänet päälle',exact:true}).click();await expect(page.getByRole('button',{name:'Mykistä',exact:true})).toBeVisible();await page.getByRole('button',{name:'Mykistä',exact:true}).click();await expect(page.getByRole('button',{name:'Äänet päälle',exact:true})).toBeVisible();
+test('frame delivery measurement without tracing or screenshot capture',async({page})=>{
+  await begin(page);await page.waitForTimeout(6000);const state=await snapshot(page);
+  const data={environment:'Headless Chromium on this development computer. Mobile viewport emulation, not a physical phone.',browserVersion:page.context().browser()?.version(),viewport:page.viewportSize(),...state.metrics};
+  writeFileSync(output+'/'+test.info().project.name+'-benchmark.json',JSON.stringify(data,null,2));expect(state.remaining).toBe(90);expect(state.guided).toBe(true);
 });
 
-test('title, controls, pointer cancellation and responsive layout',async({page,context})=>{
-  await screenshot(page,'title');await begin(page);const before=await snapshot(page);await page.keyboard.down('d');await page.waitForFunction(()=>window.__PIPE_RESCUE__!.snapshot().player.x>230);await page.keyboard.up('d');expect((await snapshot(page)).player.x).toBeGreaterThan(before.player.x+30);
+test('orientation, safe areas, reduced motion and optional audio retain one canvas',async({page,context})=>{
+  test.skip(test.info().project.name!=='portrait','Orientation is checked once.');
+  await begin(page);await page.setViewportSize({width:844,height:390});await expect(page.locator('.pr-canvas canvas')).toHaveCount(1);
+  await expect.poll(async()=>Math.round((await page.locator('.pr-canvas canvas').boundingBox())!.width)).toBeGreaterThan(800);
+  await page.setViewportSize({width:390,height:844});
+  const cdp=await context.newCDPSession(page);await cdp.send('Emulation.setSafeAreaInsetsOverride',{insets:{top:44,bottom:34,left:0,right:0}});
+  await expect.poll(async()=>Math.round((await page.locator('.pr-topbar').boundingBox())!.height)).toBe(93);
+  for(const name of ['Liikeohjain','Vuorovaikuta tai korjaa']){const box=await page.getByRole('button',{name,exact:true}).boundingBox();expect(box!.y+box!.height).toBeLessThanOrEqual(810)}
+  expect(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+1)).toBe(true);await screenshot(page,'safe-area');
+  await cdp.send('Emulation.setSafeAreaInsetsOverride',{insets:{top:0,bottom:0,left:0,right:0}});
+  await page.emulateMedia({reducedMotion:'reduce'});await page.reload();await page.locator('.pr-title-card').waitFor();
+  expect(await page.locator('.pr-title-art>img').evaluate(element=>getComputedStyle(element).animationName)).toBe('none');await begin(page);
+  await page.getByRole('button',{name:'Äänet päälle',exact:true}).click();await expect(page.getByRole('button',{name:'Mykistä',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Mykistä',exact:true}).click();await expect(page.getByRole('button',{name:'Äänet päälle',exact:true})).toBeVisible();
+});
+
+test('keyboard, simultaneous mobile touch, cancellation, pause and responsive layout',async({page,context})=>{
+  await screenshot(page,'title');await begin(page);await expect(page.locator('.pr-tutorial strong')).toHaveText('Liiku putkimiehellä!');
+  const before=await snapshot(page);await page.keyboard.down('d');await page.waitForFunction(()=>window.__PIPE_RESCUE__!.snapshot().player.x>250);await page.keyboard.up('d');
+  expect((await snapshot(page)).player.x).toBeGreaterThan(before.player.x+30);await expect(page.locator('.pr-tutorial strong')).toHaveText('Sulje vesihana!');
   await page.keyboard.press('Escape');const paused=await snapshot(page);await page.waitForTimeout(600);expect((await snapshot(page)).remaining).toBe(paused.remaining);await page.getByRole('button',{name:'Jatka peliä'}).click();
   if(test.info().project.name!=='desktop'){
-    const joystick=await page.getByRole('button',{name:'Liikeohjain',exact:true}).boundingBox(),action=await page.getByRole('button',{name:'Vuorovaikuta tai korjaa',exact:true}).boundingBox();expect(joystick).not.toBeNull();expect(action).not.toBeNull();const cdp=await context.newCDPSession(page),x=joystick!.x+joystick!.width/2,y=joystick!.y+joystick!.height/2;
+    const joystick=await page.getByRole('button',{name:'Liikeohjain',exact:true}).boundingBox(),action=await page.getByRole('button',{name:'Vuorovaikuta tai korjaa',exact:true}).boundingBox();
+    const cdp=await context.newCDPSession(page),x=joystick!.x+joystick!.width/2,y=joystick!.y+joystick!.height/2;
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y,id:1}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+35,y,id:1}]});
-    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:x+35,y,id:1},{x:action!.x+action!.width/2,y:action!.y+action!.height/2,id:2}]});await page.waitForTimeout(150);expect((await snapshot(page)).input.analog.x).toBeGreaterThan(.65);
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:x+35,y,id:1},{x:action!.x+action!.width/2,y:action!.y+action!.height/2,id:2}]});
+    await page.waitForTimeout(150);expect((await snapshot(page)).input.analog.x).toBeGreaterThan(.65);
     await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});await page.waitForTimeout(100);expect((await snapshot(page)).input.analog).toEqual({x:0,y:0});
   }
   await screenshot(page,'gameplay');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight+1)).toBe(true);
 });
 
-test('tutorial played with keyboard and pipe puzzle clicks from start to victory',async({page})=>{
-  await begin(page);await walkTo(page,LEVELS[0].valve);await page.keyboard.press('e');expect((await snapshot(page)).valveClosed).toBe(true);
-  const solution=solveLevel(LEVELS[0]);expect(solution.solvable).toBe(true);
-  for(const step of solution.plan){const state=await snapshot(page),d=DIRECTIONS[step.direction];await walkTo(page,{x:state.crate.x-d.x,y:state.crate.y-d.y});await page.keyboard.down(arrow[step.direction]);await page.waitForTimeout(45);await page.keyboard.up(arrow[step.direction]);await page.keyboard.press('Space');await page.waitForTimeout(260)}
-  expect((await snapshot(page)).gateOpen).toBe(true);await screenshot(page,'door-open');
-  for(const tool of LEVELS[0].tools)await walkTo(page,tool);expect((await snapshot(page)).collected).toEqual([true,true]);await walkTo(page,LEVELS[0].leak);await page.keyboard.press('e');await expect(page.getByRole('heading',{name:'Yhdistä putket!'})).toBeVisible();await screenshot(page,'repair');
-  for(let index=0;index<(await snapshot(page)).puzzle.masks.length;index++){for(let i=0;i<4;i++){const state=await snapshot(page);if(state.phase==='won'||state.puzzle.masks[index]===state.puzzle.solved[index])break;await page.getByTestId(`pipe-${index}`).click()}}
-  await expect(page.getByRole('heading',{name:'Vuoto pysäytetty!'})).toBeVisible();await screenshot(page,'victory');const metrics=(await snapshot(page)).metrics;writeFileSync(`${output}/${test.info().project.name}-performance.json`,JSON.stringify({environment:'Headless Chromium on the development computer; mobile viewport emulation, not a physical phone',viewport:page.viewportSize(),...metrics},null,2));
-  await page.getByRole('button',{name:'Seuraava kohde'}).click();await expect(page.getByRole('heading',{name:LEVELS[1].title})).toBeVisible();
+async function playLevel(page:Page,guided:boolean){
+  const level=(await snapshot(page)).level;
+  for(const valve of level.valves||[level.valve]){await walkTo(page,valve);await page.keyboard.press('e')}
+  expect((await snapshot(page)).valveClosed).toBe(true);
+  if(guided)await expect(page.locator('.pr-tutorial strong')).toHaveText('Kerää työkalut!');
+  for(const tool of level.tools)await walkTo(page,tool);expect((await snapshot(page)).collected.every(Boolean)).toBe(true);
+  if(guided){await expect(page.locator('.pr-tutorial strong')).toHaveText('Siirrä laatikko!');await screenshot(page,'tutorial-crate')}
+  const solution=solveLevel(level);expect(solution.solvable).toBe(true);
+  for(const step of solution.plan){
+    const state=await snapshot(page),d=DIRECTIONS[step.direction];await walkTo(page,{x:state.crate.x-d.x,y:state.crate.y-d.y});
+    await page.keyboard.down(arrow[step.direction]);await page.waitForTimeout(45);await page.keyboard.up(arrow[step.direction]);await page.keyboard.press('Space');await page.waitForTimeout(260);
+    expect((await snapshot(page)).crate).toEqual(step.crate);
+  }
+  expect((await snapshot(page)).gateOpen).toBe(true);if(guided){await expect(page.locator('.pr-tutorial strong')).toHaveText('Korjaa vuoto!');await screenshot(page,'door-open')}
+  await walkTo(page,level.leak);await page.keyboard.press('e');await expect(page.locator('.pr-repair-panel')).toBeVisible();await screenshot(page,guided?'repair':'generated-repair');
+  for(let index=0;index<(await snapshot(page)).puzzle.masks.length;index++)for(let i=0;i<4;i++){
+    const state=await snapshot(page);if(state.phase==='won'||state.puzzle.masks[index]===state.puzzle.solved[index])break;await page.getByTestId('pipe-'+index).click();
+  }
+  await expect(page.getByRole('heading',{name:'Homma hoidettu!',exact:true})).toBeVisible();
+}
+test('interactive tutorial from movement to victory, next generated job and contact link',async({page})=>{
+  await begin(page);await playLevel(page,true);expect((await snapshot(page)).remaining).toBe(90);await screenshot(page,'victory');
+  await expect(page.getByRole('link',{name:'Ota yhteyttä',exact:true})).toHaveAttribute('href','/yhteystiedot/');
+  await page.getByRole('button',{name:'Seuraava taso',exact:true}).click();await page.locator('.pr-intro-panel').waitFor();
+  const state=await snapshot(page);expect(state.level.generation).toBeDefined();expect(state.workerUsed).toBe(true);
+  await page.getByRole('button',{name:'Työhön!',exact:true}).click();await screenshot(page,'generated-gameplay');expect((await snapshot(page)).guided).toBe(false);
 });
 
-test('real countdown reaches failure and restart restores the tutorial',async({page})=>{
-  test.skip(test.info().project.name!=='desktop','Countdown is covered once in the browser and in pure model tests.');
-  await begin(page);await expect(page.getByRole('heading',{name:'Aika loppui!'})).toBeVisible({timeout:105000});await screenshot(page,'failure');await page.getByRole('button',{name:'Yritä uudelleen',exact:true}).click();const state=await snapshot(page);expect(state.phase).toBe('playing');expect(state.remaining).toBeGreaterThan(89);expect(state.valveClosed).toBe(false);expect(state.collected).toEqual([false,false]);
+test('replay code, worker responsiveness, structural variation and generated-level completion',async({page})=>{
+  test.skip(test.info().project.name!=='desktop','Stress and generated gameplay are checked once in browser.');
+  const samples:Array<{seed:number;theme:string;hash:string;milliseconds:number;worker:boolean}>=[];
+  await page.evaluate(()=>{const w=window as Window&{__rafTimes?:number[];__rafStop?:boolean};w.__rafTimes=[];const frame=(t:number)=>{w.__rafTimes!.push(t);if(!w.__rafStop)requestAnimationFrame(frame)};requestAnimationFrame(frame)});
+  for(let i=0;i<12;i++){
+    await page.getByRole('button',{name:i===0?'Asetukset ja kenttäkoodi':'Asetukset',exact:true}).click();
+    await page.getByLabel('Pelaa kenttä koodilla').fill('KHT-'+(0xace000+i*391).toString(16)+'-D'+(i%12+1));
+    await page.getByRole('button',{name:'Pelaa kenttä',exact:true}).click();await page.locator('.pr-intro-panel').waitFor();const state=await snapshot(page);
+    samples.push({seed:state.level.seed!,theme:state.level.theme,hash:state.level.generation!.layoutHash,milliseconds:state.level.generation!.milliseconds,worker:state.workerUsed});
+    await page.getByRole('button',{name:'Työhön!',exact:true}).click();
+    await page.getByRole('button',{name:'Tauko',exact:true}).click();
+  }
+  const timing=await page.evaluate(()=>{const w=window as Window&{__rafTimes?:number[];__rafStop?:boolean};w.__rafStop=true;const values=w.__rafTimes!;return{frames:values.length,maxGapMs:Math.max(...values.slice(1).map((n,i)=>n-values[i])),durationMs:values.at(-1)!-values[0]}});
+  writeFileSync('docs/game22-checks/worker-browser.json',JSON.stringify({samples,timing},null,2));
+  expect(samples.every(s=>s.worker)).toBe(true);expect(new Set(samples.map(s=>s.hash)).size).toBe(12);expect(new Set(samples.map(s=>s.theme)).size).toBeGreaterThan(3);
+  await page.getByRole('button',{name:'Asetukset',exact:true}).click();await page.getByLabel('Pelaa kenttä koodilla').fill('KHT-12345678-D6');await page.getByRole('button',{name:'Pelaa kenttä',exact:true}).click();await page.locator('.pr-intro-panel').waitFor();
+  const first=(await snapshot(page)).level;await page.getByRole('button',{name:'Työhön!',exact:true}).click();await screenshot(page,'seeded-gameplay');
+  await playLevel(page,false);await screenshot(page,'generated-victory');
+  await page.getByRole('button',{name:'Pelaa uudelleen',exact:true}).click();expect((await snapshot(page)).level).toEqual(first);
+  expect(new URL(page.url()).searchParams.get('seed')).toBe('12345678');
+});
+
+test('skip begins a real countdown, expiry loses and restart restores the same level',async({page})=>{
+  test.skip(test.info().project.name!=='desktop','Real countdown checked once.');
+  await begin(page);await page.getByRole('button',{name:'Ohita opastus',exact:true}).click();expect((await snapshot(page)).guided).toBe(false);
+  await expect(page.getByRole('heading',{name:'Aika loppui!'})).toBeVisible({timeout:105000});await screenshot(page,'failure');
+  await page.getByRole('button',{name:'Yritä uudelleen',exact:true}).click();const state=await snapshot(page);expect(state.phase).toBe('playing');expect(state.remaining).toBeGreaterThan(89);expect(state.guided).toBe(false);expect(state.collected).toEqual([false,false]);
+});
+
+test('unavailable worker yields a validated fallback and route navigation cleans up the scene',async({page})=>{
+  test.skip(test.info().project.name!=='desktop','Worker failure checked once.');
+  await page.route(/generation\.worker\.ts/,route=>route.abort());
+  await page.getByRole('button',{name:'Osaan jo pelata',exact:true}).click();await page.locator('.pr-intro-panel').waitFor();
+  const state=await snapshot(page);expect(state.workerUsed).toBe(false);expect(state.level.generation!.fallback).toBe(true);expect(solveLevel(state.level).solvable).toBe(true);
+  await page.getByRole('button',{name:'Työhön!',exact:true}).click();await page.getByRole('link',{name:'Takaisin sivustolle'}).click();
+  await expect(page.locator('.hero')).toBeVisible();expect(await page.evaluate(()=>typeof window.__PIPE_RESCUE__)).toBe('undefined');await expect(page.locator('.pr-canvas canvas')).toHaveCount(0);
+  await page.goto('/peli/');await page.locator('.pr-title-card').waitFor();await expect(page.locator('.pr-canvas canvas')).toHaveCount(1);
 });

@@ -1,0 +1,93 @@
+{
+  "samples": [
+    {
+      "seed": 11329536,
+      "theme": "bathroom",
+      "hash": "b9a06470",
+      "milliseconds": 8.599999997764826,
+      "worker": true
+    },
+    {
+      "seed": 11329927,
+      "theme": "bathroom",
+      "hash": "ef020a4a",
+      "milliseconds": 5.599999997764826,
+      "worker": true
+    },
+    {
+      "seed": 11330318,
+      "theme": "kitchen",
+      "hash": "26ee2c19",
+      "milliseconds": 3.5,
+      "worker": true
+    },
+    {
+      "seed": 11330709,
+      "theme": "basement",
+      "hash": "ad3ace4f",
+      "milliseconds": 1.2999999970197678,
+      "worker": true
+    },
+    {
+      "seed": 11331100,
+      "theme": "kitchen",
+      "hash": "45452cff",
+      "milliseconds": 2.699999999254942,
+      "worker": true
+    },
+    {
+      "seed": 11331491,
+      "theme": "basement",
+      "hash": "ed390acf",
+      "milliseconds": 2.399999998509884,
+      "worker": true
+    },
+    {
+      "seed": 11331882,
+      "theme": "utility",
+      "hash": "2df3e81f",
+      "milliseconds": 4.300000000745058,
+      "worker": true
+    },
+    {
+      "seed": 11332273,
+      "theme": "office",
+      "hash": "7aed4fd2",
+      "milliseconds": 2.2999999970197678,
+      "worker": true
+    },
+    {
+      "seed": 11332664,
+      "theme": "basement",
+      "hash": "16308e29",
+      "milliseconds": 4.099999997764826,
+      "worker": true
+    },
+    {
+      "seed": 11333055,
+      "theme": "kitchen",
+      "hash": "9d619905",
+      "milliseconds": 1.7999999970197678,
+      "worker": true
+    },
+    {
+      "seed": 11333446,
+      "theme": "basement",
+      "hash": "c3830995",
+      "milliseconds": 1.5999999977648258,
+      "worker": true
+    },
+    {
+      "seed": 11333837,
+      "theme": "utility",
+      "hash": "5c12711f",
+      "milliseconds": 1.2000000029802322,
+      "worker": true
+    }
+  ],
+  "timing": {
+    "frames": 872,
+    "maxGapMs": 66.60000000000036,
+    "durationMs": 14800.300000000001
+  }
+}

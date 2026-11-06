@@ -89,3 +89,45 @@ PUTKIMESTARI 2.0 – PIPE RESCUE
   Toteutus, testit, todelliset ruudunkaappaukset ja rajoitteet:
   GAME_2_0_REPORT.md. Selainemulointi ei korvaa fyysistä puhelintestiä.
   Työ tehdään main-haaralla; älä pushaa tai deployaa ilman hyväksyntää.
+
+PUTKIMESTARI 2.2 – NYKYINEN PELIVERSIO
+  Edeltävä 2.0-osio kuvaa aiempaa toimitusta. Nyt käytössä ovat viralliset
+  KH-Tech-logot, musta parraton maskotti, tekoihin reagoiva opastus ilman
+  aikapainetta ja seedistä generoituvat kentät kuudessa ympäristöteemassa.
+  Opastuksen jälkeen "Seuraava taso" luo uuden validoidun työkohteen.
+  "Osaan jo pelata" ohittaa opastuskentän. Tauosta pääsee asetuksiin.
+  Asetuksissa voi säätää joystickia, valita äänet ja pelata kenttäkoodilla.
+  Esimerkki: KHT-12345678-D6. Kentän avattuasi voit kopioida osoitteen.
+
+  Graafinen lähde: scripts/build-game-art.mjs ja game22-character-art.mjs.
+  npm.cmd run game:art
+  npm.cmd test                   (sisältää 1 000 seedin stressitestin)
+  npm.cmd run test:game          (Playwrightin Chromium vaaditaan)
+  npm.cmd run build
+  node scripts/check-game22-assets.mjs
+
+  Playwright: npx.cmd playwright install chromium
+  Tarvittaessa GAME_BROWSER_EXECUTABLE osoittaa valmiiseen chrome.exe:en.
+  Esimerkiksi PowerShellissa:
+    $env:GAME_BROWSER_EXECUTABLE='C:\polku\chrome.exe'
+    npm.cmd run test:game
+
+  Tuotannon projektipolun tarkistus PowerShellissa:
+    $env:VITE_BASE_PATH='/kh-tech-website/'
+    npm.cmd run build
+    node scripts/check-pages-game.mjs
+  Juuripolun tarkistus:
+    $env:VITE_BASE_PATH='/'
+    npm.cmd run build
+    node scripts/check-pages-game.mjs
+  Käynnistä kehityspalvelin oletusjuurella uudessa PowerShellissa tai poista
+  testin VITE_BASE_PATH-muuttuja ennen npm.cmd run dev -komentoa.
+
+  Todelliset kaappaukset: docs/game22-screenshots/.
+  Generoinnin, Worker-testin ja tuotannon tulokset: docs/game22-checks/.
+  Toteutus ja rajaukset: GAME_2_2_REPORT.md, GAME_2_2_ASSETS.md,
+  GAME_2_2_LEVEL_GENERATION.md. Fyysisiä puhelimia ja lapsipelaajia ei testattu.
+  Hahmon alkuperäistä valokuvaa ei julkaista; se on .gitignoressa.
+
+  Työ tehdään main-haaralla. Tässä tehtävässä ei pushata eikä deployata
+  automaattisesti.

@@ -7,12 +7,16 @@ export const DIRECTIONS: Record<Direction, Cell> = {
 export const cellKey = (p: Cell) => `${p.x},${p.y}`;
 export const sameCell = (a: Cell, b: Cell) => a.x === b.x && a.y === b.y;
 export const center = (p: Cell) => ({ x: (p.x + .5) * TILE, y: (p.y + .5) * TILE });
+export type Theme = 'kitchen' | 'bathroom' | 'basement' | 'utility' | 'office' | 'technical';
+export type GenerationInfo = { version: 22; attempts: number; fallback: boolean; milliseconds: number; states: number; pushes: number; walkingTiles: number; expectedSeconds: number; layoutHash: string };
 
 export type Level = {
   id: number; title: string; location: string; tip: string; time: number; puzzleRows: number;
-  theme: 'kitchen' | 'basement' | 'office'; width: number; height: number; walls: Cell[];
-  start: Cell; valve: Cell; leak: Cell; tools: [Cell, Cell]; crate: Cell; plate: Cell; gate: Cell;
+  theme: Theme; width: number; height: number; walls: Cell[];
+  start: Cell; valve: Cell; valves?: Cell[]; leak: Cell; tools: Cell[]; crate: Cell; plate: Cell; gate: Cell;
   decor: {cell:Cell;asset:string}[];
+  seed?: number; difficulty?: number; tutorial?: boolean; puzzleColumns?: number;
+  bonus?: Cell; generation?: GenerationInfo;
 };
 type Layout = Pick<Level, 'start' | 'valve' | 'leak' | 'tools' | 'crate' | 'plate' | 'gate'> & { extra: Cell[] };
 const vertical = (x: number, ys: number[]) => ys.map(y => ({ x, y }));
@@ -31,27 +35,29 @@ function makeLevel(id: number, title: string, location: string, theme: Level['th
 }
 export const LEVELS: Level[] = [
   makeLevel(1, 'Keittiön vesivahinko', 'Koti · Lohja', 'kitchen', 90, 1, {
-    start: {x:2,y:2}, valve:{x:10,y:2}, crate:{x:4,y:4}, plate:{x:6,y:4}, gate:{x:8,y:6},
-    tools:[{x:3,y:8},{x:10,y:8}], leak:{x:12,y:8}, extra:[],
+    start: {x:2,y:2}, valve:{x:5,y:2}, crate:{x:8,y:4}, plate:{x:10,y:4}, gate:{x:8,y:6},
+    tools:[{x:4,y:3},{x:6,y:3}], leak:{x:10,y:8}, extra:[],
   }),
   makeLevel(2, 'Kellarin painekoe', 'Taloyhtiö · Kellari', 'basement', 85, 2, {
     start:{x:2,y:2}, valve:{x:12,y:2}, crate:{x:10,y:3}, plate:{x:7,y:3}, gate:{x:3,y:6},
-    tools:[{x:3,y:8},{x:11,y:8}], leak:{x:12,y:9}, extra:[...vertical(6,[1,2]), ...vertical(6,[7,8])],
+    tools:[{x:3,y:3},{x:12,y:4}], leak:{x:12,y:9}, extra:[...vertical(6,[1,2]), ...vertical(6,[7,8])],
   }),
   makeLevel(3, 'Toimiston yllätys', 'Toimisto · Uusimaa', 'office', 80, 2, {
     start:{x:2,y:2}, valve:{x:12,y:4}, crate:{x:5,y:4}, plate:{x:5,y:2}, gate:{x:11,y:6},
-    tools:[{x:2,y:8},{x:9,y:9}], leak:{x:12,y:8}, extra:[...vertical(8,[1,2,4]), ...vertical(7,[7,8])],
+    tools:[{x:3,y:4},{x:11,y:2}], leak:{x:12,y:8}, extra:[...vertical(8,[1,2,4]), ...vertical(7,[7,8])],
   }),
   makeLevel(4, 'Pesutuvan pulma', 'Taloyhtiö · Pesutupa', 'kitchen', 78, 3, {
     start:{x:2,y:3}, valve:{x:3,y:1}, crate:{x:11,y:3}, plate:{x:11,y:5}, gate:{x:7,y:6},
-    tools:[{x:3,y:9},{x:9,y:8}], leak:{x:12,y:9}, extra:[...vertical(6,[2,3,4]), ...vertical(4,[7,8])],
+    tools:[{x:3,y:4},{x:12,y:1}], leak:{x:12,y:9}, extra:[...vertical(6,[2,3,4]), ...vertical(4,[7,8])],
   }),
   makeLevel(5, 'Huoltokäytävä', 'Kiinteistö · Huoltotila', 'office', 75, 3, {
     start:{x:2,y:4}, valve:{x:11,y:4}, crate:{x:4,y:2}, plate:{x:7,y:2}, gate:{x:5,y:6},
-    tools:[{x:3,y:8},{x:12,y:8}], leak:{x:11,y:9}, extra:[...vertical(9,[2,3,4]), ...vertical(8,[7,8])],
+    tools:[{x:3,y:3},{x:12,y:2}], leak:{x:11,y:9}, extra:[...vertical(9,[2,3,4]), ...vertical(8,[7,8])],
   }),
   makeLevel(6, 'Teknisen tilan pelastus', 'Kiinteistö · Tekninen tila', 'basement', 70, 3, {
     start:{x:2,y:2}, valve:{x:12,y:2}, crate:{x:11,y:4}, plate:{x:8,y:4}, gate:{x:9,y:6},
-    tools:[{x:2,y:9},{x:7,y:8}], leak:{x:12,y:9}, extra:[...vertical(5,[1,2,4]), ...vertical(5,[7,8]), {x:10,y:8}],
+    tools:[{x:3,y:4},{x:10,y:2}], leak:{x:12,y:9}, extra:[...vertical(5,[1,2,4]), ...vertical(5,[7,8]), {x:10,y:8}],
   }),
 ];
+export const TUTORIAL_LEVEL: Level = { ...LEVELS[0], tutorial: true, seed: 0, difficulty: 0, valves: [LEVELS[0].valve], tip: 'Opit pelaamalla. Harjoittelussa ei ole kiirettä!' };
+export const THEME_NAMES: Record<Theme,string> = {kitchen:'Keittiö',bathroom:'Kylpyhuone',basement:'Kellari',utility:'Kodinhoitohuone',office:'Toimisto',technical:'Tekninen tila'};

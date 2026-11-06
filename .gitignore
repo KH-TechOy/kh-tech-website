@@ -8,3 +8,5 @@ dist/
 .playwright-artifacts/
 playwright-report/
 test-results/
+/docs/kh-tech-character-reference.jpg
+/docs/kh-tech-character-reference.jpeg
