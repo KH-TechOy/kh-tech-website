@@ -1,4 +1,26 @@
 KH-TECH OY – VERKKOSIVU, TYÖRAPORTTI JA PELI
+PUTKIMESTARI 3.0 – NYKYINEN PELIVERSIO
+  Peli /peli/ käyttää alkuperäistä varjostettua rasteritaidetta, yhtenäisiä
+  2.5D-seiniä, uusia hahmoja, kalusteita, putkia ja animoitua vettä.
+  Pelimalli, ohjaus ja seeded-kenttägeneraattori säilyvät. Reittinuolia
+  tai seuraavan kohteen pysyviä merkkejä ei näytetä. Tutki ja ratkaise
+  itse; tavoitelista, paikalliset toimintovihjeet ja kuvitettu opastus
+  auttavat toimintojen oppimisessa. Putkipulman virtausportit säilyvät.
+
+  npm.cmd run dev               Avaa paikallinen /peli/.
+  npm.cmd test                  49 yksikkötestiä, mukana 1 000 seediä.
+  npm.cmd run test:game         Aidot syötteet kolmessa näyttökoossa.
+  npm.cmd run build             Valmiit kuvat mukana; ei kuvapalvelua.
+  node scripts/check-game3-assets.mjs
+  npm.cmd run game:art          Pakkaa PNG-lähteet WebP-atlakseksi.
+  node scripts/review-game3-art.mjs
+  Grafiikan uusinta käyttää Playwright Chromiumia; tarvittaessa aseta
+  GAME_BROWSER_EXECUTABLE kuten alempana. Ei API-avainta eikä verkkokutsua.
+  Vanhan SVG-tuotannon komento: npm.cmd run game:art:legacy.
+  Dokumentit: GAME_3_0_VISUAL_REPORT.md, GAME_3_0_ASSET_MANIFEST.md,
+  GAME_3_0_VISUAL_COMPARISON.md. Kaappaukset: docs/game3-screenshots/.
+  Alemmat GAME 2.x -osiot kuvaavat aiempia versioita. Ei pushia tai deployta.
+
 Päivitetty 6.11.2026
 
 SISÄLTÖ

@@ -9,7 +9,7 @@ export const PLAYER_RADIUS=18,PLAYER_SPEED=226;
 export const TUTORIAL_STEPS=[
   {title:'Liiku putkimiehellä!',detail:'Kokeile sinistä ohjainta tai nuolinäppäimiä.',art:'joystick'},
   {title:'Sulje vesihana!',detail:'Mene punaisen hanan luo. Paina kättä tai E.',art:'valve'},
-  {title:'Kerää työkalut!',detail:'Kävele hohtavan työkalupakin ja tiivisteen luo.',art:'toolbox'},
+  {title:'Kerää työkalut!',detail:'Etsi työkalupakki ja tiiviste. Keräät ne kävelemällä niiden luo.',art:'toolbox'},
   {title:'Siirrä laatikko!',detail:'Mene laatikon taakse. Paina laatikkopainiketta.',art:'crate'},
   {title:'Korjaa vuoto!',detail:'Mene vuodon luo. Paina kättä tai E.',art:'leak'},
   {title:'Hyvä! Homma hoidettu!',detail:'Olet valmis seuraavaan työhön!',art:'spark'},
@@ -71,5 +71,13 @@ export class RescueModel {
   rotatePiece(index:number){if(this.phase!=='repair'||index<0||index>=this.puzzle.masks.length)return;this.puzzle.masks[index]=rotateMask(this.puzzle.masks[index]);this.tutorialTurns++;this.lastProgress=this.elapsed;this.events.push({type:'turn'});if(isPuzzleComplete(this.puzzle)){this.phase='won';this.events.push({type:'win',text:'Hyvä! Homma hoidettu!'})}}
   note(text:string){this.events.push({type:'note',text})}
   drainEvents(){const events=this.events;this.events=[];return events}
-  contextHint(){if(this.guided){if(this.phase==='repair')return this.tutorialTurns?'Hyvä! Yhdistä sininen tulo keltaiseen lähtöön.':'Napauta hohtavaa putkea!';return TUTORIAL_STEPS[this.tutorialStep].title}if(this.phase==='repair')return 'Yhdistä sininen tulo keltaiseen lähtöön.';const action=this.usableAction();if(action==='valve')return 'Paina kättä tai E: Sulje hana';if(action==='repair')return 'Paina kättä tai E: Korjaa vuoto';if(this.near(this.crate,135)&&!this.gateOpen)return 'Paina laatikkoa tai välilyöntiä: Työnnä';if(!this.valveClosed)return this.closedValves.length>1?'Etsi punaiset hanat ja sulje ne.':'Etsi punainen hana ja sulje se.';if(!this.collected.every(Boolean))return 'Kerää hohtavat työkalut ja osat.';if(!this.gateOpen)return 'Työnnä laatikko painokytkimelle.';return 'Mene vuodon luo ja korjaa putki.'}
+  contextHint(){
+    if(this.guided){if(this.phase==='repair')return this.tutorialTurns?'Hyvä! Yhdistä sininen tulo keltaiseen lähtöön.':'Napauta putkea: osa kääntyy neljänneskierroksen.';return TUTORIAL_STEPS[this.tutorialStep].title}
+    if(this.phase==='repair')return 'Yhdistä sininen tulo keltaiseen lähtöön.';
+    const action=this.usableAction();
+    if(action==='valve')return 'Paina kättä tai E: Sulje hana';
+    if(action==='repair')return 'Paina kättä tai E: Korjaa vuoto';
+    if(this.near(this.crate,135)&&!this.gateOpen)return 'Paina laatikkoa tai välilyöntiä: Työnnä';
+    return 'Tutki huonetta ja ratkaise korjaustyö. Tavoitteet näkyvät ylhäällä.';
+  }
 }

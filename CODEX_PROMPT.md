@@ -1,5 +1,11 @@
 # KH-Tech Oy – toteutusohje
 
+## GAME 3.0 – nykyinen pelityö, 7.11.2026
+
+Toteuta konseptiin `docs/Putkimestari_ 2.png` perustuva huomattava 2.5D-grafiikkauudistus nykyiseen peliin. Säilytä pelimalli ja proseduraalinen generaattori. Käytä uutta alkuperäistä rasteritaidetta, yhtenäisiä seinäpintoja ja putkiliitoksia, parempaa hahmoa, kevyttä kasvavaa vettä ja valaistusta. Älä muuta sivuston tai raportin toimintaa. Tämän osion vaatimukset korvaavat vanhojen peliosioiden suuntanuolet ja ratkaisukorostukset: poista reittiohjaus, kaukaisen seuraavan kohteen merkit ja oikean korjauspalan paljastaminen. Säilytä tavoitteet, lähellä kohdetta näkyvät toimintovihjeet, kuvitettu interaktiivinen opastus ja aidot putkivirtauksen portit.
+
+Lue nykyiset lähteet ja vertailukuvat, tee visuaalinen puuteanalyysi ennen toteutusta, vähintään kaksi kaappauksiin perustuvaa korjauskierrosta sekä oikeat pelikaappaukset 1440×900, 390×844 ja 844×390. Testaa regressiot ja tuotannon juuri-/Pages-polut. Kirjaa toteutunut laatu, mittaukset ja rajoitukset GAME_3_0_VISUAL_REPORT-, ASSET_MANIFEST- ja VISUAL_COMPARISON-tiedostoihin. Pysy main-haaralla; paikallinen commit, ei pushia tai deployta.
+
 Lue `IDEA.md`, `CODEX_PROMPT.md` ja `README.txt` kokonaan ennen toteutusta. Toteuta KH-Tech Oy:lle suomenkielinen Vite/React/TypeScript-sivusto, työraportin mobiili-PWA ja omaperäinen putkenkorjauspeli. Päivitä nämä suunnittelutiedostot nykyvaatimuksia vastaaviksi ennen koodausta.
 
 ## Toimitettavat osat

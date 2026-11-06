@@ -1,5 +1,13 @@
 # KH-Tech Oy – tuotteen määrittely
 
+## GAME 3.0 – nykyinen pelityö, 7.11.2026
+
+Pelin nykyinen tavoite on kokonainen 2.5D-grafiikkauudistus: alkuperäiset pehmeästi varjostetut rasterihahmot ja kalusteet, jatkuvat teksturoidut seinäpinnat, yhteensopivat putkiliitokset, kasvava ja hanasta pysähtyvä visuaalinen vesi sekä viimeistelty HUD. Ensisijainen referenssi on edelleen `docs/Putkimestari_ 2.png`. Renderöinti tiivistää lattian y-akselin kertoimella 0,72; pelimallin koordinaatit, törmäykset, säännöt ja seeded-generaattori säilyvät.
+
+Tämä korvaa aiempien peliosioiden suuntanuoli- ja ratkaisukorostusvaatimukset: ei pysyviä reittinuolia, seuraavan kohteen huutomerkkejä eikä oikean putkipalan automaattista paljastamista. Tavoitelista, paikalliset toimintovihjeet, tekoihin reagoiva kuvitettu opastus ja korjauspulman oikeat virtausportit säilyvät. Sivuston ja raportin toiminnallisuus ei kuulu tähän muutokseen. Työ main-haaralla, paikallinen arviointi ja commit, ei pushia tai deployta.
+
+Nykyiset dokumentit: `GAME_3_0_VISUAL_REPORT.md`, `GAME_3_0_ASSET_MANIFEST.md`, `GAME_3_0_VISUAL_COMPARISON.md`. Vanhemmat GAME 2.x -kuvaukset ovat historiaa.
+
 Päivitetty 6.11.2026. Tämä dokumentti määrittää julkisen verkkosivuston, henkilöstön työraportti-PWA:n, putkiremonttipelin sekä sähköposti- ja kirjautumisintegraatioiden vaatimukset.
 
 ## Tavoite ja rajaukset

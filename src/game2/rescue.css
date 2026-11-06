@@ -18,3 +18,58 @@
 /* Keep instruction cards outside the central camera-follow area. */
 @media(max-width:600px){.pr-tutorial{top:auto;bottom:190px}.pr-toast.guided{top:132px;max-width:calc(100% - 85px)}}
 @media(max-height:580px) and (min-width:601px){.pr-tutorial{top:auto;bottom:14px;max-width:calc(100% - 350px)}.pr-toast.guided{top:93px}}
+
+/* GAME 3.0: enamel controls, brushed frame and restrained layered glass. */
+.pr-page{--gold:#ffcf5c;--panel:#10243e;background:#091523}
+.pr-stage{border:2px solid #9bbbd0;box-shadow:0 0 0 4px #162c43,0 0 0 6px #071320,0 18px 60px #0007}
+.pr-vignette{box-shadow:inset 0 0 85px #06132950;background:linear-gradient(180deg,#08152b66,transparent 25%,transparent 75%,#081a3233)}
+.pr-level-card,.pr-timer{border-color:#81c6e5;background:linear-gradient(150deg,#234766f5,#102840f7 60%,#102136f5);box-shadow:inset 0 2px #d2f3ff26,0 4px 0 #071627,0 7px 16px #07132055}
+.pr-level-card{border-radius:22px 12px 12px 22px}
+.pr-avatar{background-size:100% auto;background-position:50% 50%;background-color:#224868;border:2px solid #9de4ff;box-shadow:0 0 0 3px #10233c,inset 0 0 12px #0005}
+.pr-level-card h1{text-shadow:0 2px #071525;font-weight:900}
+.pr-objective{background:linear-gradient(#213e59f5,#10263df5);border-color:#6c96b0;border-radius:9px;box-shadow:inset 0 1px #adcce329,0 3px #0a1729}
+.pr-objective.done{background:linear-gradient(#267361f5,#15443cf5);border-color:#85e0b9}
+.pr-icon-button{background:linear-gradient(155deg,#608aad,#294e77 60%,#1a355a);box-shadow:inset 0 2px #d2eaf978,0 5px #091a2f,0 7px 12px #0004}
+.pr-timer>svg{stroke-width:2.5;filter:drop-shadow(0 2px 1px #0008)}
+.pr-joystick{border:4px solid #7cceeccc;background:radial-gradient(circle at 36% 28%,#357cb8c7,#14426dbb 65%,#102f53d6);box-shadow:inset 0 3px 3px #cff5ff88,inset 0 -7px 10px #06234488,0 0 0 5px #102942cc,0 8px 0 5px #06152788,0 12px 25px #07132255}
+.pr-thumb{background:radial-gradient(circle at 35% 25%,#79e5ff,#20a6ec 48%,#0764b2 82%);border-color:#104b7b;box-shadow:inset 0 4px #d2fcff99,inset 0 -4px #07569eaa,0 6px #062b53,0 10px 12px #07172c88}
+.pr-thumb>i{border-color:#91ecff55;background:linear-gradient(135deg,#5ad3ff22,#0763aa44)}
+.pr-interact{background:radial-gradient(circle at 32% 23%,#8de9ff,#2994e4 53%,#1258b5 85%);border-color:#b5f0ff;box-shadow:inset 0 4px #e5fcffbb,inset 0 -6px #064f9c,0 0 0 4px #173a5b,0 8px 0 4px #061a32,0 14px 22px #03132888}
+.pr-push{background:radial-gradient(circle at 32% 23%,#fff1ab,#ffc34b 50%,#d27a25 90%);border-color:#fff0bb;box-shadow:inset 0 3px #fffbd0,inset 0 -4px #be6628,0 0 0 3px #263e53,0 6px 0 3px #071b31,0 10px 18px #07132266}
+.pr-action-area button>svg{stroke-width:2.7;filter:drop-shadow(0 2px 1px #0b355277)}
+.pr-tutorial{background:linear-gradient(130deg,#254663f5,#11283ff5 78%);border-color:#e7bf66;box-shadow:inset 0 2px #ffe9a225,0 5px #07182a,0 9px 20px #07152a66;border-radius:16px}
+.pr-tutorial strong{color:#ffe19b;text-shadow:0 2px #06172b}
+.pr-step-dots i{height:5px;border:1px solid #91b0c344}.pr-step-dots i.done{background:linear-gradient(#ffe8a6,#efb945);border-color:#ffe5a0}
+.pr-panel{background:linear-gradient(140deg,#294865f7,#142c44fc 55%,#0d2136fc);border-color:#83adc5;box-shadow:inset 0 2px #c2e5f538,0 7px #08172a,0 25px 70px #0007}
+.pr-result{background:radial-gradient(ellipse at 30% 0,#3c6b7af7,#183950fc 55%,#102339fc)}
+.pr-yellow{background:linear-gradient(#ffe78b,#ffc43d 55%,#e59a24);box-shadow:inset 0 3px #fff1b7,0 4px #9b5d1b,0 7px #07182a77;border-color:#ffe9a2}
+.pr-glass{background:linear-gradient(#3c607f,#213e5d);box-shadow:inset 0 2px #b4d2e94d,0 4px #0b1c30}
+.pr-job-illustration span{border:0;width:5px;height:5px;background:#9fc3d5;border-radius:50%}
+.pr-title-overlay{background:radial-gradient(ellipse at 34% 40%,#244b66c9,#08172bf0 82%)}
+.pr-title-art{width:380px;height:490px}
+.pr-title-art>img{width:390px;height:490px;transform:none;object-fit:contain;filter:drop-shadow(0 18px 20px #02102099)}
+.pr-title-halo{opacity:.65}
+.pr-title-content .pr-logo{font-size:84px}
+.pr-pipe-cell{background:linear-gradient(135deg,#6683a1,#354c6c 55%,#203451);border-color:#9dafc5;box-shadow:inset 0 3px #c0d6eb55,inset 0 -4px #14284299,0 3px #09182b}
+.pr-pipe-cell.connected{background:linear-gradient(135deg,#447f9a,#23566f 70%,#163950)}
+.pr-pipe-grid{background:#102239;box-shadow:inset 0 3px 14px #0008,0 1px #9fc8dc44;border-radius:14px}
+.pr-repair-hint{font-size:12px;line-height:1.6}
+@media(max-width:600px){
+ .pr-title-art{width:190px;height:220px;margin-bottom:-16px}
+ .pr-title-art>img{width:185px;height:230px}
+ .pr-title-content .pr-logo{font-size:50px}
+ .pr-title-content>.pr-brand{margin-bottom:5px}
+ .pr-title-card{margin-top:-10px}
+ .pr-title-chips{margin-top:12px}
+ .pr-title-secondary .pr-link-button{margin-top:14px}
+ .pr-tutorial{bottom:183px;padding:10px;gap:9px}
+ .pr-tutorial strong{font-size:17px}
+ .pr-tutorial p{font-size:11px;line-height:1.45}
+ .pr-avatar{background-size:100% auto}
+}
+@media(max-height:580px) and (min-width:601px){
+ .pr-title-art{width:215px;height:280px}.pr-title-art>img{width:215px;height:280px}
+ .pr-title-content .pr-logo{font-size:43px}
+ .pr-tutorial{padding:7px 10px;bottom:14px;max-width:calc(100% - 350px)}
+ .pr-tutorial p{font-size:10px}
+}

@@ -37,8 +37,8 @@ try{
   await routePage.reload();assert.equal(await routePage.locator('[name=customer]').inputValue(),'Paikallinen QA-asiakas');
   await routePage.goto(origin+base+'yhteystiedot/');await routePage.locator('[name=name]').fill('QA-tarkistus');await routePage.locator('[name=phone]').fill('0401234567');await routePage.locator('textarea[name=description]').fill('Paikallinen lomakekäyttöliittymän tarkistus.');await routePage.locator('[name=consent]').check();
   await routePage.getByRole('button',{name:'Lähetä pyyntö'}).click();assert.match(await routePage.getByRole('status').innerText(),/Pyyntöä ei lähetetty/);
-  await mkdir('docs/game22-screenshots',{recursive:true});await page.screenshot({path:`docs/game22-screenshots/production-${base==='/'?'root':'pages'}-gameplay.png`,animations:'disabled'});
+  await mkdir('docs/game3-screenshots',{recursive:true});await page.screenshot({path:`docs/game3-screenshots/production-${base==='/'?'root':'pages'}-gameplay.png`,animations:'disabled'});
   assert.deepEqual(failures,[],'Production page had a runtime or request failure');
-  await writeFile(`docs/game22-checks/production-${base==='/'?'root':'pages'}.json`,JSON.stringify({base,game:true,refresh:true,oneCanvas:true,noDevHook:true,workerRequests,allRoutes:true,localPdfDownload:true,reportDraftPersisted:true,contactDemoStatus:true,failures},null,2));
+  await writeFile(`docs/game3-checks/production-${base==='/'?'root':'pages'}.json`,JSON.stringify({base,game:true,refresh:true,oneCanvas:true,noDevHook:true,workerRequests,allRoutes:true,localPdfDownload:true,reportDraftPersisted:true,contactDemoStatus:true,failures},null,2));
   console.log(`Production preview passed: ${base}peli/, direct refresh, one canvas, no dev hook, worker and official assets; all routes, contact demo, report draft and actual PDF download.`);
 }finally{await browser?.close();server.kill()}

@@ -1,0 +1,171 @@
+{
+  "branch": "main",
+  "scope": "GAME 3.0 visual overhaul and exploration guidance removal",
+  "unit": {
+    "files": 8,
+    "passed": 49
+  },
+  "fullBrowser": {
+    "passed": 16,
+    "skipped": 8,
+    "failed": 0,
+    "viewports": [
+      "1440x900",
+      "390x844",
+      "844x390"
+    ]
+  },
+  "finalFocusedBrowser": {
+    "startTime": "2026-11-06T23:28:05.449Z",
+    "duration": 108984.787,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "production": {
+    "root": {
+      "base": "/",
+      "game": true,
+      "refresh": true,
+      "oneCanvas": true,
+      "noDevHook": true,
+      "workerRequests": [
+        "http://127.0.0.1:5182/assets/generation.worker-CJX3NO2a.js"
+      ],
+      "allRoutes": true,
+      "localPdfDownload": true,
+      "reportDraftPersisted": true,
+      "contactDemoStatus": true,
+      "failures": []
+    },
+    "pages": {
+      "base": "/kh-tech-website/",
+      "game": true,
+      "refresh": true,
+      "oneCanvas": true,
+      "noDevHook": true,
+      "workerRequests": [
+        "http://127.0.0.1:5182/kh-tech-website/assets/generation.worker-CJX3NO2a.js"
+      ],
+      "allRoutes": true,
+      "localPdfDownload": true,
+      "reportDraftPersisted": true,
+      "contactDemoStatus": true,
+      "failures": []
+    }
+  },
+  "generation": {
+    "seeds": 1000,
+    "fallbacks": 0,
+    "maxStates": 49,
+    "maxAttempts": 9,
+    "multipleValves": 353,
+    "extraTools": 600,
+    "bonusObjectives": 318,
+    "uniqueStructuralLayouts": 1000,
+    "themes": [
+      "basement",
+      "bathroom",
+      "kitchen",
+      "office",
+      "technical",
+      "utility"
+    ],
+    "dimensions": [
+      "15x11",
+      "15x13",
+      "17x11",
+      "17x13",
+      "19x11",
+      "19x13"
+    ],
+    "totalValidationMilliseconds": 3066.7153000000003,
+    "generationMedianMs": 0.878099999999904,
+    "generationP95Ms": 3.3093000000003485,
+    "generationMaxMs": 10.977500000000191
+  },
+  "assets": {
+    "frames": 28,
+    "brand": {
+      "kh-tech-logo.png": "84848d06ab6a9221ca7bda43e60309cfed2832773042dea743fb9d8aa7ee20aa",
+      "kh-tech-icon.png": "8ed9604495add3e75c4275c84ab17524774dfd18a33b1342b86fd5a81e17ac85"
+    },
+    "totalBytes": 1159242,
+    "assets": [
+      {
+        "name": "crate.webp",
+        "bytes": 28680,
+        "sha256": "12df18525ad549d1470c04fe5caa71a46a73ce7ba8156add39408beb0e5a3e77"
+      },
+      {
+        "name": "floor.webp",
+        "bytes": 33096,
+        "sha256": "0d84e1cd09e303abb79fc5e950b3390194b2cb020ae5a847b71efb975f18f930"
+      },
+      {
+        "name": "gasket.webp",
+        "bytes": 18784,
+        "sha256": "c3bbd00e2a34fce88e2906512ec468ecb7fbca6121966d6e1bb01e359ff6839e"
+      },
+      {
+        "name": "leak.webp",
+        "bytes": 8910,
+        "sha256": "3c9989201c78eec729bee92b824d256f223052c28e03e6a3555adb83fe8d2766"
+      },
+      {
+        "name": "mascot.webp",
+        "bytes": 100036,
+        "sha256": "32269ceb182359cd1d893134bdc50fc15c99829e2c86c171e8da2adeb3e7df4b"
+      },
+      {
+        "name": "plumber-sheet.webp",
+        "bytes": 195808,
+        "sha256": "7843b770fe7738581543b4244ec3a41ebfea57f322216b164f0aebe9455747ea"
+      },
+      {
+        "name": "portrait.webp",
+        "bytes": 15732,
+        "sha256": "407269e8e9849bea8731c1dac9cbecf77d3e1352164bea69ac5e8d956732d270"
+      },
+      {
+        "name": "spare.webp",
+        "bytes": 25840,
+        "sha256": "025d8a62ec50951944cb752f10ad07ea7e608af8926390a31db0bd475af529ef"
+      },
+      {
+        "name": "toolbox.webp",
+        "bytes": 27760,
+        "sha256": "627e8d2956768f09598353ef5dc24cce7151d77f2fa80d301997ccefcfe05f38"
+      },
+      {
+        "name": "valve.webp",
+        "bytes": 28224,
+        "sha256": "267de4b85342dc81aaa656eaf26a110c5f565a688554ea6728a41c27af51a916"
+      },
+      {
+        "name": "wall.webp",
+        "bytes": 20288,
+        "sha256": "200710f14414273f023d0ab8d2cb4ee373974fc188999923bb9bb72052e8d5c8"
+      },
+      {
+        "name": "workshop-atlas.json",
+        "bytes": 9676,
+        "sha256": "4aed8c633d08df7e8c26192e0b3d707270cde5e8ce80fc1a65d4614559156c52"
+      },
+      {
+        "name": "workshop-atlas.webp",
+        "bytes": 646408,
+        "sha256": "0c0080859f3b8dcb3bdd30c7cee3d9903d9fe0bfb986c267943f04131425c4dc"
+      }
+    ]
+  },
+  "reference": "docs/Putkimestari_ 2.png",
+  "visualIterations": [
+    "docs/game3-screenshots/initial",
+    "docs/game3-screenshots/iteration1",
+    "docs/game3-screenshots"
+  ],
+  "deployment": "No push or deployment performed",
+  "physicalPhonesTested": false
+}

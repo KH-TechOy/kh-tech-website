@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { TILE, center, DIRECTIONS, type Cell, type Direction } from '../src/game2/levels';
 import { solveLevel, walkPath } from '../src/game2/solver';
-const output='docs/game22-screenshots';mkdirSync(output,{recursive:true});
+const output=process.env.GAME_SCREENSHOTS||'docs/game3-screenshots';mkdirSync(output,{recursive:true});
 const snapshot=(page:Page)=>page.evaluate(()=>window.__PIPE_RESCUE__!.snapshot());
 let errors:string[]=[];
 test.beforeEach(async({page})=>{errors=[];page.on('pageerror',error=>errors.push(error.message));await page.goto(`/peli/${process.env.GAME_RENDERER==='canvas'?'?renderer=canvas':''}`);await page.waitForFunction(()=>window.__PIPE_RESCUE__&&document.querySelector('.pr-title-card'))});
@@ -14,6 +14,35 @@ async function moveTo(page:Page,point:Cell){
 }
 async function walkTo(page:Page,target:Cell){const state=await snapshot(page),current={x:Math.floor(state.player.x/TILE),y:Math.floor(state.player.y/TILE)};const path=walkPath(state.level,current,target,state.crate,state.gateOpen);expect(path,'target must have a path').not.toBeNull();await page.locator('.pr-page').focus();for(const cell of path!.slice(1))await moveTo(page,center(cell))}
 const arrow:Record<Direction,string>={up:'ArrowUp',right:'ArrowRight',down:'ArrowDown',left:'ArrowLeft'};
+
+test('exploration has no route markers, context is local and closing water freezes coverage',async({page})=>{
+  await begin(page);
+  const initial=await snapshot(page);
+  expect(initial.presentation?.loadedGuidanceTextures).toEqual([]);
+  expect(initial.presentation?.contextVisible).toBe(false);
+  expect(await page.locator('.pr-intro-panel').count()).toBe(0);
+  await page.waitForTimeout(1200);
+  const wet=await snapshot(page);
+  expect(wet.presentation!.water.coverage).toBeGreaterThan(initial.presentation!.water.coverage);
+  expect(wet.presentation!.water.jetVisible).toBe(true);
+  const valve=wet.level.valve;await walkTo(page,valve);
+  await expect.poll(async()=>(await snapshot(page)).presentation!.contextVisible).toBe(true);
+  const atValve=await snapshot(page);
+  expect(atValve.presentation!.playerFoot.y).toBeCloseTo(atValve.player.y*.72,4);
+  expect(atValve.presentation!.avatar.x).toBeCloseTo(atValve.player.x,4);
+  await page.keyboard.press('e');await page.waitForTimeout(80);
+  const closed=await snapshot(page);
+  expect(closed.valveClosed).toBe(true);expect(closed.tutorialStep).toBe(2);
+  expect(closed.presentation!.water.emitting).toBe(false);
+  expect(closed.presentation!.water.jetVisible).toBe(false);
+  await page.waitForTimeout(1200);const settled=await snapshot(page);
+  expect(settled.presentation!.water.coverage).toBe(closed.presentation!.water.coverage);
+  expect(settled.presentation!.water.settle).toBeLessThan(closed.presentation!.water.settle);
+  expect(settled.presentation!.contextVisible).toBe(false);
+  await expect(page.locator('.pr-objective')).toHaveCount(4);
+  await page.getByRole('button',{name:'Ohita opastus',exact:true}).click();
+  await expect(page.locator('.pr-context')).toHaveText('Tutki huonetta ja ratkaise korjaustyö. Tavoitteet näkyvät ylhäällä.');
+});
 
 test('frame delivery measurement without tracing or screenshot capture',async({page})=>{
   await begin(page);await page.waitForTimeout(6000);const state=await snapshot(page);
@@ -68,6 +97,8 @@ async function playLevel(page:Page,guided:boolean){
   }
   expect((await snapshot(page)).gateOpen).toBe(true);if(guided){await expect(page.locator('.pr-tutorial strong')).toHaveText('Korjaa vuoto!');await screenshot(page,'door-open')}
   await walkTo(page,level.leak);await page.keyboard.press('e');await expect(page.locator('.pr-repair-panel')).toBeVisible();await screenshot(page,guided?'repair':'generated-repair');
+  await expect(page.locator('.pr-pipe-cell.pr-highlight')).toHaveCount(0);
+  await expect(page.locator('.pr-port')).toHaveCount(2);
   for(let index=0;index<(await snapshot(page)).puzzle.masks.length;index++)for(let i=0;i<4;i++){
     const state=await snapshot(page);if(state.phase==='won'||state.puzzle.masks[index]===state.puzzle.solved[index])break;await page.getByTestId('pipe-'+index).click();
   }
@@ -94,7 +125,7 @@ test('replay code, worker responsiveness, structural variation and generated-lev
     await page.getByRole('button',{name:'Tauko',exact:true}).click();
   }
   const timing=await page.evaluate(()=>{const w=window as Window&{__rafTimes?:number[];__rafStop?:boolean};w.__rafStop=true;const values=w.__rafTimes!;return{frames:values.length,maxGapMs:Math.max(...values.slice(1).map((n,i)=>n-values[i])),durationMs:values.at(-1)!-values[0]}});
-  writeFileSync('docs/game22-checks/worker-browser.json',JSON.stringify({samples,timing},null,2));
+  writeFileSync('docs/game3-checks/worker-browser.json',JSON.stringify({samples,timing},null,2));
   expect(samples.every(s=>s.worker)).toBe(true);expect(new Set(samples.map(s=>s.hash)).size).toBe(12);expect(new Set(samples.map(s=>s.theme)).size).toBeGreaterThan(3);
   await page.getByRole('button',{name:'Asetukset',exact:true}).click();await page.getByLabel('Pelaa kenttä koodilla').fill('KHT-12345678-D6');await page.getByRole('button',{name:'Pelaa kenttä',exact:true}).click();await page.locator('.pr-intro-panel').waitFor();
   const first=(await snapshot(page)).level;await page.getByRole('button',{name:'Työhön!',exact:true}).click();await screenshot(page,'seeded-gameplay');
