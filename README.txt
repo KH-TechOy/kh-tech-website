@@ -142,3 +142,54 @@ PUTKIMESTARI 2.2 – NYKYINEN PELIVERSIO
 
   Työ tehdään main-haaralla. Tässä tehtävässä ei pushata eikä deployata
   automaattisesti.
+
+
+WEBSITE 2.0 – SIVUSTON JA RAPORTIN UUDISTUS
+  Nykyinen työ yhtenäistää yrityssivuston, raportin ja PDF:n viralliseen
+  KH-Tech-brändiin. Pelin mekaniikka säilyy. Lomake ja raportti säilyttävät
+  aiemman paikallisen/esittelytilansa; sähköpostia ei väitetä lähetetyksi.
+  Toteutus ja tarkistukset kirjataan WEBSITE_2_0_REPORT.md-tiedostoon.
+  Viralliset tunnukset ja niiden käyttö: BRAND_ASSET_MANIFEST.md.
+  Ei automaattista pushia tai deployta.
+  Nykyiset WEBSITE 2.0 -komennot:
+    npm.cmd run brand:assets
+    npm.cmd test
+    npm.cmd run build
+    npm.cmd run test:website
+    npm.cmd run test:game
+    node scripts/check-website-assets.mjs
+
+  Build kopioi viralliset tunnukset, tarkistaa TypeScriptin, tekee Vite-
+  tuotantoversion ja generoi raportin offline-kuoren. Normaali build ei
+  tarvitse Pythonia. Sivusto, raportti ja peli ladataan erillisinä osina.
+  Kehityksen selaintestipalvelin käynnistyy erilliselle portille 5174.
+
+  Tuotannon selaintestit PowerShellissa (Playwright-Chromium asennettuna,
+  tarvittaessa GAME_BROWSER_EXECUTABLE kuten edellä):
+    $env:WEBSITE_PRODUCTION='1'
+    $env:VITE_BASE_PATH='/'
+    npm.cmd run build
+    npm.cmd run test:website
+    $env:VITE_BASE_PATH='/kh-tech-website/'
+    npm.cmd run build
+    npm.cmd run test:website
+  Testi käynnistää ja sulkee oman paikallisen preview-palvelimensa (5183).
+  Nämä komennot eivät julkaise sivustoa.
+
+  Riippumaton PDF:n sivutus-, ääkkös- ja kuvasuhdetarkistus:
+    python -m pip install pymupdf
+    python scripts/review-website-pdf.py
+  npm.cmd test tuottaa ensin synteettisen 14-sivuisen, kuuden kuvan PDF:n.
+  Raportit ja kaappaukset: docs/website2-checks/ ja docs/website2-screenshots/.
+  Alkuperäisen logon tavuvertailu: node scripts/check-website-assets.mjs.
+  PWA-ikonien uusinta tarvittaessa: python scripts/build-brand-icons.py
+  (vaatii Pillow'n). Ikonit ovat valmiiksi versionhallinnassa.
+
+  Ennen normaalia kehityspalvelinta tai pelin kehitystestejä poista testin
+  peruspolku ja tuotantotestiasetus tai käytä uutta PowerShell-ikkunaa:
+    Remove-Item Env:VITE_BASE_PATH -ErrorAction SilentlyContinue
+    Remove-Item Env:WEBSITE_PRODUCTION -ErrorAction SilentlyContinue
+    npm.cmd run dev
+  Paikallinen arviointi: /, /yhteystiedot/, /report/ ja /peli/.
+  Raportin offline-tila vaatii onnistuneen ensimmäisen verkkokäynnin
+  tuotantobuildissa. Käytä omaa laitetta ja poista luonnos käytön jälkeen.

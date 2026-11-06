@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="720" viewBox="0 0 660 720">
+<defs>
+ <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#343a3d"/><stop offset="1" stop-color="#101718"/></linearGradient>
+ <linearGradient id="steel"><stop stop-color="#394449"/><stop offset=".18" stop-color="#879294"/><stop offset=".33" stop-color="#e4e6e2"/><stop offset=".43" stop-color="#b7bdbb"/><stop offset=".72" stop-color="#69767b"/><stop offset="1" stop-color="#263238"/></linearGradient>
+ <linearGradient id="horizontal" x2="0" y2="1"><stop stop-color="#d8dcd7"/><stop offset=".23" stop-color="#899597"/><stop offset=".6" stop-color="#3f4a4f"/><stop offset="1" stop-color="#1e292e"/></linearGradient>
+ <linearGradient id="blue" x2="1" y2="1"><stop stop-color="#5595ae"/><stop offset="1" stop-color="#24516a"/></linearGradient>
+ <pattern id="grid" width="55" height="55" patternUnits="userSpaceOnUse"><path d="M55 0H0V55" fill="none" stroke="#fff" stroke-opacity=".035"/></pattern>
+ <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="14" dy="18" stdDeviation="13" flood-color="#050a0b" flood-opacity=".7"/></filter>
+ <radialGradient id="light"><stop stop-color="#a6bcc4" stop-opacity=".18"/><stop offset="1" stop-color="#a6bcc4" stop-opacity="0"/></radialGradient>
+</defs>
+<path fill="url(#bg)" d="M0 0h660v720H0z"/><path fill="url(#grid)" d="M0 0h660v720H0z"/><ellipse cx="460" cy="190" rx="410" ry="350" fill="url(#light)"/>
+<g stroke="#aab9bd" stroke-opacity=".2" fill="none"><path d="M45 80h75m-38-38v76M560 600h55m-27-27v55"/><circle cx="492" cy="420" r="130" stroke-dasharray="4 8"/><path d="M65 200h530M150 40v620" stroke-dasharray="3 7"/></g>
+<g filter="url(#shadow)">
+ <path d="M170-30V240q0 62 62 62h158q60 0 60 60v210" fill="none" stroke="#182428" stroke-width="79"/>
+ <path d="M170-30V240q0 62 62 62h158q60 0 60 60v210" fill="none" stroke="url(#steel)" stroke-width="67"/>
+ <path d="M170 241q0 61 63 61h157q60 0 60 60" fill="none" stroke="url(#horizontal)" stroke-width="67"/>
+ <path d="M160-10V239q0 51 55 52h171q72 0 73 69v185" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="4"/>
+ <g fill="url(#horizontal)" stroke="#2e3a3e" stroke-width="3"><rect x="126" y="104" width="88" height="29" rx="6"/><rect x="126" y="138" width="88" height="16" rx="4"/><rect x="126" y="207" width="88" height="28" rx="5"/><rect x="407" y="401" width="86" height="27" rx="5"/><rect x="407" y="434" width="86" height="16" rx="4"/><rect x="407" y="536" width="86" height="27" rx="5"/></g>
+ <g transform="translate(300 302)"><rect x="-46" y="-44" width="92" height="88" rx="9" fill="url(#steel)" stroke="#25363c" stroke-width="4"/><circle r="67" fill="#18282f" stroke="#3e6475" stroke-width="8"/><circle r="49" fill="url(#blue)" stroke="#83b0bf" stroke-width="3"/><g fill="none" stroke="#122f42" stroke-width="12" stroke-linecap="round"><path d="M-33-33L33 33M-33 33L33-33"/></g><circle r="18" fill="#a4b6bd" stroke="#2a4858" stroke-width="5"/><circle r="7" fill="#31434b"/></g>
+ <path d="M563-30v221q0 28-28 28h-54" fill="none" stroke="#202e32" stroke-width="24"/><path d="M563-30v221q0 28-28 28h-54" fill="none" stroke="#88979a" stroke-width="17"/><path d="M560-30v220q0 25-25 25h-54" fill="none" stroke="#d5d9d4" stroke-width="3"/>
+ <circle cx="487" cy="202" r="37" fill="#27353b" stroke="#89999d" stroke-width="5"/><circle cx="487" cy="202" r="28" fill="#eceee7"/><path d="M467 210a22 22 0 1 1 40 0" fill="none" stroke="#a4adb0" stroke-width="2"/><path d="M487 202l13-15" stroke="#355e76" stroke-width="3"/><circle cx="487" cy="202" r="4" fill="#30414a"/>
+</g>
+<g fill="#b2c0c2" font-family="Arial,sans-serif" font-size="9" letter-spacing="2"><text x="45" y="51">VESI / LÄMPÖ / TOIMIVA ARKI</text><text x="495" y="612" transform="rotate(-90 495 612)">HUOLELLISESTI TEHTY.</text></g>
+</svg>

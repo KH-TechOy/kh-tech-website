@@ -1,0 +1,53 @@
+{
+  "base": "/kh-tech-website/",
+  "production": true,
+  "environment": "Headless Chromium; mobile viewport and touch emulation on the development computer, not physical phones.",
+  "status": "passed",
+  "durationMs": 17605.627,
+  "projects": [
+    {
+      "name": "desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "touch": false
+    },
+    {
+      "name": "portrait",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "touch": true
+    },
+    {
+      "name": "landscape",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "touch": true
+    }
+  ],
+  "tests": [
+    {
+      "project": "desktop",
+      "title": "contact validation, preferred channel and urgency retain entered data without false delivery",
+      "status": "passed",
+      "durationMs": 2752
+    },
+    {
+      "project": "desktop",
+      "title": "report progress, photos, preview, PDF download and draft persistence",
+      "status": "passed",
+      "durationMs": 5619
+    },
+    {
+      "project": "desktop",
+      "title": "installed report shell reloads and generates a branded PDF offline",
+      "status": "passed",
+      "durationMs": 2932
+    }
+  ]
+}

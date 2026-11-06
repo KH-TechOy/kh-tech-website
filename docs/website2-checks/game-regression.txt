@@ -1,0 +1,31 @@
+
+> kh-tech-website@1.0.0 test:game
+> playwright test
+
+
+Running 21 tests using 1 worker
+
+  ok  1 [desktop] › e2e\game.playwright.ts:18:1 › frame delivery measurement without tracing or screenshot capture (11.9s)
+  -   2 [desktop] › e2e\game.playwright.ts:24:1 › orientation, safe areas, reduced motion and optional audio retain one canvas
+  ok  3 [desktop] › e2e\game.playwright.ts:40:1 › keyboard, simultaneous mobile touch, cancellation, pause and responsive layout (6.5s)
+  ok  4 [desktop] › e2e\game.playwright.ts:76:1 › interactive tutorial from movement to victory, next generated job and contact link (13.7s)
+  ok  5 [desktop] › e2e\game.playwright.ts:84:1 › replay code, worker responsiveness, structural variation and generated-level completion (58.5s)
+  ok  6 [desktop] › e2e\game.playwright.ts:106:1 › skip begins a real countdown, expiry loses and restart restores the same level (1.6m)
+  ok  7 [desktop] › e2e\game.playwright.ts:113:1 › unavailable worker yields a validated fallback and route navigation cleans up the scene (6.3s)
+  ok  8 [portrait] › e2e\game.playwright.ts:18:1 › frame delivery measurement without tracing or screenshot capture (10.8s)
+  ok  9 [portrait] › e2e\game.playwright.ts:24:1 › orientation, safe areas, reduced motion and optional audio retain one canvas (7.1s)
+  ok 10 [portrait] › e2e\game.playwright.ts:40:1 › keyboard, simultaneous mobile touch, cancellation, pause and responsive layout (5.2s)
+  ok 11 [portrait] › e2e\game.playwright.ts:76:1 › interactive tutorial from movement to victory, next generated job and contact link (12.8s)
+  -  12 [portrait] › e2e\game.playwright.ts:84:1 › replay code, worker responsiveness, structural variation and generated-level completion
+  -  13 [portrait] › e2e\game.playwright.ts:106:1 › skip begins a real countdown, expiry loses and restart restores the same level
+  -  14 [portrait] › e2e\game.playwright.ts:113:1 › unavailable worker yields a validated fallback and route navigation cleans up the scene
+  ok 15 [landscape] › e2e\game.playwright.ts:18:1 › frame delivery measurement without tracing or screenshot capture (10.1s)
+  -  16 [landscape] › e2e\game.playwright.ts:24:1 › orientation, safe areas, reduced motion and optional audio retain one canvas
+  ok 17 [landscape] › e2e\game.playwright.ts:40:1 › keyboard, simultaneous mobile touch, cancellation, pause and responsive layout (4.9s)
+  ok 18 [landscape] › e2e\game.playwright.ts:76:1 › interactive tutorial from movement to victory, next generated job and contact link (13.6s)
+  -  19 [landscape] › e2e\game.playwright.ts:84:1 › replay code, worker responsiveness, structural variation and generated-level completion
+  -  20 [landscape] › e2e\game.playwright.ts:106:1 › skip begins a real countdown, expiry loses and restart restores the same level
+  -  21 [landscape] › e2e\game.playwright.ts:113:1 › unavailable worker yields a validated fallback and route navigation cleans up the scene
+
+  8 skipped
+  13 passed (4.8m)

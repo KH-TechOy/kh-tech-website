@@ -1,0 +1,24 @@
+{
+  "official": [
+    {
+      "source": "docs/kh-tech-logo-musta.png",
+      "target": "brand/kh-tech-logo.png",
+      "sha256": "84848d06ab6a9221ca7bda43e60309cfed2832773042dea743fb9d8aa7ee20aa",
+      "bytes": 81736
+    },
+    {
+      "source": "docs/favicon-kh-tech.png",
+      "target": "brand/kh-tech-icon.png",
+      "sha256": "8ed9604495add3e75c4275c84ab17524774dfd18a33b1342b86fd5a81e17ac85",
+      "bytes": 13845
+    }
+  ],
+  "pdfEmbedsOriginalPng": true,
+  "pwaIconSizes": [
+    192,
+    512
+  ],
+  "privateReferencesInDist": false,
+  "internalConfigurationInDist": false,
+  "reportPdfPrecached": true
+}

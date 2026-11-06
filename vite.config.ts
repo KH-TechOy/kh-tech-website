@@ -7,6 +7,11 @@ export default defineConfig(({ mode }) => {
   return {
     base: env.VITE_BASE_PATH || '/',
     plugins: [react()],
+    server: {
+      // Generated browser captures/PDFs can be briefly locked on Windows.
+      // They are review artifacts, not application module dependencies.
+      watch: { ignored: ['**/docs/**', '**/.playwright-artifacts/**', '**/test-results/**'] },
+    },
     build: { rollupOptions: { input: {
       home: resolve(__dirname, 'index.html'),
       services: resolve(__dirname, 'palvelut/index.html'),

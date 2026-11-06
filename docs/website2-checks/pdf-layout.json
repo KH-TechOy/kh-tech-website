@@ -1,0 +1,13 @@
+{
+  "renderer": "PyMuPDF 2.1",
+  "pages": 14,
+  "a4Pages": true,
+  "logos": 14,
+  "workPhotos": 6,
+  "finnishTextSearchable": true,
+  "lastDescriptionAndFollowupPresent": true,
+  "allMaterialsPresent": true,
+  "pageNumbersCorrect": true,
+  "imageAspectRatiosPreserved": true,
+  "textOutOfBoundsOrFooterOverlap": []
+}

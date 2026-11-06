@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test';
 const executable=process.env.GAME_BROWSER_EXECUTABLE;
 export default defineConfig({
-  testDir:'./e2e',testMatch:'**/*.playwright.ts',timeout:180000,expect:{timeout:15000},workers:1,
+  testDir:'./e2e',testMatch:'**/game.playwright.ts',timeout:180000,expect:{timeout:15000},workers:1,
   outputDir:'.playwright-artifacts',reporter:[['list']],
   use:{baseURL:'http://127.0.0.1:5173',headless:true,trace:'off',screenshot:'only-on-failure',launchOptions:{...(executable?{executablePath:executable}:{}),args:process.env.GAME_SOFTWARE_WEBGL==='1'?['--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist']:[]}},
   projects:[
