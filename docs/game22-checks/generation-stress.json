@@ -23,8 +23,8 @@
     "19x11",
     "19x13"
   ],
-  "totalValidationMilliseconds": 2242.9876000000004,
-  "generationMedianMs": 0.6658000000002176,
-  "generationP95Ms": 2.6509000000000924,
-  "generationMaxMs": 8.104900000000043
+  "totalValidationMilliseconds": 2394.3271000000004,
+  "generationMedianMs": 0.6925999999998567,
+  "generationP95Ms": 2.6325000000001637,
+  "generationMaxMs": 9.502300000000105
 }
