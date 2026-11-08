@@ -516,13 +516,15 @@ svg {
   display: flex;
   align-items: center;
   background: #f1f3ef;
-  padding: 15px 30px;
+  padding: 18px 24px;
+  gap: 18px;
   border-radius: 5px;
   flex-shrink: 0;
 }
 .game-promo-art img {
-  width: 150px;
-  height: 165px;
+  width: 148px;
+  height: auto;
+  aspect-ratio: 4 / 5;
   object-fit: contain;
 }
 .game-promo-art > span {
@@ -536,6 +538,12 @@ svg {
   letter-spacing: 0.17em;
   margin-top: 7px;
   color: #697b83;
+}
+@media (max-width: 380px) {
+  .game-teaser .game-promo-art { gap: 12px; padding: 14px 12px; }
+  .game-teaser .game-promo-art img { width: 100px; }
+  .game-teaser .game-promo-art > span { font-size: 15px; }
+  .game-teaser .game-promo-art small { font-size: 7px; letter-spacing: .12em; }
 }
 .site-footer {
   background: #1b2327;
@@ -2217,7 +2225,7 @@ svg {
   }
   .game-promo-art img {
     width: 115px;
-    height: 125px;
+    height: auto;
   }
   .game-promo-art > span {
     font-size: 17px;

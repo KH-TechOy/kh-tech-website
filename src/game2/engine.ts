@@ -50,12 +50,14 @@ export class RescueScene extends Phaser.Scene {
     effectAssets.forEach(name=>this.load.svg(name,`${ART}${name}.svg`));
     this.load.atlas('workshop',`${ART}v3/workshop-atlas.webp`,`${ART}v3/workshop-atlas.json`);
     this.load.image('plumber3',`${ART}v3/plumber-sheet.webp`);
+    this.load.image('plumber-walk',`${ART}v3/plumber-walk.webp`);
     this.load.image('floor3',`${ART}v3/floor.webp`);this.load.image('wall3',`${ART}v3/wall.webp`);
     this.load.on('loaderror',(file:Phaser.Loader.File)=>{this.message=`Grafiikan lataus epäonnistui: ${file.key}. Päivitä sivu.`});
   }
   create(){
     const sheet=this.textures.get('plumber3');
     for(const [row,direction] of ['down','left','right','up'].entries())for(let frame=0;frame<3;frame++)sheet.add(`${direction}-${frame}`,0,frame*256,row*256,256,256);
+    for(const [row,direction] of ['right','left'].entries())for(let frame=0;frame<6;frame++)this.textures.get('plumber-walk').add(`${direction}-walk-${frame}`,0,frame*256,row*256,256,256);
     this.buildWorld();this.ready=true;this.emitSnapshot();
     this.scale.on('resize',this.fitCamera,this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{this.ready=false;this.generationEpoch++;this.factory.dispose();this.scale.off('resize',this.fitCamera,this);this.sfx.destroy();this.keys.clear();this.analog={x:0,y:0};this.tweens.killAll()});

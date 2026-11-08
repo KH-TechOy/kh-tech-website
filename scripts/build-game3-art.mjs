@@ -6,7 +6,7 @@ import { resolve } from 'node:path';
 const root=resolve('art/game3/source'), output=resolve('public/game2/v3');
 mkdirSync(output,{recursive:true});
 const data=path=>'data:image/png;base64,'+readFileSync(path).toString('base64');
-const sources=Object.fromEntries(['character','props','pipes','floor','wall','mascot','water'].map(key=>[key,data(resolve(root,key+'.png'))]));
+const sources=Object.fromEntries(['character','props','pipes','floor','wall','mascot','water','side-walk'].map(key=>[key,data(resolve(root,key+'.png'))]));
 sources.logo=data(resolve('docs/kh-tech-logo-musta.png'));sources.icon=data(resolve('docs/favicon-kh-tech.png'));
 const browser=await chromium.launch({headless:true,...(process.env.GAME_BROWSER_EXECUTABLE?{executablePath:process.env.GAME_BROWSER_EXECUTABLE}:{})});
 try{
@@ -41,6 +41,19 @@ const result=await page.evaluate(async sources=>{
     if(row===0&&col===0){const head=canvas(192,192);head.getContext('2d').drawImage(c,73,23,110,110,0,0,192,192);save('portrait.webp',head)}
   }
   save('plumber-sheet.webp',sheet);
+  const walk=canvas(1536,512),walkContext=walk.getContext('2d'),source=images['side-walk'];
+  // Fixed cell framing and one scale across all poses: never centre/resize each
+  // silhouette independently, which makes the head jump when limbs swing.
+  const cellW=source.width/6,cellH=source.height/2,walkScale=220/330;
+  for(let row=0;row<2;row++)for(let col=0;col<6;col++){
+    const c=canvas(256,256),ctx=c.getContext('2d'),baseline=row===0?326:333;
+    const dx=128-cellW/2*walkScale+(row===0?-9:3),dy=242-baseline*walkScale;
+    ctx.drawImage(source,col*cellW,row*cellH,cellW,cellH,dx,dy,cellW*walkScale,cellH*walkScale);
+    contain(ctx,images.icon,row===0?153:110,row===0?55:51,10,11.3);
+    label(ctx,row===0?153:115,row===0?139:136,17);
+    walkContext.drawImage(c,col*256,row*256);
+  }
+  save('plumber-walk.webp',walk);
   const atlas=canvas(1536,1280),a=atlas.getContext('2d');
   const groups=[['props',['crate','toolbox','plant','boiler','counter','shelf','basin','washer','toilet','desk','spare','gasket']],['pipes',['pipe','pipe-elbow','pipe-tee','coupling','valve','valve-closed','leak','leak-off','support','wall-light','gate','plate']]];
   let n=0;
@@ -64,8 +77,11 @@ const result=await page.evaluate(async sources=>{
   contain(m,images.icon,236,50,32,36.1);label(m,384,380,43);save('mascot.webp',mascot);
   return{files,atlas:{frames,meta:{app:'KH-Tech GAME 3.0 offline atlas packer',image:'workshop-atlas.webp',format:'RGBA8888',size:{w:1536,h:1280},scale:'1'}},bounds};
 },sources);
-for(const [name,base64] of Object.entries(result.files))writeFileSync(resolve(output,name),Buffer.from(base64,'base64'));
-writeFileSync(resolve(output,'workshop-atlas.json'),JSON.stringify(result.atlas,null,2)+'\n');
-writeFileSync(resolve('art/game3/pack-layout.json'),JSON.stringify(result.bounds,null,2)+'\n');
-console.log(`Packed ${Object.keys(result.files).length} WebP files and 28 atlas frames into ${output}`);
+const walkOnly=process.argv.includes('--walk-only');
+for(const [name,base64] of Object.entries(result.files))if(!walkOnly||name==='plumber-walk.webp')writeFileSync(resolve(output,name),Buffer.from(base64,'base64'));
+if(!walkOnly){
+  writeFileSync(resolve(output,'workshop-atlas.json'),JSON.stringify(result.atlas,null,2)+'\n');
+  writeFileSync(resolve('art/game3/pack-layout.json'),JSON.stringify(result.bounds,null,2)+'\n');
+}
+console.log(walkOnly?'Packed side walking cycle only.':`Packed ${Object.keys(result.files).length} WebP files and 28 atlas frames into ${output}`);
 }finally{await browser.close()}

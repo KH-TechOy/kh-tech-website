@@ -1,5 +1,11 @@
 # GAME 3.0 – built-in imagegen production prompts
 
+## 8.11.2026 – six-phase side walking correction
+
+Built-in imagegen edit, transparent output, reference `public/game2/v3/plumber-sheet.webp`. Saved editable source: `art/game3/source/side-walk.png`; packaged runtime asset: `public/game2/v3/plumber-walk.webp`. Original logos are added by the local packer.
+
+Use case: precise-object-edit. Reference is the existing original fictional game plumber; preserve the exact friendly young adult character, face, black cap, charcoal work jacket/trousers, boots, brown belt, soft painted 3D cartoon shading and three-quarter top-down camera. Create a PRODUCTION SIDE WALK CYCLE ATLAS, exactly SIX equal square columns and TWO rows (12 figures), transparent background. Row1 faces RIGHT. Row2 faces LEFT. Same fixed head centre, head scale, torso centre and shoulder height in EVERY cell; no camera rotation or body resizing. Only arms and legs change in a smooth full walk cycle. Columns: 1 LEFT leg forward contact, right leg behind, opposite arm forward; 2 left planted leg starts passing under body, right foot lifts; 3 legs passing with right knee forward and left leg supporting; 4 RIGHT leg forward contact, left leg behind, opposite arms from frame1; 5 right planted leg starts passing under body, left foot lifts; 6 legs passing with left knee forward, right leg supporting. Frames1 and4 MUST have opposite leading legs and visibly opposite arm swings, never near-duplicates. Boots in contact remain on one fixed ground baseline; raised foot may move upward. Equal 256px square cells with generous transparent margins; no clipping/overlap or ground shadows. Black cap and jacket have small blank light patches for later original logo overlay; NO text, logos, borders, arrows, UI or scene. A consistent true six-phase walk, not twelve alternate portraits.
+
 Built-in tool mode, eight successful calls. Transparent output was requested for character, props, pipes, mascot and water. Floor and wall were opaque. These are original fictional game assets. The primary poster was inspected for art direction; its pixels and the private character photo were not sent as generation inputs. Reference input for calls 6 and 7 was the generated character from call 1.
 
 ## 1. Character, initial version (preserved as character-initial.png)

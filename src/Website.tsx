@@ -333,11 +333,12 @@ function Home() {
         </div>
         <div className="game-promo-art">
           <img
-            src={url("game2/mascot.svg")}
-            width="256"
-            height="256"
+            src={url("game2/v3/mascot.webp")}
+            width="640"
+            height="800"
             alt="Putkimestarin hymyilevä maskotti KH-Tech-työvaatteissa"
             loading="lazy"
+            decoding="async"
           />
           <span>
             PUTKIMESTARI<small>KH-TECH OY ESITTÄÄ</small>

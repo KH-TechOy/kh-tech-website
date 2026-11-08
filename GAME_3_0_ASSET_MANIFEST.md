@@ -1,5 +1,11 @@
 # GAME 3.0 – asset manifest
 
+## Kävelykorjaus 8.11.2026
+
+Sivukävely käyttää nyt kuuden aidon asennon sykliä kumpaankin suuntaan: uusi `public/game2/v3/plumber-walk.webp` (1536×512), alkuperäinen läpinäkyvä PNG `art/game3/source/side-walk.png`. Sama mittakaava ja lähderuudun kiinnityspiste kaikissa ruuduissa pitävät pään ja vartalon vakaina. Animaatio etenee kuljetun matkan mukaan; etu-/takasuuntiin lisättiin lepoasennon kautta kulkeva väliaskel. Etusivun esittely käyttää samaa olemassa olevaa `mascot.webp`-kuvaa kuin pelin otsikko. Aiemmat ympäristöassetit säilyvät.
+
+Pelkkä kävelykuvan uusintapakkaus: `node scripts/build-game3-art.mjs --walk-only`. Prompti on `art/game3/PROMPTS.md`:ssä. Tarkistus ja todelliset liikevideot: `docs/walk-review/README.md`.
+
 ## Lähteet ja tuotanto
 
 Alkuperäinen, tätä peliä varten sisäänrakennetulla **imagegen**-työkalulla luotu rasteritaide. Kahdeksan onnistunutta tuotantoa: ensimmäinen hahmo, kalusteet, putkisto, lattiamateriaali, seinämateriaali, otsikkomaskotti, korjattu hahmo ja vesi. CLI:tä, maksullista API-varareittiä, ulkopuolista kuvapankkia tai muiden pelien spritejä ei käytetty. Tarkat tuotantopyynnöt: [art/game3/PROMPTS.md](art/game3/PROMPTS.md).

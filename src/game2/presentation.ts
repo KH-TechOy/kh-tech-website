@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { center, TILE, type Cell } from './levels';
 import { RescueModel, type GameEvent } from './model';
 import { FLOOR_DEPTH, project, wallRuns } from './projection';
+import { WalkCycle } from './walkCycle';
 
 const ATLAS='workshop';
 const floorTints={kitchen:0xd9dce8,bathroom:0xb8e0ec,basement:0xa7aac3,utility:0xc1cdd6,office:0xd9c6c9,technical:0xadc3d9};
@@ -28,8 +29,10 @@ export class WorkshopView {
   private settle=1;
   private crateKey='';
   private lightQuality=false;
+  private walk:WalkCycle;
   constructor(private scene:Phaser.Scene,private model:RescueModel,private reducedMotion:boolean){
     const s=scene,level=model.level,w=level.width*TILE,h=level.height*TILE*FLOOR_DEPTH;
+    this.walk=new WalkCycle(model.player);
     this.effects();
     s.cameras.main.setBackgroundColor('#0e1b31');
     s.add.tileSprite(-1800,-1300,w+3600,h+2600,'floor3').setOrigin(0).setTileScale(.625,.625*FLOOR_DEPTH).setTint(0x394a66).setDepth(-500);
@@ -149,7 +152,8 @@ export class WorkshopView {
   }
   update(time:number,seconds:number){
     const m=this.model,p=project(m.player),active=m.phase==='playing'||m.phase==='repair';
-    this.avatar.setPosition(p.x,p.y+7).setDepth(p.y+12).setFrame(`${m.facing}-${m.moving&&!this.reducedMotion?1+Math.floor(time/160)%2:0}`);
+    const frame=this.walk.sample(m.player,m.facing,m.moving,m.phase==='playing',this.reducedMotion);
+    this.avatar.setTexture(frame.includes('-walk-')?'plumber-walk':'plumber3',frame).setPosition(p.x,p.y+7).setDepth(p.y+12);
     if(!m.moving&&!this.reducedMotion&&m.phase==='playing')this.avatar.y+=Math.sin(time/800)*.7;
     this.avatarShadow.setPosition(p.x+3,p.y+4);
     this.tools.forEach((image,i)=>image.setVisible(!m.collected[i]));this.bonus?.setVisible(!m.bonusCollected);

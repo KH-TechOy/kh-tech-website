@@ -15,6 +15,22 @@ async function moveTo(page:Page,point:Cell){
 async function walkTo(page:Page,target:Cell){const state=await snapshot(page),current={x:Math.floor(state.player.x/TILE),y:Math.floor(state.player.y/TILE)};const path=walkPath(state.level,current,target,state.crate,state.gateOpen);expect(path,'target must have a path').not.toBeNull();await page.locator('.pr-page').focus();for(const cell of path!.slice(1))await moveTo(page,center(cell))}
 const arrow:Record<Direction,string>={up:'ArrowUp',right:'ArrowRight',down:'ArrowDown',left:'ArrowLeft'};
 
+test('homepage game teaser uses the current mascot and fits narrow phones',async({page})=>{
+  await page.goto('/');
+  const teaser=page.locator('.game-teaser'),image=teaser.locator('img');
+  await teaser.scrollIntoViewIfNeeded();await expect(image).toHaveAttribute('src','/game2/v3/mascot.webp');
+  await image.evaluate(image=>(image as HTMLImageElement).decode());
+  await expect(teaser.getByRole('link',{name:'Pelaa Putkimestaria'})).toHaveAttribute('href','/peli/');
+  for(const width of test.info().project.name==='portrait'?[390,320]:[page.viewportSize()!.width]){
+    await page.setViewportSize({width,height:page.viewportSize()!.height});await teaser.scrollIntoViewIfNeeded();
+    const card=(await teaser.locator('.game-promo-art').boundingBox())!,picture=(await image.boundingBox())!;
+    expect(card.x).toBeGreaterThanOrEqual(0);expect(card.x+card.width).toBeLessThanOrEqual(width);
+    expect(picture.height/picture.width).toBeCloseTo(1.25,1);
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+    await page.screenshot({path:`docs/walk-review/${test.info().project.name}-teaser-${width}.png`});
+  }
+});
+
 test('exploration has no route markers, context is local and closing water freezes coverage',async({page})=>{
   await begin(page);
   const initial=await snapshot(page);
