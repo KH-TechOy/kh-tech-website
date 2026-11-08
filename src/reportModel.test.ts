@@ -92,7 +92,6 @@ describe("contact channel and size validation", () => {
     urgency: "normal",
     method: "phone",
     description: "Hana vuotaa",
-    consent: true,
     honey: "",
   };
   it("requires the selected response channel and rejects invalid options", () => {

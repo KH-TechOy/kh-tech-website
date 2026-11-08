@@ -171,7 +171,9 @@ test("contact validation, preferred channel and urgency retain entered data with
   });
   await page.goto(route("yhteystiedot/?palvelu=huolto"));
   await expect(page.locator("select[name=service]")).toHaveValue("LVI-huolto");
-  await page.getByRole("button", { name: "Lähetä pyyntö" }).click();
+  await expect(page.getByRole("button", { name: "Verkkolähetys ei ole käytössä", exact: true })).toBeDisabled();
+  // Fault test: even a programmatic form submission must not send data.
+  await page.locator('.contact-form').evaluate((form: HTMLFormElement) => form.requestSubmit());
   await expect(page.locator(".error-summary")).toBeFocused();
   await expect(page.locator("input[name=name]")).toHaveAttribute(
     "aria-invalid",
@@ -182,9 +184,9 @@ test("contact validation, preferred channel and urgency retain entered data with
   await page
     .locator("textarea[name=description]")
     .fill("Hana vuotaa, toivon arviota korjaustarpeesta.");
-  await page.locator("[name=consent]").check();
+  await expect(page.locator('[name=consent]')).toHaveCount(0);
   await page.locator("select[name=method]").selectOption("email");
-  await page.getByRole("button", { name: "Lähetä pyyntö" }).click();
+  await page.locator('.contact-form').evaluate((form: HTMLFormElement) => form.requestSubmit());
   await expect(page.locator("input[name=email]")).toHaveAttribute(
     "aria-invalid",
     "true",
@@ -196,7 +198,7 @@ test("contact validation, preferred channel and urgency retain entered data with
   );
   await page.getByRole("radio", { name: "Kiireellinen", exact: true }).check();
   await expect(page.locator(".urgent-note")).toContainText("040 073 6199");
-  await page.getByRole("button", { name: "Lähetä pyyntö" }).click();
+  await page.locator('.contact-form').evaluate((form: HTMLFormElement) => form.requestSubmit());
   await expect(page.locator(".form-status")).toContainText(
     "Pyyntöä ei lähetetty",
   );

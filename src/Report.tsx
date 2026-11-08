@@ -12,7 +12,6 @@ import {
   ImagePlus,
   Info,
   Plus,
-  ShieldCheck,
   Trash2,
   X,
 } from "lucide-react";
@@ -480,10 +479,10 @@ export default function Report() {
             </p>
           </div>
           <div className="report-mode">
-            <ShieldCheck size={19} />
+            <Info size={19} />
             <span>
               Paikallinen PDF-työkalu
-              <small>Ei palvelinlähetystä tai henkilöstökirjautumista.</small>
+              <small>Henkilöstötodennus ja sähköpostitoimitus eivät ole käytössä. Ei tuotantokäyttöön asiakastiedoilla.</small>
             </span>
           </div>
         </div>
@@ -559,7 +558,7 @@ export default function Report() {
               </button>
             </div>
             <div className="privacy-alert">
-              <ShieldCheck />
+              <Info />
               <p>
                 Luonnos ja kuvat tallentuvat tämän laitteen selaimeen. Käytä
                 omaa laitettasi ja poista luonnos työn jälkeen.{" "}

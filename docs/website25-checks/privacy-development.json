@@ -1,0 +1,332 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\mfi0alta\\AppData\\Local\\Microsoft\\WinGet\\Packages\\OpenJS.NodeJS.LTS_Microsoft.Winget.Source_8wekyb3d8bbwe\\node-v24.20.0-win-x64\\node.exe",
+      "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "playwright.privacy.config.ts",
+      "--grep",
+      "privacy notice"
+    ],
+    "configFile": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\playwright.privacy.config.ts",
+    "rootDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/.playwright-artifacts/privacy",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/privacy.playwright.ts"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/.playwright-artifacts/privacy",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/privacy.playwright.ts"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/.playwright-artifacts/privacy",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "tablet",
+        "name": "tablet",
+        "testDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/privacy.playwright.ts"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\.playwright-artifacts\\privacy",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "snapshotDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/privacy.playwright.ts",
+        "timeout": 90000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5186",
+          "headless": true,
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "launchOptions": {
+            "executablePath": "C:/Users/mfi0alta/AppData/Local/ms-playwright/chromium-1248/chrome-win64/chrome.exe",
+            "args": []
+          },
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\.playwright-artifacts\\privacy",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mobile",
+        "testDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "snapshotDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/privacy.playwright.ts",
+        "timeout": 90000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5186",
+          "headless": true,
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "launchOptions": {
+            "executablePath": "C:/Users/mfi0alta/AppData/Local/ms-playwright/chromium-1248/chrome-win64/chrome.exe",
+            "args": []
+          },
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "isMobile": true,
+          "hasTouch": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "mobile"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\.playwright-artifacts\\privacy",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "tablet",
+        "testDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "snapshotDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/privacy.playwright.ts",
+        "timeout": 90000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5186",
+          "headless": true,
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "launchOptions": {
+            "executablePath": "C:/Users/mfi0alta/AppData/Local/ms-playwright/chromium-1248/chrome-win64/chrome.exe",
+            "args": []
+          },
+          "viewport": {
+            "width": 768,
+            "height": 1024
+          },
+          "hasTouch": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "tablet"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/website25-checks/privacy-development.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": {
+      "command": "node node_modules/vite/bin/vite.js  --host 127.0.0.1 --port 5186 --strictPort",
+      "url": "http://127.0.0.1:5186/",
+      "reuseExistingServer": false,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "privacy.playwright.ts",
+      "file": "privacy.playwright.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "privacy notice: nineteen topics, metadata, glass, keyboard anchors and readable images",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7165,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:28:34.708Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "53c958dfc9c34add52b5-def5c8a7f833577b5f94",
+          "file": "privacy.playwright.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "privacy notice: nineteen topics, metadata, glass, keyboard anchors and readable images",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6908,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:28:45.285Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "53c958dfc9c34add52b5-a0fe5ed116bd1b4b59ce",
+          "file": "privacy.playwright.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "privacy notice: nineteen topics, metadata, glass, keyboard anchors and readable images",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5827,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:28:57.586Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "53c958dfc9c34add52b5-d17773cdafc9cd915a85",
+          "file": "privacy.playwright.ts",
+          "line": 15,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-08T20:28:31.127Z",
+    "duration": 37449.151,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

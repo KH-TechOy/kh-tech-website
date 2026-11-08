@@ -1,14 +1,25 @@
 # Tuotantoon siirtymisen tarkistuslista
 
-- [ ] Omistaja vahvistanut puhelimen, sähköpostin, Y-tunnuksen, palvelut, toiminta-alueen ja kaikki verkkosivun väitteet.
-- [ ] Omistaja toimittanut oikeudet omaava logo, favicon ja julkaistavat valokuvat.
-- [ ] Tietosuojaseloste täydennetty rekisterinpitäjällä, oikeusperusteella, säilytysajalla, palveluntarjoajilla ja rekisteröidyn oikeuksilla.
-- [ ] Google Apps Script asennettu yrityksen tilille; vastaanottaja ja henkilöstön erillinen vahva salasana tallennettu Script Properties -asetuksiin, ei lähdekoodiin.
-- [ ] Todennettu rajapintaratkaisu hyväksyy pyyntöjä vain rajoitetusti; CORS/Google-hostattu lähetyssivu, istuntojen vanheneminen, väärinkäytön torjunta ja kokorajat testattu selaimilla.
-- [ ] Testiviesti ja testiraportti vastaanotettu; ei luotettu opaque/no-cors vastaukseen.
-- [ ] Työraportin salasana vaihdettu, henkilökohtaiset/jaetut käyttötilanteet arvioitu; uloskirjautuminen ja istunnon mitätöinti testattu.
-- [ ] PDF:n suomenkieliset merkit, monisivuisuus, kuvat ja tulostus tarkistettu iOS/Android/desktop.
-- [ ] Paikallisten luonnosten säilytys ja poistaminen hyväksytty tietosuojassa.
-- [ ] GitHub Pages projektipolku testattu suoralla avauksella ja päivityksellä; custom domain, DNS ja sähköpostin DNS-tietueet omistajan hyväksymät.
-- [ ] Mobiili- ja näppäimistöohjaimet sekä pelin ratkeavuus tarkistettu eri selaimilla.
-- [ ] Julkaisu hyväksytty erikseen; älä julkaise tästä paikallisesta commitista ilman hyväksyntää.
+Päivitetty 8.11.2026. Julkaisua ei ole hyväksytty. Yksityiskohtaiset vahvistettavat faktat, omistajan päätökset ja todisteet: [PRIVACY_APPROVAL_CHECKLIST.md](PRIVACY_APPROVAL_CHECKLIST.md). Nykytilan tekninen näyttö: [PRIVACY_DATA_FLOW_AUDIT.md](PRIVACY_DATA_FLOW_AUDIT.md).
+
+1. Julkinen sivusto ja visuaalinen hyväksyntä.
+   - [ ] Sisältö, viralliset tunnukset ja responsiivisuus hyväksytty.
+   - [ ] Lopullinen domain, host, HTTPS ja Pages-ympäristön julkaisuhyväksyntä varmistettu. Nykyinen main-push voi käynnistää deployn; tässä työssä ei pushata.
+2. Tietosuojaseloste ja todelliset tietovirrat.
+   - [ ] Oikeusperusteet, roolit, toimittajat/sopimukset, säilytys, siirrot, oikeuspyynnöt ja loukkausmenettelyt vahvistettu.
+   - [ ] Lopullisen hostin evästeet ja pyynnöt tarkistettu; ei-välttämät tekniikat estetty ennen asianmukaista suostumusta tai poistettu.
+3. Oikea yhteydenottosähköposti.
+   - [ ] Palvelin, salainen vastaanottaja, validointi, väärinkäytön torjunta ja virhe-/kaksoislähetysmenettelyt toteutettu.
+   - [ ] Todellinen viesti vastaanotettu ja virhetapaukset testattu. Lähetyspainike avataan vasta tämän jälkeen.
+4. Turvallinen henkilöstötodennus.
+   - [ ] Palvelinpuolinen identiteetti, valtuutus, vanheneva istunto, uloskirjautuminen ja oikeuksien peruminen testattu. Ei selaimen salasanaratkaisua tai jaettua GAS-salasanaa tuotantoturvana.
+   - [ ] NFC avaa tavallisen suoran HTTPS-URL:n, tarvittaessa kirjautumisen kautta. Ei henkilötietoja, kortti-ID:tä tai salaisuutta URL:ssa. Julkisessa navigaatiossa ei raporttilinkkiä.
+5. Raportti, PDF, toimitus ja PWA.
+   - [ ] Luonnosten ja kuvien käyttäjä-/laitesuojaus, säilytys ja poisto hyväksytty.
+   - [ ] Oikea PDF-toimitus testattu hyväksytyn henkilöstöistunnon kautta.
+   - [ ] PDF, kamera, asennus, NFC, offline ja päivitykset testattu fyysisellä iPhonella ja Androidilla.
+6. Lopullinen tuotannon hyväksyntä.
+   - [ ] Tietoturva-, toiminnallisuus- ja mobiilihyväksyntä tehty; testitulokset vastaavat lopullista ympäristöä.
+   - [ ] Omistaja hyväksynyt selosteen ja julkaisun. Keskeneräistä toimintoa ei esitetä käyttövalmiina.
+
+Näiden ehtojen täyttyminen ei seuraa pelkästä buildin tai yksikkötestien läpäisystä. Ei automaattista pushia tai deployta.

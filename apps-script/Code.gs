@@ -5,7 +5,7 @@ const MAX_TEXT_LENGTH = 12000;
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('Index')
-    .setTitle('KH-Tech – suojattu lähetys')
+    .setTitle('KH-Tech – yhteydenotto')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
@@ -77,7 +77,7 @@ function validateContact_(f) {
   if (f.honey) throw new Error('Pyyntöä ei voitu käsitellä.');
   ['name','email','phone','location','service','method','description'].forEach(k => {if(typeof f[k] !== 'string' || f[k].length > MAX_TEXT_LENGTH) throw new Error('Tarkista lomakkeen tiedot.');});
   if (!f.name.trim() || !f.description.trim() || (!f.email.trim() && !f.phone.trim())) throw new Error('Nimi, kuvaus ja vähintään yksi yhteystieto vaaditaan.');
-  if (f.description.length > 3000 || f.consent !== 'on') throw new Error('Kuvaus on liian pitkä tai tietosuojatietoja ei ole kuitattu.');
+  if (f.description.length > 3000) throw new Error('Kuvaus on liian pitkä.');
   if (f.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) throw new Error('Sähköpostiosoite ei kelpaa.');
   if (!['normal','soon','urgent'].includes(f.urgency) || !['email','phone'].includes(f.method)) throw new Error('Valitse lomakkeen vaihtoehdot uudelleen.');
 }

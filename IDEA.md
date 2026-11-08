@@ -1,5 +1,9 @@
 # KH-Tech Oy – tuotteen määrittely
 
+## WEBSITE 2.5 – tuotantopalvelun tietosuoja, 8.11.2026
+
+Nykyiset tietovirrat auditoidaan ennen tietosuojatekstin päivitystä. Seloste koskee todellista toteutusta; puuttuvat omistajan tiedot, oikea sähköpostitoimitus, henkilöstötodennus ja hyväksyntätestit ovat julkaisuesteitä. Ei uusia demoja, keksittyä onnistumista, suostumuspakkoa yhteydenottoon tai asiakaspuolen salasanaturvaa. Sisäinen raportti poistetaan julkisesta navigaatiosta, mutta suora osoite säilyy NFC-avausta ja tulevaa oikeaa kirjautumista varten. Tietosuojahero käyttää toimitettua kuvaa 7. Dokumentit: `PRIVACY_DATA_FLOW_AUDIT.md`, `PRIVACY_APPROVAL_CHECKLIST.md`, `WEBSITE_2_5_PRIVACY_REPORT.md`.
+
 ## WEBSITE 2.4 – alasivujen taustat, 8.11.2026
 
 Palvelut-, Yritys- ja Yhteystiedot-sivujen nykyisiin heroihin lisätään toimitetut kuvat 4, 5 ja 6 sekä etusivun kanssa yhtenäinen lasipaneeli. Vain herojen esitystapa muuttuu. Nykyinen sisältö, etusivu, palvelukortit, yritystiedot, yhteydenottolomake ja muut sovellukset säilyvät. Optimoidut kuvat ovat paikallisia ja Pages-yhteensopivia; mobiilissa käytetään tarvittaessa omia rajauksia. Tarkistukset: `WEBSITE_2_4_SUBPAGES_REPORT.md`.

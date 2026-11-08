@@ -12,7 +12,6 @@ const empty: ContactData = {
   urgency: "normal",
   method: "phone",
   description: "",
-  consent: false,
   honey: "",
 };
 export default function Contact() {
@@ -153,11 +152,13 @@ export default function Contact() {
           <h2>Pyydä tarjous tai kysy lisää</h2>
           <p>Tähdellä merkityt tiedot tarvitaan pyynnön käsittelyyn.</p>
         </div>
-        <div className="notice">
+        <div className="notice" id="contact-availability">
           <Info size={19} />
           <p>
-            <strong>Lomake on esittelytilassa.</strong> Tietoja ei vielä
-            lähetetä. Saat yhteyden soittamalla tai sähköpostilla.
+            <strong>Verkkolähetys ei ole käytössä.</strong> Älä jätä
+            yhteydenottoasi tämän lomakkeen varaan. Soita numeroon{" "}
+            <a href={"tel:" + company.tel}>{company.phone}</a> tai lähetä
+            sähköpostia osoitteeseen <a href={"mailto:" + company.email}>{company.email}</a>.
           </p>
         </div>
         {Object.keys(errors).length > 0 && (
@@ -288,29 +289,13 @@ export default function Contact() {
             autoComplete="off"
           />
         </label>
-        <label className="consent" htmlFor="contact-consent">
-          <input
-            id="contact-consent"
-            type="checkbox"
-            name="consent"
-            required
-            checked={data.consent}
-            onChange={change}
-            aria-invalid={!!errors.consent}
-            aria-describedby={errors.consent ? "error-consent" : undefined}
-          />
-          <span>
-            Olen lukenut <a href={url("tietosuoja/")}>tietosuojatiedot</a> ja
-            ymmärrän, että tiedot on tarkoitettu yhteydenottoa varten. *
-          </span>
-        </label>
-        {errors.consent && (
-          <p id="error-consent" className="field-error">
-            {errors.consent}
-          </p>
-        )}
-        <button className="button primary" type="submit">
-          Lähetä pyyntö <ArrowRight size={18} />
+        <p className="contact-privacy-note">
+          Yhteydenottotietoja käytetään pyyntöösi vastaamiseen ja mahdollisen
+          toimeksiannon valmisteluun. <a href={url("tietosuoja/")}>Lue tietosuojaseloste</a>.
+          Älä kirjoita terveystietoja tai muita arkaluonteisia tietoja.
+        </p>
+        <button className="button primary" type="submit" disabled aria-describedby="contact-availability">
+          Verkkolähetys ei ole käytössä
         </button>
         {status && (
           <p role="status" className="form-status">

@@ -1,5 +1,7 @@
 # Apps Script – käyttöönotto (ei vielä tuotantoon)
 
+WEBSITE 2.5: tämä on vanha erillinen integraatiolähde, ei nykyisen sivuston toimiva sähköposti- tai kirjautumispalvelu. Pakollinen tietosuojakuittaus on poistettu sekä tästä lähteestä että Reactista. Yksikkötestien MailApp-mock ei todista oikeaa toimitusta. Tuotannon henkilöstöidentiteetti, käyttöoikeudet, sopimukset ja oikea vastaanottotesti puuttuvat; noudata ensisijaisesti `PRIVACY_APPROVAL_CHECKLIST.md`:n vaiheita. Alla olevat testikäyttöönoton vaiheet eivät ole tuotannon hyväksyntä.
+
 Tämä lähdekoodi on luonnos. Se sisältää Apps Scriptin omalla `google.script.run`-rajapinnalla toimivan Google-hostatun yhteydenottolomakkeen sekä palvelinpuoliset funktiot työntekijän kirjautumiseen, istuntoon ja PDF-liitteen lähettämiseen. Se ei ole vielä kytketty GitHub Pagesin lomakkeeseen tai työraporttiin. Julkinen GitHub Pages ei voi käyttää `google.script.run`-rajapintaa toisesta originista. Tavallinen `fetch` Apps Scriptin web-sovellukseen törmää CORS/redirect-rajoituksiin ja `no-cors` ei palauta luotettavaa hyväksyntää. Käytä GAS:n omaa HTMLService-hostattua näkymää tai rakenna ja auditoi erillinen rajapintapalvelin; älä väitä suoraa CORS-integraatiota toimivaksi.
 
 ## Asennus

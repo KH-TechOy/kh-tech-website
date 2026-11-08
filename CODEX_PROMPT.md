@@ -1,5 +1,11 @@
 # KH-Tech Oy – toteutusohje
 
+## WEBSITE 2.5 – tietosuoja ja tuotantoon valmistelu, 8.11.2026
+
+Tästä erästä alkaen tavoite on oikea tuotantopalvelu, ei esittelyversio. Toteuta tietosuoja nykyisten, lähdekoodista ja virallisista lähteistä tarkistettujen tietovirtojen perusteella. Älä keksi säilytysaikoja, sopimuksia, siirtosuojia tai toimivaa kirjautumista/sähköpostia. Kirjaa puuttuvat tosiasiat ja julkaisua estävät asiat `PRIVACY_APPROVAL_CHECKLIST.md`:hen. Tietosuoja saa kuvan 7 ja nykyisen lasiheron; sisältöön 19 selkeää kysymys-vastausosiota. Poista pakollinen tietosuojasuostumus tavallisesta yhteydenotosta ja julkiset raporttilinkit. Keskeneräinen lomakelähetys merkitään pois käytöstä, ei väärää onnistumista. Sisäisen raportin suora URL ja PWA säilyvät NFC-korttien avaukselle; URL ei ole tunnistautuminen eikä linkin piilotus käyttöoikeusrajaus. Säilytä paikallinen PDF-toiminto, älä lisää näennäistä asiakaspuolen kirjautumista. Raportoi todelliset julkaisuesteet. Työ main-haaralla, paikallinen commit, ei pushia tai deployta.
+
+Jatkokehitysjärjestys: julkinen sivusto ja ulkoasu → tietosuoja ja tietovirrat → oikea lomakesähköposti päästä päähän → palvelinpuolinen henkilöstötodennus → raportin PDF/toimitus/mobiili/PWA → tuotannon turvallisuus- ja hyväksyntätestit. Vanhojen erien demo- ja jaetun salasanan luonnosvaatimukset eivät oikeuta julkaisemaan keskeneräistä toimintoa.
+
 ## WEBSITE 2.4 – alasivujen herot, 8.11.2026
 
 Käyttäjä hyväksyi lisäksi 768 px:n näkymässä havaitun vanhan yhteystietoruudukon CSS-korjauksen: puhelinlinkki ja palvelualue eivät saa osua samaan ruudukon soluun. Tämä on ainoa poikkeus herojen alapuolisen tyylityksen säilyttämiseen; sisältö ja lomakelogiikka eivät muutu.

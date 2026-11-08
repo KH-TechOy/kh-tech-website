@@ -7,7 +7,6 @@ export type ContactData = {
   urgency: string;
   method: string;
   description: string;
-  consent: boolean;
   honey: string;
 };
 function secureRandom() {
@@ -55,7 +54,6 @@ export function contactErrors(
     errors.description = "Kuvaile lyhyesti työn tarvetta.";
   else if (d.description.length > 3000)
     errors.description = "Kuvaus voi olla enintään 3000 merkkiä.";
-  if (!d.consent) errors.consent = "Kuittaa tietosuojatiedot luetuiksi.";
   if (!["normal", "soon", "urgent"].includes(d.urgency))
     errors.urgency = "Valitse työn ajankohta uudelleen.";
   if (!["phone", "email"].includes(d.method))

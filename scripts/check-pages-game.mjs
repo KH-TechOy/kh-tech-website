@@ -36,10 +36,10 @@ try{
   const downloadPromise=routePage.waitForEvent('download');await routePage.getByRole('button',{name:'Luo ja lataa PDF'}).click();const download=await downloadPromise;
   assert.match(download.suggestedFilename(),/KHT-.*\.pdf$/);assert((await readFile(await download.path())).subarray(0,4).equals(Buffer.from('%PDF')));
   await routePage.reload();assert.equal(await routePage.locator('[name=customer]').inputValue(),'Paikallinen QA-asiakas');
-  await routePage.goto(origin+base+'yhteystiedot/');await routePage.locator('[name=name]').fill('QA-tarkistus');await routePage.locator('[name=phone]').fill('0401234567');await routePage.locator('textarea[name=description]').fill('Paikallinen lomakekäyttöliittymän tarkistus.');await routePage.locator('[name=consent]').check();
-  await routePage.getByRole('button',{name:'Lähetä pyyntö'}).click();assert.match(await routePage.getByRole('status').innerText(),/Pyyntöä ei lähetetty/);
+  await routePage.goto(origin+base+'yhteystiedot/');await routePage.locator('[name=name]').fill('QA-tarkistus');await routePage.locator('[name=phone]').fill('0401234567');await routePage.locator('textarea[name=description]').fill('Paikallinen lomakekäyttöliittymän tarkistus.');
+  assert(await routePage.getByRole('button',{name:'Verkkolähetys ei ole käytössä',exact:true}).isDisabled());await routePage.locator('.contact-form').evaluate(form=>form.requestSubmit());assert.match(await routePage.getByRole('status').innerText(),/Pyyntöä ei lähetetty/);
   await mkdir(screenshots,{recursive:true});await mkdir(checks,{recursive:true});await page.screenshot({path:`${screenshots}/production-${base==='/'?'root':'pages'}-gameplay.png`,animations:'disabled'});
   assert.deepEqual(failures,[],'Production page had a runtime or request failure');
-  await writeFile(`${checks}/production-${base==='/'?'root':'pages'}.json`,JSON.stringify({base,game:true,refresh:true,oneCanvas:true,noDevHook:true,workerRequests,allRoutes:true,localPdfDownload:true,reportDraftPersisted:true,contactDemoStatus:true,failures},null,2));
-  console.log(`Production preview passed: ${base}peli/, direct refresh, one canvas, no dev hook, worker and official assets; all routes, contact demo, report draft and actual PDF download.`);
+  await writeFile(`${checks}/production-${base==='/'?'root':'pages'}.json`,JSON.stringify({base,game:true,refresh:true,oneCanvas:true,noDevHook:true,workerRequests,allRoutes:true,localPdfDownload:true,reportDraftPersisted:true,contactDeliveryDisabled:true,failures},null,2));
+  console.log(`Production preview passed: ${base}peli/, direct refresh, one canvas, no dev hook, worker and official assets; all routes, contact delivery unavailable, report draft and actual PDF download.`);
 }finally{await browser?.close();server.kill()}

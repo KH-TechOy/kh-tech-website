@@ -212,7 +212,7 @@ test('pause menu buttons undo, show help, save settings and restart',async({page
   await press('Tauko');await press('Palaa alkuvalikkoon');await expect(page.locator('.pr-title-card')).toBeVisible();
 });
 test('interactive tutorial from movement to victory, next generated job and contact link',async({page})=>{
-  await begin(page);await playLevel(page,true);expect((await snapshot(page)).remaining).toBe(90);await screenshot(page,'victory');
+  await begin(page);await playLevel(page,true);expect((await snapshot(page)).remaining).toBe(90);expect(await page.evaluate(()=>localStorage.getItem('kht-game2-progress'))).toBeNull();await screenshot(page,'victory');
   await expect(page.getByRole('link',{name:'Ota yhteyttä',exact:true})).toHaveAttribute('href','/yhteystiedot/');
   await page.getByRole('button',{name:'Seuraava taso',exact:true}).click();await page.locator('.pr-intro-panel').waitFor();
   const state=await snapshot(page);expect(state.level.generation).toBeDefined();expect(state.workerUsed).toBe(true);

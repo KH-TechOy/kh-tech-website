@@ -16,11 +16,11 @@ function scriptHarness(){
   };
   const code=readFileSync(resolve(process.cwd(),'apps-script/Code.gs'),'utf8');runInNewContext(code,context);return context;
 }
-const contact={name:'Aino Esimerkki',email:'aino@example.fi',phone:'',location:'Lohja',service:'Huolto',urgency:'urgent',method:'email',description:'Putkivuoto keittiössä',consent:'on',honey:''};
+const contact={name:'Aino Esimerkki',email:'aino@example.fi',phone:'',location:'Lohja',service:'Huolto',urgency:'urgent',method:'email',description:'Putkivuoto keittiössä',honey:''};
 const report={id:'KHT-20261105-ABCDEF',city:'Lohja',date:'2026-11-05',pdfBase64:'JVBERi0='};
 describe('Apps Script backend guards',()=>{
-  it('formats a contact email and accepts only after MailApp returns',()=>{const app=scriptHarness();expect(app.submitContact(contact)).toEqual({accepted:true});const mail=app.__sent[0];expect(mail.to).toBe('internal@example.test');expect(mail.subject).toContain('[KH-Tech][TYÖPYYNTÖ][KIIREELLINEN] Aino Esimerkki – Lohja');expect(mail.body).toContain('Putkivuoto keittiössä')});
+  it('accepts a contact without consent and returns only after MailApp completes',()=>{const app=scriptHarness();expect(app.submitContact(contact)).toEqual({accepted:true});const mail=app.__sent[0];expect(mail.to).toBe('internal@example.test');expect(mail.subject).toContain('[KH-Tech][TYÖPYYNTÖ][KIIREELLINEN] Aino Esimerkki – Lohja');expect(mail.body).toContain('Putkivuoto keittiössä')});
   it('rejects unauthenticated report access',()=>{const app=scriptHarness();expect(()=>app.emailReport(report,'invalid')).toThrow('Kirjautuminen on vanhentunut')});
   it('rejects a report after the server session expires',()=>{const app=scriptHarness();const session=app.login('a-test-only-strong-passphrase');app.__advance(1800001);expect(()=>app.emailReport(report,session.token)).toThrow('Kirjautuminen on vanhentunut')});
-  it('rejects missing consent before email delivery',()=>{const app=scriptHarness();expect(()=>app.submitContact({...contact,consent:''})).toThrow('tietosuojatietoja ei ole kuitattu');expect(app.__sent).toHaveLength(0)});
+  it('rejects excessive descriptions before email delivery',()=>{const app=scriptHarness();expect(()=>app.submitContact({...contact,description:'x'.repeat(3001)})).toThrow();expect(app.__sent).toHaveLength(0)});
 });

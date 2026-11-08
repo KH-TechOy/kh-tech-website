@@ -1,4 +1,19 @@
 KH-TECH OY – VERKKOSIVU, TYÖRAPORTTI JA PELI
+WEBSITE 2.5 – TUOTANTOON VALMISTELU JA TIETOSUOJA
+  Tavoite on oikea tuotantopalvelu. Vanhojen erien demo- ja
+  salasanaluonnokset ovat historiaa, eivät tuotannon käyttöoikeusratkaisu.
+  Vahvistetut tietovirrat: PRIVACY_DATA_FLOW_AUDIT.md.
+  Ennen julkaisua ratkaistavat asiat: PRIVACY_APPROVAL_CHECKLIST.md.
+  Toteutus ja testit: WEBSITE_2_5_PRIVACY_REPORT.md.
+  Sisäinen raportti avataan suoraan NFC-kortin osoitteesta, ei julkisesta
+  navigaatiosta. Kortin URL ei korvaa palvelinpuolista kirjautumista.
+  Ei pushia tai deployta. Tulevat vaiheet: sivusto → tietosuoja → oikea
+  lomakesähköposti → henkilöstötodennus → raportti/PWA → hyväksyntätestit.
+  Vanhempia käyttöönotto-/push-komentoja ei saa käyttää tuotannon
+  julkaisuun ennen PRIVACY_APPROVAL_CHECKLIST.md:n esteiden ratkaisemista.
+  Tietosuojan selain-/tietovirtatestit: npm.cmd run test:privacy.
+  Kuva 7 WebP-muotoon: python scripts/build-website-backgrounds.py --privacy.
+
 WEBSITE 2.4 – ALASIVUJEN HEROT
   Palvelut-, Yritys- ja Yhteystiedot-sivut käyttävät samaa taustakuva-
   komponenttia ja lasipaneelia kuin etusivu. Vain yläherot muuttuvat.

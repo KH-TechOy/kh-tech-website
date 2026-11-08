@@ -72,7 +72,6 @@ export class RescueScene extends Phaser.Scene {
     if(event.text){this.message=event.text;this.messageUntil=this.time.now+3300}
     this.sfx.play(event.type);this.view.event(event);
     if(event.type==='repair')this.resetInput();
-    if(event.type==='win')try{const highest=Number(localStorage.getItem('kht-game2-progress')||0);localStorage.setItem('kht-game2-progress',String(Math.max(highest,this.levelIndex+1)))}catch{/* Optional progress. */}
   }
   update(time:number,frameDelta:number){
     if(!this.ready)return;

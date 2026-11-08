@@ -1,0 +1,33 @@
+{
+  "tool": "Pillow 11.2.1",
+  "quality": 84,
+  "method": 6,
+  "images": [
+    {
+      "source": "docs/website_bg_7.png",
+      "sha256": "84dd208fe36ee7818e61dd20c21f761278a2ddb3f3ecfb04343bbd67fb424a93",
+      "originalBytes": 1812606,
+      "mobileCrop": null,
+      "outputs": [
+        {
+          "path": "public/website/privacy-800.webp",
+          "width": 800,
+          "height": 450,
+          "bytes": 29644
+        },
+        {
+          "path": "public/website/privacy-1200.webp",
+          "width": 1200,
+          "height": 675,
+          "bytes": 50972
+        },
+        {
+          "path": "public/website/privacy-1672.webp",
+          "width": 1672,
+          "height": 941,
+          "bytes": 79014
+        }
+      ]
+    }
+  ]
+}

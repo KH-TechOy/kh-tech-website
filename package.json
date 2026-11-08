@@ -12,7 +12,8 @@
     "game:art:legacy": "node scripts/build-game-art.mjs",
     "test:game": "playwright test",
     "brand:assets": "node scripts/build-brand-assets.mjs",
-    "test:website": "playwright test --config playwright.website.config.ts"
+    "test:website": "playwright test --config playwright.website.config.ts",
+    "test:privacy": "playwright test --config playwright.privacy.config.ts"
   },
   "dependencies": {
     "jspdf": "^4.2.1",

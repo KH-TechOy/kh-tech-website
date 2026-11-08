@@ -17,8 +17,11 @@ import { Brand, company, services, url } from "./brand";
 import Contact from "./Contact";
 import "./homepage-backgrounds.css";
 import "./subpage-backgrounds.css";
+import "./privacy.css";
 
-type SubpageBackground = "services" | "about" | "contact";
+const PrivacyNotice = React.lazy(() => import("./PrivacyNotice"));
+
+type SubpageBackground = "services" | "about" | "contact" | "privacy";
 
 function SectionBackground({
   image,
@@ -28,21 +31,21 @@ function SectionBackground({
   primary?: boolean;
 }) {
   const asset = (suffix: string) => url(`website/${image}${suffix}.webp`);
-  const subpage = image === "services" || image === "about" || image === "contact";
+  const subpage = image === "services" || image === "about" || image === "contact" || image === "privacy";
   const imageWidth = subpage ? 1672 : 1774;
   return (
     <picture className="section-background" aria-hidden="true">
-      <source
+      {image !== "privacy" && <source
         media="(max-width: 600px)"
         srcSet={`${asset("-mobile-480")} 480w, ${asset("-mobile-720")} 720w`}
         sizes={subpage ? "150vw" : "220vw"}
-      />
+      />}
       <img
         src={asset(`-${imageWidth}`)}
         srcSet={subpage
           ? `${asset("-800")} 800w, ${asset("-1200")} 1200w, ${asset("-1672")} 1672w`
           : `${asset("-960")} 960w, ${asset("-1280")} 1280w, ${asset("-1774")} 1774w`}
-        sizes={subpage ? "(max-width: 1100px) 130vw, 100vw" : "(max-width: 1100px) 180vw, 100vw"}
+        sizes={image === "privacy" ? "(max-width: 600px) 250vw, (max-width: 1100px) 130vw, 100vw" : subpage ? "(max-width: 1100px) 130vw, 100vw" : "(max-width: 1100px) 180vw, 100vw"}
         width={imageWidth}
         height={subpage ? 941 : 887}
         alt=""
@@ -145,7 +148,6 @@ function Footer() {
           <a href={url("yritys/")}>Yritys</a>
           <a href={url("yhteystiedot/")}>Yhteystiedot</a>
           <a href={url("peli/")}>Putkimestari-peli</a>
-          <a href={url("report/")}>Työraportti</a>
         </div>
       </div>
       <div className="container footer-bottom">
@@ -445,48 +447,13 @@ function Privacy() {
     <>
       <PageHero
         eyebrow="TIETOSUOJA"
+        image="privacy"
         title="Tiedä, mihin tietosi jäävät."
-        copy="Nykyisen paikallisen sovelluksen tietojen käsittely. Tietosuojaseloste täydennetään ennen palvelinlähetysten käyttöönottoa."
+        copy="Näin KH-Tech Oy käsittelee yhteydenottajien, asiakkaiden ja verkkopalvelun käyttäjien henkilötietoja."
       />
-      <section className="section container prose">
-        <h2>Yhteydenottolomake</h2>
-        <p>
-          Lomake toimii tällä hetkellä esittelytilassa. Sen tietoja ei lähetetä
-          palvelimelle eikä tallenneta selaimeen pysyvästi. Soittaminen tai
-          sähköpostin lähettäminen tapahtuu omalla puhelin- tai
-          sähköpostisovelluksellasi.
-        </p>
-        <h2>Työraportti ja valokuvat</h2>
-        <p>
-          Raportin tiedot ja kuvat tallentuvat automaattisesti tämän laitteen
-          selaimen paikalliseen tallennustilaan. Tallennus ei ole
-          käyttäjäkohtaisesti salattu eikä tässä versiossa vanhene
-          automaattisesti. Käytä työkalua vain omalla laitteellasi ja käsittele
-          vain työn kannalta tarpeellisia tietoja.
-        </p>
-        <p>
-          Poista tiedot raporttisivun “Poista luonnos” -painikkeella tai
-          selaimen sivustotietojen asetuksista. Lataamasi PDF jää laitteen
-          latauskansioon ja pitää tarvittaessa poistaa erikseen. Sovellus ei
-          lähetä PDF:ää sähköpostiin.
-        </p>
-        <h2>Toiminnan tarvitsemat tallennukset</h2>
-        <p>
-          Raportin offline-kuori käyttää selaimen välimuistia. Putkimestari-peli
-          voi tallentaa ohjainasetuksen ja etenemisen paikallisesti. Sivustoon
-          ei ole lisätty analytiikkaa tai markkinointievästeitä.
-        </p>
-        <h2>Ennen palvelinlähetysten käyttöönottoa</h2>
-        <p>
-          Yrityksen kanssa täydennetään rekisterinpitäjän tiedot, käsittelyn
-          perusteet, säilytysajat, palveluntarjoajat ja tietosuojaoikeuksien
-          toteuttaminen. Nykyinen sivu kuvaa paikallisen esittelyversion
-          toimintaa.
-        </p>
-        <a className="text-link" href={"mailto:" + company.email}>
-          Tietosuojaa koskeva yhteydenotto <ArrowUpRight size={17} />
-        </a>
-      </section>
+      <React.Suspense fallback={<div className="container privacy-notice" role="status">Ladataan tietosuojaselostetta…</div>}>
+        <PrivacyNotice />
+      </React.Suspense>
     </>
   );
 }

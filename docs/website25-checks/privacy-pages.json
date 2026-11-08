@@ -1,0 +1,534 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\mfi0alta\\AppData\\Local\\Microsoft\\WinGet\\Packages\\OpenJS.NodeJS.LTS_Microsoft.Winget.Source_8wekyb3d8bbwe\\node-v24.20.0-win-x64\\node.exe",
+      "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "playwright.privacy.config.ts"
+    ],
+    "configFile": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\playwright.privacy.config.ts",
+    "rootDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/.playwright-artifacts/privacy",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/privacy.playwright.ts"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/.playwright-artifacts/privacy",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/privacy.playwright.ts"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/.playwright-artifacts/privacy",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "tablet",
+        "name": "tablet",
+        "testDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/privacy.playwright.ts"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\.playwright-artifacts\\privacy",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "snapshotDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/privacy.playwright.ts",
+        "timeout": 90000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5186",
+          "headless": true,
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "launchOptions": {
+            "executablePath": "C:/Users/mfi0alta/AppData/Local/ms-playwright/chromium-1248/chrome-win64/chrome.exe",
+            "args": []
+          },
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\.playwright-artifacts\\privacy",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mobile",
+        "testDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "snapshotDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/privacy.playwright.ts",
+        "timeout": 90000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5186",
+          "headless": true,
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "launchOptions": {
+            "executablePath": "C:/Users/mfi0alta/AppData/Local/ms-playwright/chromium-1248/chrome-win64/chrome.exe",
+            "args": []
+          },
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "isMobile": true,
+          "hasTouch": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "mobile"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\.playwright-artifacts\\privacy",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "tablet",
+        "testDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "snapshotDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/privacy.playwright.ts",
+        "timeout": 90000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5186",
+          "headless": true,
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "launchOptions": {
+            "executablePath": "C:/Users/mfi0alta/AppData/Local/ms-playwright/chromium-1248/chrome-win64/chrome.exe",
+            "args": []
+          },
+          "viewport": {
+            "width": 768,
+            "height": 1024
+          },
+          "hasTouch": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "tablet"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/website25-checks/privacy-pages.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": {
+      "command": "node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 5186 --strictPort",
+      "url": "http://127.0.0.1:5186/kh-tech-website/",
+      "reuseExistingServer": false,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "privacy.playwright.ts",
+      "file": "privacy.playwright.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "privacy notice: nineteen topics, metadata, glass, keyboard anchors and readable images",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7717,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:44:57.277Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "53c958dfc9c34add52b5-def5c8a7f833577b5f94",
+          "file": "privacy.playwright.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "public data flows: no report links, cookies, contact transmission or unsolicited game storage",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14215,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:45:07.415Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "53c958dfc9c34add52b5-a9d4ccaa7b5ca7b38612",
+          "file": "privacy.playwright.ts",
+          "line": 89,
+          "column": 1
+        },
+        {
+          "title": "NFC direct URL preserves the report, manifest, local PDF and deletion without pretending authentication",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5864,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:45:21.701Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "53c958dfc9c34add52b5-c8b8f317ad18d3c1d3d9",
+          "file": "privacy.playwright.ts",
+          "line": 127,
+          "column": 1
+        },
+        {
+          "title": "privacy notice: nineteen topics, metadata, glass, keyboard anchors and readable images",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6022,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:45:30.118Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "53c958dfc9c34add52b5-a0fe5ed116bd1b4b59ce",
+          "file": "privacy.playwright.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "public data flows: no report links, cookies, contact transmission or unsolicited game storage",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12261,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:45:38.328Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "53c958dfc9c34add52b5-3e9211a58c49a8e04b7f",
+          "file": "privacy.playwright.ts",
+          "line": 89,
+          "column": 1
+        },
+        {
+          "title": "NFC direct URL preserves the report, manifest, local PDF and deletion without pretending authentication",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9352,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:45:50.641Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "53c958dfc9c34add52b5-86999257d14d538d1f7c",
+          "file": "privacy.playwright.ts",
+          "line": 127,
+          "column": 1
+        },
+        {
+          "title": "privacy notice: nineteen topics, metadata, glass, keyboard anchors and readable images",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5368,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:46:04.515Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "53c958dfc9c34add52b5-d17773cdafc9cd915a85",
+          "file": "privacy.playwright.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "public data flows: no report links, cookies, contact transmission or unsolicited game storage",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11367,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:46:11.872Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "53c958dfc9c34add52b5-4aa3a4a0e12d7f07fb97",
+          "file": "privacy.playwright.ts",
+          "line": 89,
+          "column": 1
+        },
+        {
+          "title": "NFC direct URL preserves the report, manifest, local PDF and deletion without pretending authentication",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "tablet",
+              "projectName": "tablet",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10908,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T20:46:23.295Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "53c958dfc9c34add52b5-72fc52f6c2b4ecf6e717",
+          "file": "privacy.playwright.ts",
+          "line": 127,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-08T20:44:51.343Z",
+    "duration": 106933.56999999999,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
