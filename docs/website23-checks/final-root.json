@@ -1,0 +1,713 @@
+{
+  "base": "/",
+  "production": true,
+  "pass": "final",
+  "environment": "Chromium desktop and touch viewport emulation; no physical phone",
+  "results": [
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "copy": [
+        {
+          "text": "KH-TECH OY · HELSINKI JA UUSIMAASuomalaistaLVI-osaamista.Huolellista työnjälkeä.Toimiva talotekniikka tekee arjesta sujuvampaa. Huollamme, muutamme ja saneeraamme kotien ja kiinteistöjen putkistoja asiakkaan tarpeita kuunnellen.Pyydä tarjous 040 073 6199 Lohjalta Helsinkiin ja Uudellemaalle",
+          "links": [
+            {
+              "text": "Pyydä tarjous ",
+              "href": "/yhteystiedot/"
+            },
+            {
+              "text": "040 073 6199",
+              "href": "tel:+358400736199"
+            }
+          ]
+        },
+        {
+          "text": "TEKIJÄ YRITYKSEN TAKANATuttu tekijä.Viimeistelty lopputulos.KH-Techin yrittäjä Tomi Honka on LVI-asentaja, jolle asiakkaan tarpeet ja toiveet ovat työn lähtökohta.Yrityksen taustalla on yrittäjäsuvun innostus alaan. Työtä ohjaavat luotettavuus, viimeistelty työnjälki ja asiakkaan tyytyväisyys – ensimmäisestä yhteydenotosta työn valmistumiseen.Tutustu yritykseen",
+          "links": [
+            {
+              "text": "Tutustu yritykseen ",
+              "href": "/yritys/"
+            }
+          ]
+        },
+        {
+          "text": "PIENI TAUKO PUTKITÖISTÄSinusta putkimestari?Sulje hanat, kerää työkalut ja ratko putkipulma. KH-Techin Putkimestari-pelissä pääset kokeilemaan itse.Pelaa Putkimestaria",
+          "links": [
+            {
+              "text": "Pelaa Putkimestaria ",
+              "href": "/peli/"
+            }
+          ]
+        }
+      ],
+      "loading": [
+        {
+          "loading": "eager",
+          "priority": "high"
+        },
+        {
+          "loading": "lazy",
+          "priority": "auto"
+        },
+        {
+          "loading": "lazy",
+          "priority": "auto"
+        }
+      ],
+      "overflow": false,
+      "details": [
+        {
+          "section": "hero",
+          "width": 390,
+          "left": 0,
+          "height": 778.828125,
+          "minimumContrast": 4.633362689964098,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/hero-mobile-720.webp",
+            "width": 857,
+            "height": 796,
+            "loading": "eager",
+            "objectPosition": "50% 0%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(12, 25, 35, 0.7)",
+            "radius": "22px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/yhteystiedot/",
+              "height": 49
+            },
+            {
+              "href": "tel:+358400736199",
+              "height": 49
+            }
+          ]
+        },
+        {
+          "section": "company-section",
+          "width": 390,
+          "left": 0,
+          "height": 721.140625,
+          "minimumContrast": 4.633362689964098,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/company-mobile-720.webp",
+            "width": 857,
+            "height": 617,
+            "loading": "eager",
+            "objectPosition": "30% 0%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(12, 25, 35, 0.7)",
+            "radius": "22px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/yritys/",
+              "height": 44
+            }
+          ]
+        },
+        {
+          "section": "game-teaser",
+          "width": 390,
+          "left": 0,
+          "height": 628.171875,
+          "minimumContrast": 5.576936943442011,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/game-mobile-720.webp",
+            "width": 857,
+            "height": 757,
+            "loading": "eager",
+            "objectPosition": "30% 0%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(8, 28, 48, 0.76)",
+            "radius": "22px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/peli/",
+              "height": 50
+            }
+          ]
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024,
+      "copy": [
+        {
+          "text": "KH-TECH OY · HELSINKI JA UUSIMAASuomalaistaLVI-osaamista.Huolellista työnjälkeä.Toimiva talotekniikka tekee arjesta sujuvampaa. Huollamme, muutamme ja saneeraamme kotien ja kiinteistöjen putkistoja asiakkaan tarpeita kuunnellen.Pyydä tarjous 040 073 6199 Lohjalta Helsinkiin ja Uudellemaalle",
+          "links": [
+            {
+              "text": "Pyydä tarjous ",
+              "href": "/yhteystiedot/"
+            },
+            {
+              "text": "040 073 6199",
+              "href": "tel:+358400736199"
+            }
+          ]
+        },
+        {
+          "text": "TEKIJÄ YRITYKSEN TAKANATuttu tekijä.Viimeistelty lopputulos.KH-Techin yrittäjä Tomi Honka on LVI-asentaja, jolle asiakkaan tarpeet ja toiveet ovat työn lähtökohta.Yrityksen taustalla on yrittäjäsuvun innostus alaan. Työtä ohjaavat luotettavuus, viimeistelty työnjälki ja asiakkaan tyytyväisyys – ensimmäisestä yhteydenotosta työn valmistumiseen.Tutustu yritykseen",
+          "links": [
+            {
+              "text": "Tutustu yritykseen ",
+              "href": "/yritys/"
+            }
+          ]
+        },
+        {
+          "text": "PIENI TAUKO PUTKITÖISTÄSinusta putkimestari?Sulje hanat, kerää työkalut ja ratko putkipulma. KH-Techin Putkimestari-pelissä pääset kokeilemaan itse.Pelaa Putkimestaria",
+          "links": [
+            {
+              "text": "Pelaa Putkimestaria ",
+              "href": "/peli/"
+            }
+          ]
+        }
+      ],
+      "loading": [
+        {
+          "loading": "eager",
+          "priority": "high"
+        },
+        {
+          "loading": "lazy",
+          "priority": "auto"
+        },
+        {
+          "loading": "lazy",
+          "priority": "auto"
+        }
+      ],
+      "overflow": false,
+      "details": [
+        {
+          "section": "hero",
+          "width": 768,
+          "left": 0,
+          "height": 586.21875,
+          "minimumContrast": 4.633362689964098,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/hero-1774.webp",
+            "width": 1382,
+            "height": 691,
+            "loading": "eager",
+            "objectPosition": "78% 50%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(12, 25, 35, 0.7)",
+            "radius": "24px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/yhteystiedot/",
+              "height": 47
+            },
+            {
+              "href": "tel:+358400736199",
+              "height": 46
+            }
+          ]
+        },
+        {
+          "section": "company-section",
+          "width": 768,
+          "left": 0,
+          "height": 606.8125,
+          "minimumContrast": 4.633362689964098,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/company-1774.webp",
+            "width": 1382,
+            "height": 691,
+            "loading": "eager",
+            "objectPosition": "32% 50%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(12, 25, 35, 0.7)",
+            "radius": "24px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/yritys/",
+              "height": 44
+            }
+          ]
+        },
+        {
+          "section": "game-teaser",
+          "width": 768,
+          "left": 0,
+          "height": 729.296875,
+          "minimumContrast": 5.576936943442011,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/game-1774.webp",
+            "width": 1382,
+            "height": 691,
+            "loading": "eager",
+            "objectPosition": "0% 100%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(8, 28, 48, 0.76)",
+            "radius": "24px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/peli/",
+              "height": 50
+            }
+          ]
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 900,
+      "copy": [
+        {
+          "text": "KH-TECH OY · HELSINKI JA UUSIMAASuomalaistaLVI-osaamista.Huolellista työnjälkeä.Toimiva talotekniikka tekee arjesta sujuvampaa. Huollamme, muutamme ja saneeraamme kotien ja kiinteistöjen putkistoja asiakkaan tarpeita kuunnellen.Pyydä tarjous 040 073 6199 Lohjalta Helsinkiin ja Uudellemaalle",
+          "links": [
+            {
+              "text": "Pyydä tarjous ",
+              "href": "/yhteystiedot/"
+            },
+            {
+              "text": "040 073 6199",
+              "href": "tel:+358400736199"
+            }
+          ]
+        },
+        {
+          "text": "TEKIJÄ YRITYKSEN TAKANATuttu tekijä.Viimeistelty lopputulos.KH-Techin yrittäjä Tomi Honka on LVI-asentaja, jolle asiakkaan tarpeet ja toiveet ovat työn lähtökohta.Yrityksen taustalla on yrittäjäsuvun innostus alaan. Työtä ohjaavat luotettavuus, viimeistelty työnjälki ja asiakkaan tyytyväisyys – ensimmäisestä yhteydenotosta työn valmistumiseen.Tutustu yritykseen",
+          "links": [
+            {
+              "text": "Tutustu yritykseen ",
+              "href": "/yritys/"
+            }
+          ]
+        },
+        {
+          "text": "PIENI TAUKO PUTKITÖISTÄSinusta putkimestari?Sulje hanat, kerää työkalut ja ratko putkipulma. KH-Techin Putkimestari-pelissä pääset kokeilemaan itse.Pelaa Putkimestaria",
+          "links": [
+            {
+              "text": "Pelaa Putkimestaria ",
+              "href": "/peli/"
+            }
+          ]
+        }
+      ],
+      "loading": [
+        {
+          "loading": "eager",
+          "priority": "high"
+        },
+        {
+          "loading": "lazy",
+          "priority": "auto"
+        },
+        {
+          "loading": "lazy",
+          "priority": "auto"
+        }
+      ],
+      "overflow": false,
+      "details": [
+        {
+          "section": "hero",
+          "width": 1440,
+          "left": 0,
+          "height": 667.828125,
+          "minimumContrast": 4.633362689964098,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/hero-1774.webp",
+            "width": 1440,
+            "height": 720,
+            "loading": "eager",
+            "objectPosition": "78% 50%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(12, 25, 35, 0.7)",
+            "radius": "24px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/yhteystiedot/",
+              "height": 50
+            },
+            {
+              "href": "tel:+358400736199",
+              "height": 50
+            }
+          ]
+        },
+        {
+          "section": "company-section",
+          "width": 1440,
+          "left": 0,
+          "height": 603.84375,
+          "minimumContrast": 4.633362689964098,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/company-1774.webp",
+            "width": 1440,
+            "height": 720,
+            "loading": "eager",
+            "objectPosition": "32% 50%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(12, 25, 35, 0.7)",
+            "radius": "24px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/yritys/",
+              "height": 44
+            }
+          ]
+        },
+        {
+          "section": "game-teaser",
+          "width": 1440,
+          "left": 0,
+          "height": 640,
+          "minimumContrast": 5.576936943442011,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/game-1774.webp",
+            "width": 1440,
+            "height": 720,
+            "loading": "eager",
+            "objectPosition": "0% 100%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(8, 28, 48, 0.76)",
+            "radius": "24px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/peli/",
+              "height": 50
+            }
+          ]
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "small-mobile",
+      "width": 320,
+      "height": 740,
+      "copy": [
+        {
+          "text": "KH-TECH OY · HELSINKI JA UUSIMAASuomalaistaLVI-osaamista.Huolellista työnjälkeä.Toimiva talotekniikka tekee arjesta sujuvampaa. Huollamme, muutamme ja saneeraamme kotien ja kiinteistöjen putkistoja asiakkaan tarpeita kuunnellen.Pyydä tarjous 040 073 6199 Lohjalta Helsinkiin ja Uudellemaalle",
+          "links": [
+            {
+              "text": "Pyydä tarjous ",
+              "href": "/yhteystiedot/"
+            },
+            {
+              "text": "040 073 6199",
+              "href": "tel:+358400736199"
+            }
+          ]
+        },
+        {
+          "text": "TEKIJÄ YRITYKSEN TAKANATuttu tekijä.Viimeistelty lopputulos.KH-Techin yrittäjä Tomi Honka on LVI-asentaja, jolle asiakkaan tarpeet ja toiveet ovat työn lähtökohta.Yrityksen taustalla on yrittäjäsuvun innostus alaan. Työtä ohjaavat luotettavuus, viimeistelty työnjälki ja asiakkaan tyytyväisyys – ensimmäisestä yhteydenotosta työn valmistumiseen.Tutustu yritykseen",
+          "links": [
+            {
+              "text": "Tutustu yritykseen ",
+              "href": "/yritys/"
+            }
+          ]
+        },
+        {
+          "text": "PIENI TAUKO PUTKITÖISTÄSinusta putkimestari?Sulje hanat, kerää työkalut ja ratko putkipulma. KH-Techin Putkimestari-pelissä pääset kokeilemaan itse.Pelaa Putkimestaria",
+          "links": [
+            {
+              "text": "Pelaa Putkimestaria ",
+              "href": "/peli/"
+            }
+          ]
+        }
+      ],
+      "loading": [
+        {
+          "loading": "eager",
+          "priority": "high"
+        },
+        {
+          "loading": "lazy",
+          "priority": "auto"
+        },
+        {
+          "loading": "lazy",
+          "priority": "auto"
+        }
+      ],
+      "overflow": false,
+      "details": [
+        {
+          "section": "hero",
+          "width": 320,
+          "left": 0,
+          "height": 831.40625,
+          "minimumContrast": 4.633362689964098,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/hero-mobile-720.webp",
+            "width": 704,
+            "height": 653,
+            "loading": "eager",
+            "objectPosition": "50% 0%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(12, 25, 35, 0.7)",
+            "radius": "22px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/yhteystiedot/",
+              "height": 49
+            },
+            {
+              "href": "tel:+358400736199",
+              "height": 49
+            }
+          ]
+        },
+        {
+          "section": "company-section",
+          "width": 320,
+          "left": 0,
+          "height": 810.125,
+          "minimumContrast": 4.633362689964098,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/company-mobile-720.webp",
+            "width": 704,
+            "height": 506,
+            "loading": "eager",
+            "objectPosition": "30% 0%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(12, 25, 35, 0.7)",
+            "radius": "22px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/yritys/",
+              "height": 44
+            }
+          ]
+        },
+        {
+          "section": "game-teaser",
+          "width": 320,
+          "left": 0,
+          "height": 663.5625,
+          "minimumContrast": 5.576936943442011,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/game-mobile-720.webp",
+            "width": 704,
+            "height": 621,
+            "loading": "eager",
+            "objectPosition": "30% 0%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(8, 28, 48, 0.76)",
+            "radius": "22px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/peli/",
+              "height": 50
+            }
+          ]
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "wide",
+      "width": 1920,
+      "height": 1080,
+      "copy": [
+        {
+          "text": "KH-TECH OY · HELSINKI JA UUSIMAASuomalaistaLVI-osaamista.Huolellista työnjälkeä.Toimiva talotekniikka tekee arjesta sujuvampaa. Huollamme, muutamme ja saneeraamme kotien ja kiinteistöjen putkistoja asiakkaan tarpeita kuunnellen.Pyydä tarjous 040 073 6199 Lohjalta Helsinkiin ja Uudellemaalle",
+          "links": [
+            {
+              "text": "Pyydä tarjous ",
+              "href": "/yhteystiedot/"
+            },
+            {
+              "text": "040 073 6199",
+              "href": "tel:+358400736199"
+            }
+          ]
+        },
+        {
+          "text": "TEKIJÄ YRITYKSEN TAKANATuttu tekijä.Viimeistelty lopputulos.KH-Techin yrittäjä Tomi Honka on LVI-asentaja, jolle asiakkaan tarpeet ja toiveet ovat työn lähtökohta.Yrityksen taustalla on yrittäjäsuvun innostus alaan. Työtä ohjaavat luotettavuus, viimeistelty työnjälki ja asiakkaan tyytyväisyys – ensimmäisestä yhteydenotosta työn valmistumiseen.Tutustu yritykseen",
+          "links": [
+            {
+              "text": "Tutustu yritykseen ",
+              "href": "/yritys/"
+            }
+          ]
+        },
+        {
+          "text": "PIENI TAUKO PUTKITÖISTÄSinusta putkimestari?Sulje hanat, kerää työkalut ja ratko putkipulma. KH-Techin Putkimestari-pelissä pääset kokeilemaan itse.Pelaa Putkimestaria",
+          "links": [
+            {
+              "text": "Pelaa Putkimestaria ",
+              "href": "/peli/"
+            }
+          ]
+        }
+      ],
+      "loading": [
+        {
+          "loading": "eager",
+          "priority": "high"
+        },
+        {
+          "loading": "lazy",
+          "priority": "auto"
+        },
+        {
+          "loading": "lazy",
+          "priority": "auto"
+        }
+      ],
+      "overflow": false,
+      "details": [
+        {
+          "section": "hero",
+          "width": 1920,
+          "left": 0,
+          "height": 697.828125,
+          "minimumContrast": 4.633362689964098,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/hero-1774.webp",
+            "width": 1919,
+            "height": 959,
+            "loading": "eager",
+            "objectPosition": "78% 50%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(12, 25, 35, 0.7)",
+            "radius": "24px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/yhteystiedot/",
+              "height": 50
+            },
+            {
+              "href": "tel:+358400736199",
+              "height": 50
+            }
+          ]
+        },
+        {
+          "section": "company-section",
+          "width": 1920,
+          "left": 0,
+          "height": 603.84375,
+          "minimumContrast": 4.633362689964098,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/company-1774.webp",
+            "width": 1919,
+            "height": 959,
+            "loading": "eager",
+            "objectPosition": "32% 50%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(12, 25, 35, 0.7)",
+            "radius": "24px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/yritys/",
+              "height": 44
+            }
+          ]
+        },
+        {
+          "section": "game-teaser",
+          "width": 1920,
+          "left": 0,
+          "height": 740,
+          "minimumContrast": 5.576936943442011,
+          "focalVisible": true,
+          "image": {
+            "src": "http://127.0.0.1:5184/website/game-1774.webp",
+            "width": 1919,
+            "height": 959,
+            "loading": "eager",
+            "objectPosition": "0% 50%"
+          },
+          "panel": {
+            "blur": "blur(18px) saturate(1.25)",
+            "background": "rgba(8, 28, 48, 0.76)",
+            "radius": "24px",
+            "color": "rgb(247, 249, 251)"
+          },
+          "links": [
+            {
+              "href": "http://127.0.0.1:5184/peli/",
+              "height": 50
+            }
+          ]
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

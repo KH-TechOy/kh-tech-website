@@ -8,8 +8,8 @@ const production = process.env.WEBSITE_PRODUCTION === "1",
       ? "production-root"
       : "production-pages"
     : "development";
-const out = "docs/website2-screenshots",
-  checks = "docs/website2-checks";
+const out = process.env.WEBSITE_SCREENSHOTS || "docs/website2-screenshots",
+  checks = process.env.WEBSITE_CHECKS || "docs/website2-checks";
 mkdirSync(out, { recursive: true });
 mkdirSync(checks, { recursive: true });
 let errors: string[] = [];

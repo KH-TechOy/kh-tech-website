@@ -1,0 +1,32 @@
+{
+  "base": "/kh-tech-website/",
+  "offlineReload": true,
+  "offlinePdf": true,
+  "cache": {
+    "keys": [
+      "kh-tech-shell-website2-75979bb2f63a"
+    ],
+    "assets": [
+      "http://127.0.0.1:5183/kh-tech-website/",
+      "http://127.0.0.1:5183/kh-tech-website/report/",
+      "http://127.0.0.1:5183/kh-tech-website/manifest.webmanifest",
+      "http://127.0.0.1:5183/kh-tech-website/brand/kh-tech-logo.png",
+      "http://127.0.0.1:5183/kh-tech-website/brand/kh-tech-icon.png",
+      "http://127.0.0.1:5183/kh-tech-website/brand/icon-192.png",
+      "http://127.0.0.1:5183/kh-tech-website/brand/icon-512.png",
+      "http://127.0.0.1:5183/kh-tech-website/assets/Report-BCkFJez3.js",
+      "http://127.0.0.1:5183/kh-tech-website/assets/Website-Bx2Zf-R9.css",
+      "http://127.0.0.1:5183/kh-tech-website/assets/Website-CbDiHMQv.js",
+      "http://127.0.0.1:5183/kh-tech-website/assets/arrow-left-G4SrOeZK.js",
+      "http://127.0.0.1:5183/kh-tech-website/assets/brand-ShfWAlTC.js",
+      "http://127.0.0.1:5183/kh-tech-website/assets/html2canvas.esm-DXEQVQnt.js",
+      "http://127.0.0.1:5183/kh-tech-website/assets/index.es-kSy4s2Jw.js",
+      "http://127.0.0.1:5183/kh-tech-website/assets/main-CWIowuJJ.js",
+      "http://127.0.0.1:5183/kh-tech-website/assets/main-D6Odvc5J.css",
+      "http://127.0.0.1:5183/kh-tech-website/assets/pdf-BUdl2gVz.js",
+      "http://127.0.0.1:5183/kh-tech-website/assets/purify.es-18JuyMri.js",
+      "http://127.0.0.1:5183/kh-tech-website/assets/wrench-BlKrQsw1.js",
+      "http://127.0.0.1:5183/kh-tech-website/assets/x-BpeH2yv_.js"
+    ]
+  }
+}

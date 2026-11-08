@@ -15,6 +15,37 @@ import {
 } from "lucide-react";
 import { Brand, company, services, url } from "./brand";
 import Contact from "./Contact";
+import "./homepage-backgrounds.css";
+
+function SectionBackground({
+  image,
+  primary = false,
+}: {
+  image: "hero" | "company" | "game";
+  primary?: boolean;
+}) {
+  const asset = (suffix: string) => url(`website/${image}${suffix}.webp`);
+  return (
+    <picture className="section-background" aria-hidden="true">
+      <source
+        media="(max-width: 600px)"
+        srcSet={`${asset("-mobile-480")} 480w, ${asset("-mobile-720")} 720w`}
+        sizes="220vw"
+      />
+      <img
+        src={asset("-1774")}
+        srcSet={`${asset("-960")} 960w, ${asset("-1280")} 1280w, ${asset("-1774")} 1774w`}
+        sizes="(max-width: 1100px) 180vw, 100vw"
+        width="1774"
+        height="887"
+        alt=""
+        loading={primary ? "eager" : "lazy"}
+        fetchPriority={primary ? "high" : "auto"}
+        decoding="async"
+      />
+    </picture>
+  );
+}
 
 const icons = [Wrench, GitBranch, SlidersHorizontal, Waves];
 function Header({ path }: { path: string }) {
@@ -190,9 +221,10 @@ function ContactBand() {
 function Home() {
   return (
     <>
-      <section className="hero">
+      <section className="hero cinematic-section">
+        <SectionBackground image="hero" primary />
         <div className="container hero-grid">
-          <div className="hero-copy">
+          <div className="hero-copy kh-glass">
             <div className="eyebrow">
               <span /> KH-TECH OY · HELSINKI JA UUSIMAA
             </div>
@@ -219,25 +251,6 @@ function Home() {
             </div>
             <div className="hero-note">
               <MapPin size={16} /> Lohjalta Helsinkiin ja Uudellemaalle
-            </div>
-          </div>
-          <div className="hero-art">
-            <img
-              className="hero-installation"
-              src={url("brand/lvi-installation.svg")}
-              width="660"
-              height="720"
-              alt="Kuvitettu metallinen putkisto ja sininen venttiili tummalla taustalla"
-              fetchPriority="high"
-            />
-            <div className="hero-art-caption">
-              <span>KH-TECH TALOTEKNIIKKA</span>
-              <strong>
-                Jokainen työ
-                <br />
-                ansaitsee huolellisen tekijän.
-              </strong>
-              <i>01 / LVI-OSAAMINEN</i>
             </div>
           </div>
         </div>
@@ -278,23 +291,10 @@ function Home() {
         </div>
         <ServiceCards />
       </section>
-      <section className="company-section">
+      <section className="company-section cinematic-section">
+        <SectionBackground image="company" />
         <div className="container company-grid">
-          <div className="company-mark">
-            <img
-              src={url("brand/kh-tech-icon.png")}
-              width="864"
-              height="975"
-              alt="KH-Techin kolmen pisaran tunnus"
-              loading="lazy"
-            />
-            <span>
-              KH-TECH OY
-              <br />
-              TALOTEKNIIKKA
-            </span>
-          </div>
-          <div className="company-copy">
+          <div className="company-copy kh-glass">
             <span className="eyebrow">TEKIJÄ YRITYKSEN TAKANA</span>
             <h2>
               Tuttu tekijä.
@@ -317,32 +317,22 @@ function Home() {
         </div>
       </section>
       <ContactBand />
-      <section className="section container game-teaser">
-        <div className="game-teaser-copy">
-          <span className="eyebrow">
-            <Gamepad2 size={17} /> PIENI TAUKO PUTKITÖISTÄ
-          </span>
-          <h2>Sinusta putkimestari?</h2>
-          <p>
-            Sulje hanat, kerää työkalut ja ratko putkipulma. KH-Techin
-            Putkimestari-pelissä pääset kokeilemaan itse.
-          </p>
-          <a className="button secondary" href={url("peli/")}>
-            Pelaa Putkimestaria <ArrowUpRight size={18} />
-          </a>
-        </div>
-        <div className="game-promo-art">
-          <img
-            src={url("game2/v3/mascot.webp")}
-            width="640"
-            height="800"
-            alt="Putkimestarin hymyilevä maskotti KH-Tech-työvaatteissa"
-            loading="lazy"
-            decoding="async"
-          />
-          <span>
-            PUTKIMESTARI<small>KH-TECH OY ESITTÄÄ</small>
-          </span>
+      <section className="game-teaser cinematic-section">
+        <SectionBackground image="game" />
+        <div className="container game-teaser-grid">
+          <div className="game-teaser-copy kh-glass">
+            <span className="eyebrow">
+              <Gamepad2 size={17} /> PIENI TAUKO PUTKITÖISTÄ
+            </span>
+            <h2>Sinusta putkimestari?</h2>
+            <p>
+              Sulje hanat, kerää työkalut ja ratko putkipulma. KH-Techin
+              Putkimestari-pelissä pääset kokeilemaan itse.
+            </p>
+            <a className="button secondary" href={url("peli/")}>
+              Pelaa Putkimestaria <ArrowUpRight size={18} />
+            </a>
+          </div>
         </div>
       </section>
     </>

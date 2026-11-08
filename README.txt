@@ -1,4 +1,16 @@
 KH-TECH OY – VERKKOSIVU, TYÖRAPORTTI JA PELI
+WEBSITE 2.3 – ETUSIVUN TAUSTAT JA LIQUID GLASS
+  Heron, yritysesittelyn ja peliesittelyn nykyisten tekstien taakse
+  lisätään toimitetut koko leveydelle ulottuvat kuvat ja lasipaneelit.
+  Alkuperäiset docs/website_bg_*.png-kuvat säilyvät muuttamattomina.
+  Optimoidut WebP-kuvat: public/website/. Raportti ja tarkistusohjeet:
+  WEBSITE_2_3_LIQUID_GLASS_REPORT.md. Peli ja raporttitoiminnot säilyvät.
+  Kuvien uusinta: python scripts/build-website-backgrounds.py (Pillow).
+  Selainkatselmointi: node scripts/review-liquid-glass.mjs.
+  Tuotantokatselmointia varten rakenna sivusto ja aseta
+  WEBSITE_PRODUCTION=1 sekä VITE_BASE_PATH=/ tai /kh-tech-website/.
+  Kaappaukset: docs/website23-screenshots/final/.
+
 TOIMINTA-PAINIKE – 8.11.2026
   Pelissä on yksi Toiminta-painike. Se sulkee hanan, työntää laatikkoa
   tai avaa korjauksen lähimmän kohteen mukaan. E ja välilyönti tekevät

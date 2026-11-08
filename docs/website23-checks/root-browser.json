@@ -1,0 +1,143 @@
+{
+  "base": "/",
+  "production": true,
+  "environment": "Headless Chromium; mobile viewport and touch emulation on the development computer, not physical phones.",
+  "status": "passed",
+  "durationMs": 106182.352,
+  "projects": [
+    {
+      "name": "desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "touch": false
+    },
+    {
+      "name": "portrait",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "touch": true
+    },
+    {
+      "name": "landscape",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "touch": true
+    }
+  ],
+  "tests": [
+    {
+      "project": "desktop",
+      "title": "official branding, verified services, responsive pages and lazy game loading",
+      "status": "passed",
+      "durationMs": 13279
+    },
+    {
+      "project": "desktop",
+      "title": "keyboard skip link and mobile navigation work without overflow",
+      "status": "passed",
+      "durationMs": 3020
+    },
+    {
+      "project": "desktop",
+      "title": "contact validation, preferred channel and urgency retain entered data without false delivery",
+      "status": "passed",
+      "durationMs": 3340
+    },
+    {
+      "project": "desktop",
+      "title": "report progress, photos, preview, PDF download and draft persistence",
+      "status": "passed",
+      "durationMs": 9339
+    },
+    {
+      "project": "desktop",
+      "title": "legacy report migrates safely and blocked storage still permits a local PDF",
+      "status": "passed",
+      "durationMs": 4332
+    },
+    {
+      "project": "desktop",
+      "title": "installed report shell reloads and generates a branded PDF offline",
+      "status": "passed",
+      "durationMs": 4514
+    },
+    {
+      "project": "portrait",
+      "title": "official branding, verified services, responsive pages and lazy game loading",
+      "status": "passed",
+      "durationMs": 11603
+    },
+    {
+      "project": "portrait",
+      "title": "keyboard skip link and mobile navigation work without overflow",
+      "status": "passed",
+      "durationMs": 2419
+    },
+    {
+      "project": "portrait",
+      "title": "contact validation, preferred channel and urgency retain entered data without false delivery",
+      "status": "passed",
+      "durationMs": 2909
+    },
+    {
+      "project": "portrait",
+      "title": "report progress, photos, preview, PDF download and draft persistence",
+      "status": "passed",
+      "durationMs": 7021
+    },
+    {
+      "project": "portrait",
+      "title": "legacy report migrates safely and blocked storage still permits a local PDF",
+      "status": "skipped",
+      "durationMs": 1030
+    },
+    {
+      "project": "portrait",
+      "title": "installed report shell reloads and generates a branded PDF offline",
+      "status": "skipped",
+      "durationMs": 1002
+    },
+    {
+      "project": "landscape",
+      "title": "official branding, verified services, responsive pages and lazy game loading",
+      "status": "passed",
+      "durationMs": 9327
+    },
+    {
+      "project": "landscape",
+      "title": "keyboard skip link and mobile navigation work without overflow",
+      "status": "passed",
+      "durationMs": 2521
+    },
+    {
+      "project": "landscape",
+      "title": "contact validation, preferred channel and urgency retain entered data without false delivery",
+      "status": "passed",
+      "durationMs": 3923
+    },
+    {
+      "project": "landscape",
+      "title": "report progress, photos, preview, PDF download and draft persistence",
+      "status": "passed",
+      "durationMs": 7345
+    },
+    {
+      "project": "landscape",
+      "title": "legacy report migrates safely and blocked storage still permits a local PDF",
+      "status": "skipped",
+      "durationMs": 1440
+    },
+    {
+      "project": "landscape",
+      "title": "installed report shell reloads and generates a branded PDF offline",
+      "status": "skipped",
+      "durationMs": 1182
+    }
+  ]
+}

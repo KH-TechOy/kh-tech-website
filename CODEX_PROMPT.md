@@ -1,5 +1,9 @@
 # KH-Tech Oy – toteutusohje
 
+## WEBSITE 2.3 – rajattu etusivun ulkoasupäivitys, 8.11.2026
+
+Käytä toimitettuja `docs/website_bg_1.png`, `website_bg_2.png` ja `website_bg_3.png` tässä järjestyksessä etusivun heron, yritysesittelyn ja peliesittelyn koko leveydelle ulottuvina taustoina. Poista näiden osioiden vanhat kuvituskortit ja lisää nykyisten tekstiryhmien taakse hillitty tumma Liquid Glass -paneeli. Säilytä tekstisisältö, linkit, painikkeet, keskitetty sisältöleveys ja ryhmien nykyiset puolet. Optimoi WebP-versiot public-kansioon, säilytä alkuperäiset ja varmista kuvakohtaiset mobiilirajaukset, kohteiden näkyvyys, kontrasti, blur-varatyyli ja Pages-peruspolku. Älä muuta peliä, raporttia, lomaketoimintoja tai julkaisutyönkulkua. Tarkista aidot 390×844-, 768×1024- ja 1440×900-kaappaukset sekä tee niiden perusteella korjauskierros. Raportti: `WEBSITE_2_3_LIQUID_GLASS_REPORT.md`. Paikallinen main-commit, ei pushia tai deployta.
+
 Nykyinen peliohjaus 8.11.2026: yksi Toiminta-painike yhdistää hanan sulkemisen, laatikon työnnön ja vuodon korjauksen. E ja välilyönti ovat saman tilannekohtaisen toiminnon pikanäppäimiä. Käytä lähintä kantaman sisällä olevaa kohdetta ja säilytä työnnön turvallisuus- sekä opastusehdot. Erillistä työntöpainiketta ei ole. Kosketuksen yhteensopivuusclick ei saa aktivoida uutta painiketta näkymän vaihtuessa. Tarkistukset: `docs/action-review/README.md`.
 
 ## GAME 3.0 – nykyinen pelityö, 7.11.2026

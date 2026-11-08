@@ -21,10 +21,11 @@ export default class WebsiteReporter {
     const base = process.env.VITE_BASE_PATH || "/",
       production = process.env.WEBSITE_PRODUCTION === "1",
       name = production ? (base === "/" ? "root" : "pages") : "development";
-    mkdirSync("docs/website2-checks", { recursive: true });
+    const checks = process.env.WEBSITE_CHECKS || "docs/website2-checks";
+    mkdirSync(checks, { recursive: true });
     const suffix = process.env.WEBSITE_FOCUSED === "1" ? "-focused" : "";
     writeFileSync(
-      "docs/website2-checks/" + name + suffix + "-browser.json",
+      checks + "/" + name + suffix + "-browser.json",
       JSON.stringify(
         {
           base,

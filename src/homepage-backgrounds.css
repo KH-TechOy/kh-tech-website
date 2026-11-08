@@ -1,0 +1,206 @@
+/* WEBSITE 2.3: only the three photographic homepage sections. */
+.cinematic-section {
+  position: relative;
+  isolation: isolate;
+  background: #10212c;
+  color: #f7f9fb;
+}
+.section-background {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.section-background img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hero.cinematic-section {
+  border: 0;
+}
+.hero .section-background img {
+  object-position: 78% center;
+}
+.company-section .section-background img {
+  object-position: 32% center;
+}
+.game-teaser .section-background img {
+  object-position: left bottom;
+}
+.kh-glass {
+  /* Readable fallback when backdrop-filter is unavailable. */
+  background: rgba(12, 25, 35, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 24px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  color: #f7f9fb;
+}
+@supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
+  .kh-glass {
+    background: rgba(12, 25, 35, 0.70);
+    backdrop-filter: blur(18px) saturate(125%);
+    -webkit-backdrop-filter: blur(18px) saturate(125%);
+  }
+  .game-teaser .kh-glass {
+    background: rgba(8, 28, 48, 0.76);
+  }
+}
+.cinematic-section .kh-glass .eyebrow {
+  color: #c2dce9;
+}
+.cinematic-section .eyebrow > span {
+  background: #a8d4ea;
+}
+.cinematic-section .lead,
+.cinematic-section .company-copy > p:not(.lead),
+.cinematic-section .game-teaser-copy p,
+.cinematic-section .hero-note {
+  color: #e0e8ee;
+}
+.cinematic-section .hero-copy h1 em {
+  color: #d4e2ec;
+}
+.cinematic-section .primary {
+  background: #f5f8fa;
+  color: #142a37;
+  border-color: #f5f8fa;
+}
+.cinematic-section .primary:hover {
+  background: #dfeef5;
+}
+.cinematic-section .secondary {
+  color: #f7f9fb;
+  border-color: #b6c7d1;
+  background: rgba(10, 26, 38, 0.35);
+}
+.cinematic-section .secondary:hover {
+  background: #284759;
+}
+.cinematic-section .text-link {
+  color: #f0f7fb;
+  border-color: #a8c9da;
+  min-height: 44px;
+  align-items: center;
+}
+.cinematic-section a:focus-visible {
+  outline-color: #b2e3ff;
+}
+.hero.cinematic-section .hero-copy {
+  padding: 36px;
+  margin-inline: -36px;
+  width: calc(100% + 72px);
+}
+.company-section.cinematic-section .company-copy {
+  grid-column: 2;
+  padding: 32px;
+  margin-inline: -32px;
+  width: calc(100% + 64px);
+}
+.game-teaser.cinematic-section {
+  display: block;
+}
+.game-teaser-grid {
+  display: flex;
+  align-items: end;
+  min-height: 640px;
+  padding-block: 334px 26px;
+}
+.game-teaser.cinematic-section .game-teaser-copy {
+  max-width: 654px;
+  padding: 28px 32px;
+  margin-left: -32px;
+}
+@media (min-width: 1600px) {
+  .game-teaser-grid {
+    min-height: 740px;
+    padding-block: 430px 30px;
+  }
+  .game-teaser .section-background img {
+    object-position: left center;
+  }
+}
+@media (max-width: 1100px) {
+  .hero.cinematic-section .hero-grid {
+    grid-template-columns: 1.3fr 0.7fr;
+  }
+  .hero.cinematic-section .hero-copy {
+    padding: 28px;
+    margin-inline: -12px;
+    width: calc(100% + 24px);
+  }
+  .company-section.cinematic-section .company-grid {
+    grid-template-columns: 0.65fr 1fr;
+  }
+  .company-section.cinematic-section .company-copy {
+    padding: 28px;
+    margin-inline: -12px;
+    width: calc(100% + 24px);
+  }
+  .game-teaser.cinematic-section .game-teaser-copy {
+    max-width: 590px;
+    margin-left: -12px;
+    padding: 28px;
+  }
+  .game-teaser-grid {
+    min-height: 720px;
+    padding-block: 410px 40px;
+  }
+}
+@media (max-width: 600px) {
+  .hero.cinematic-section .hero-grid,
+  .company-section.cinematic-section .company-grid {
+    display: block;
+    padding-block: 250px 28px;
+  }
+  .company-section.cinematic-section {
+    padding-block: 0;
+  }
+  .company-section.cinematic-section .company-grid {
+    padding-top: 230px;
+  }
+  .hero.cinematic-section .hero-copy,
+  .company-section.cinematic-section .company-copy,
+  .game-teaser.cinematic-section .game-teaser-copy {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 25px 22px;
+    border-radius: 22px;
+  }
+  .hero.cinematic-section .section-background img {
+    object-position: 50% top;
+  }
+  .company-section.cinematic-section .section-background img {
+    object-position: 30% top;
+  }
+  .game-teaser.cinematic-section .section-background img {
+    object-position: 30% top;
+  }
+  .hero.cinematic-section h1 {
+    font-size: clamp(34px, 10.6vw, 58px);
+  }
+  .hero.cinematic-section .hero-actions {
+    flex-wrap: wrap;
+  }
+  .hero.cinematic-section .hero-actions .button {
+    flex-basis: 120px;
+  }
+  .hero.cinematic-section .hero-note {
+    line-height: 1.6;
+  }
+  .game-teaser-grid {
+    display: block;
+    min-height: 0;
+    padding-block: 310px 28px;
+  }
+}
+@media (max-width: 360px) {
+  .hero.cinematic-section .hero-actions .button {
+    /* The inherited narrow layout stacks these; flex-basis then means height. */
+    flex-basis: auto;
+    width: 100%;
+  }
+}

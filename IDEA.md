@@ -1,5 +1,9 @@
 # KH-Tech Oy – tuotteen määrittely
 
+## WEBSITE 2.3 – etusivun taustat ja lasipaneelit, 8.11.2026
+
+Kolmeen nykyiseen osioon lisätään toimitetut kuvat järjestyksessä: putkisto/venttiili heroon, kupariputket yritysesittelyyn ja Putkimestari-kuva peliesittelyyn. Taustat ulottuvat koko näytön leveydelle; nykyiset HTML-tekstit ja toiminnot säilyvät yhtenäisissä tummissa lasipaneeleissa. Poistetaan vain näiden osioiden vanhat kuvituskortit. Tekstiryhmien puolia tai muun sivuston rakennetta ei vaihdeta. Mobiilissa kuvarajaus ja pystysuuntainen tila suojaavat venttiilin, mittarin ja maskotin kasvojen näkyvyyden. Optimoidut paikalliset WebP-assetit, nykyiset muuttamattomat logot ja Pages-polut; pelin, raportin ja lomakkeen toiminta säilyy. Toteutus ja visuaalinen tarkistus: `WEBSITE_2_3_LIQUID_GLASS_REPORT.md`.
+
 Pelin ohjauspäivitys 8.11.2026: yksi Toiminta-painike hoitaa hanat, laatikon työnnöt ja korjauksen lähimmän kantaman sisällä olevan kohteen mukaan. E ja välilyönti käynnistävät saman toiminnon. Kaksi erillistä toimintopainiketta korvataan tällä ohjauksella; laatikon fyysiset työnnöt, ratkeavuustarkistukset ja opastus säilyvät. Tarkistusraportti: `docs/action-review/README.md`.
 
 ## GAME 3.0 – nykyinen pelityö, 7.11.2026

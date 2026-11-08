@@ -1,0 +1,136 @@
+{
+  "tool": "Pillow 11.2.1",
+  "quality": 84,
+  "method": 6,
+  "images": [
+    {
+      "source": "docs/website_bg_1.png",
+      "sha256": "5188aa6cdd139a4204d428952f35bab8249c28a36f2c80f9e6307d8396e5f0a9",
+      "originalBytes": 2048831,
+      "mobileCrop": [
+        1010,
+        210,
+        1740,
+        887
+      ],
+      "outputs": [
+        {
+          "path": "public/website/hero-960.webp",
+          "width": 960,
+          "height": 480,
+          "bytes": 47650
+        },
+        {
+          "path": "public/website/hero-1280.webp",
+          "width": 1280,
+          "height": 640,
+          "bytes": 73664
+        },
+        {
+          "path": "public/website/hero-1774.webp",
+          "width": 1774,
+          "height": 887,
+          "bytes": 114238
+        },
+        {
+          "path": "public/website/hero-mobile-480.webp",
+          "width": 480,
+          "height": 445,
+          "bytes": 39536
+        },
+        {
+          "path": "public/website/hero-mobile-720.webp",
+          "width": 720,
+          "height": 668,
+          "bytes": 70164
+        }
+      ]
+    },
+    {
+      "source": "docs/website_bg_2.png",
+      "sha256": "b7e14b39b8587764753fc31056d66adfa7f1156c582f9720e1e4237f7e660a97",
+      "originalBytes": 1893921,
+      "mobileCrop": [
+        0,
+        110,
+        1080,
+        887
+      ],
+      "outputs": [
+        {
+          "path": "public/website/company-960.webp",
+          "width": 960,
+          "height": 480,
+          "bytes": 42418
+        },
+        {
+          "path": "public/website/company-1280.webp",
+          "width": 1280,
+          "height": 640,
+          "bytes": 60644
+        },
+        {
+          "path": "public/website/company-1774.webp",
+          "width": 1774,
+          "height": 887,
+          "bytes": 89604
+        },
+        {
+          "path": "public/website/company-mobile-480.webp",
+          "width": 480,
+          "height": 345,
+          "bytes": 26860
+        },
+        {
+          "path": "public/website/company-mobile-720.webp",
+          "width": 720,
+          "height": 518,
+          "bytes": 46148
+        }
+      ]
+    },
+    {
+      "source": "docs/website_bg_3.png",
+      "sha256": "310d4cd730ca5c6d3ec05f02d44d19c36626c0797e4b798e0d02e3b59fb86ebf",
+      "originalBytes": 1999178,
+      "mobileCrop": [
+        40,
+        110,
+        920,
+        887
+      ],
+      "outputs": [
+        {
+          "path": "public/website/game-960.webp",
+          "width": 960,
+          "height": 480,
+          "bytes": 70548
+        },
+        {
+          "path": "public/website/game-1280.webp",
+          "width": 1280,
+          "height": 640,
+          "bytes": 98718
+        },
+        {
+          "path": "public/website/game-1774.webp",
+          "width": 1774,
+          "height": 887,
+          "bytes": 145292
+        },
+        {
+          "path": "public/website/game-mobile-480.webp",
+          "width": 480,
+          "height": 424,
+          "bytes": 35132
+        },
+        {
+          "path": "public/website/game-mobile-720.webp",
+          "width": 720,
+          "height": 636,
+          "bytes": 57976
+        }
+      ]
+    }
+  ]
+}
