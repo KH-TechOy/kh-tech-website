@@ -1,0 +1,683 @@
+{
+  "pass": "final",
+  "base": "/kh-tech-website/",
+  "production": true,
+  "environment": "Chromium viewport/touch emulation, not physical devices",
+  "results": [
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "route": "palvelut",
+      "heroText": "PALVELUTPutkityöt, jotka palvelevat arkeasi.Huollosta saneeraukseen – LVI-työt koteihin ja kiinteistöihin Helsingissä ja Uudellamaalla.",
+      "belowHash": "514e6dec58cd66aa5967b0d5b994dc367512723cd87859581b262de2f00c50f6",
+      "belowStyles": [
+        {
+          "selector": ".service-card",
+          "width": 350,
+          "height": 428.09375,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "25px"
+        },
+        {
+          "selector": ".service-card",
+          "width": 350,
+          "height": 428.09375,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "25px"
+        },
+        {
+          "selector": ".service-card",
+          "width": 350,
+          "height": 402.203125,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "25px"
+        },
+        {
+          "selector": ".service-card",
+          "width": 350,
+          "height": 460.484375,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "25px"
+        }
+      ],
+      "detail": {
+        "width": 390,
+        "left": 0,
+        "height": 472.171875,
+        "blur": "blur(12px) saturate(1.25)",
+        "radius": "22px",
+        "contrast": 4.633362689964098,
+        "focalVisible": true,
+        "panelInside": true,
+        "image": {
+          "src": "http://127.0.0.1:5185/kh-tech-website/website/services-mobile-720.webp",
+          "loading": "eager",
+          "priority": "high",
+          "position": "60% 0%"
+        }
+      }
+    },
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "route": "yritys",
+      "heroText": "YRITYSOsaamista ja asennetta. Asiakasta varten.KH-Tech Oy tuo suomalaista LVI-osaamista koteihin ja kiinteistöihin Helsingissä ja Uudellamaalla.",
+      "belowHash": "bdb0a6d7fa92119fe42d008b2e34cdee1449a7b416f1becdf2e5b27b17dfaefe",
+      "belowStyles": [
+        {
+          "selector": ".company-info-card",
+          "width": 350,
+          "height": 439.34375,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgb(242, 244, 241)",
+          "padding": "28px"
+        },
+        {
+          "selector": ".about-grid",
+          "width": 350,
+          "height": 1014.265625,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "59px 0px"
+        }
+      ],
+      "detail": {
+        "width": 390,
+        "left": 0,
+        "height": 542.0625,
+        "blur": "blur(12px) saturate(1.25)",
+        "radius": "22px",
+        "contrast": 4.633362689964098,
+        "focalVisible": true,
+        "panelInside": true,
+        "image": {
+          "src": "http://127.0.0.1:5185/kh-tech-website/website/about-mobile-720.webp",
+          "loading": "eager",
+          "priority": "high",
+          "position": "65% 0%"
+        }
+      }
+    },
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "route": "yhteystiedot",
+      "heroText": "YHTEYSTIEDOTMiten voimme auttaa?Kysy LVI-työstä tai kerro suunnitelmistasi. Saat yhteyden suoraan yrityksen yrittäjään.",
+      "belowHash": "10d72cfd962014e9bfe3fe86b3dc32c42515b1ad9ec103ca9316a52f3d19258b",
+      "belowStyles": [
+        {
+          "selector": ".contact-form",
+          "width": 350,
+          "height": 1478.359375,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgb(255, 255, 255)",
+          "padding": "25px 20px"
+        },
+        {
+          "selector": ".contact-aside",
+          "width": 350,
+          "height": 668.734375,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "0px"
+        }
+      ],
+      "detail": {
+        "width": 390,
+        "left": 0,
+        "height": 472.171875,
+        "blur": "blur(12px) saturate(1.25)",
+        "radius": "22px",
+        "contrast": 4.633362689964098,
+        "focalVisible": true,
+        "panelInside": true,
+        "image": {
+          "src": "http://127.0.0.1:5185/kh-tech-website/website/contact-mobile-720.webp",
+          "loading": "eager",
+          "priority": "high",
+          "position": "70% 0%"
+        }
+      },
+      "contactRows": [
+        {
+          "x": 20,
+          "y": 810.4375,
+          "width": 350,
+          "height": 83
+        },
+        {
+          "x": 20,
+          "y": 893.4375,
+          "width": 350,
+          "height": 83
+        },
+        {
+          "x": 20,
+          "y": 976.4375,
+          "width": 350,
+          "height": 83
+        }
+      ]
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024,
+      "route": "palvelut",
+      "heroText": "PALVELUTPutkityöt, jotka palvelevat arkeasi.Huollosta saneeraukseen – LVI-työt koteihin ja kiinteistöihin Helsingissä ja Uudellamaalla.",
+      "belowHash": "514e6dec58cd66aa5967b0d5b994dc367512723cd87859581b262de2f00c50f6",
+      "belowStyles": [
+        {
+          "selector": ".service-card",
+          "width": 342,
+          "height": 456.046875,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "38px 36px"
+        },
+        {
+          "selector": ".service-card",
+          "width": 342,
+          "height": 456.046875,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "38px 36px"
+        },
+        {
+          "selector": ".service-card",
+          "width": 342,
+          "height": 508.4375,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "38px 36px"
+        },
+        {
+          "selector": ".service-card",
+          "width": 342,
+          "height": 508.4375,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "38px 36px"
+        }
+      ],
+      "detail": {
+        "width": 768,
+        "left": 0,
+        "height": 420,
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px",
+        "contrast": 4.633362689964098,
+        "focalVisible": true,
+        "panelInside": true,
+        "image": {
+          "src": "http://127.0.0.1:5185/kh-tech-website/website/services-1200.webp",
+          "loading": "eager",
+          "priority": "high",
+          "position": "80% 32%"
+        }
+      }
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024,
+      "route": "yritys",
+      "heroText": "YRITYSOsaamista ja asennetta. Asiakasta varten.KH-Tech Oy tuo suomalaista LVI-osaamista koteihin ja kiinteistöihin Helsingissä ja Uudellamaalla.",
+      "belowHash": "bdb0a6d7fa92119fe42d008b2e34cdee1449a7b416f1becdf2e5b27b17dfaefe",
+      "belowStyles": [
+        {
+          "selector": ".company-info-card",
+          "width": 334.5,
+          "height": 428.53125,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgb(242, 244, 241)",
+          "padding": "26px"
+        },
+        {
+          "selector": ".about-grid",
+          "width": 704,
+          "height": 620.9375,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "72px 0px"
+        }
+      ],
+      "detail": {
+        "width": 768,
+        "left": 0,
+        "height": 420,
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px",
+        "contrast": 4.633362689964098,
+        "focalVisible": true,
+        "panelInside": true,
+        "image": {
+          "src": "http://127.0.0.1:5185/kh-tech-website/website/about-1200.webp",
+          "loading": "eager",
+          "priority": "high",
+          "position": "72% 28%"
+        }
+      }
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024,
+      "route": "yhteystiedot",
+      "heroText": "YHTEYSTIEDOTMiten voimme auttaa?Kysy LVI-työstä tai kerro suunnitelmistasi. Saat yhteyden suoraan yrityksen yrittäjään.",
+      "belowHash": "10d72cfd962014e9bfe3fe86b3dc32c42515b1ad9ec103ca9316a52f3d19258b",
+      "belowStyles": [
+        {
+          "selector": ".contact-form",
+          "width": 680,
+          "height": 1254.015625,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgb(255, 255, 255)",
+          "padding": "35px"
+        },
+        {
+          "selector": ".contact-aside",
+          "width": 704,
+          "height": 536.875,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "0px"
+        }
+      ],
+      "detail": {
+        "width": 768,
+        "left": 0,
+        "height": 420,
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px",
+        "contrast": 4.633362689964098,
+        "focalVisible": true,
+        "panelInside": true,
+        "image": {
+          "src": "http://127.0.0.1:5185/kh-tech-website/website/contact-1200.webp",
+          "loading": "eager",
+          "priority": "high",
+          "position": "88% 30%"
+        }
+      },
+      "contactRows": [
+        {
+          "x": 404,
+          "y": 581.03125,
+          "width": 332,
+          "height": 136.9375
+        },
+        {
+          "x": 404,
+          "y": 717.96875,
+          "width": 332,
+          "height": 95.1875
+        },
+        {
+          "x": 404,
+          "y": 813.15625,
+          "width": 332,
+          "height": 83
+        }
+      ]
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 900,
+      "route": "palvelut",
+      "heroText": "PALVELUTPutkityöt, jotka palvelevat arkeasi.Huollosta saneeraukseen – LVI-työt koteihin ja kiinteistöihin Helsingissä ja Uudellamaalla.",
+      "belowHash": "514e6dec58cd66aa5967b0d5b994dc367512723cd87859581b262de2f00c50f6",
+      "belowStyles": [
+        {
+          "selector": ".service-card",
+          "width": 607.5,
+          "height": 390.6875,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "38px 36px"
+        },
+        {
+          "selector": ".service-card",
+          "width": 607.5,
+          "height": 390.6875,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "38px 36px"
+        },
+        {
+          "selector": ".service-card",
+          "width": 607.5,
+          "height": 390.6875,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "38px 36px"
+        },
+        {
+          "selector": ".service-card",
+          "width": 607.5,
+          "height": 390.6875,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "38px 36px"
+        }
+      ],
+      "detail": {
+        "width": 1440,
+        "left": 0,
+        "height": 420,
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px",
+        "contrast": 4.633362689964098,
+        "focalVisible": true,
+        "panelInside": true,
+        "image": {
+          "src": "http://127.0.0.1:5185/kh-tech-website/website/services-1672.webp",
+          "loading": "eager",
+          "priority": "high",
+          "position": "80% 32%"
+        }
+      }
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 900,
+      "route": "yritys",
+      "heroText": "YRITYSOsaamista ja asennetta. Asiakasta varten.KH-Tech Oy tuo suomalaista LVI-osaamista koteihin ja kiinteistöihin Helsingissä ja Uudellamaalla.",
+      "belowHash": "bdb0a6d7fa92119fe42d008b2e34cdee1449a7b416f1becdf2e5b27b17dfaefe",
+      "belowStyles": [
+        {
+          "selector": ".company-info-card",
+          "width": 460,
+          "height": 453.34375,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgb(242, 244, 241)",
+          "padding": "35px"
+        },
+        {
+          "selector": ".about-grid",
+          "width": 1240,
+          "height": 653.34375,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "100px 0px"
+        }
+      ],
+      "detail": {
+        "width": 1440,
+        "left": 0,
+        "height": 420,
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px",
+        "contrast": 4.633362689964098,
+        "focalVisible": true,
+        "panelInside": true,
+        "image": {
+          "src": "http://127.0.0.1:5185/kh-tech-website/website/about-1672.webp",
+          "loading": "eager",
+          "priority": "high",
+          "position": "72% 28%"
+        }
+      }
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 900,
+      "route": "yhteystiedot",
+      "heroText": "YHTEYSTIEDOTMiten voimme auttaa?Kysy LVI-työstä tai kerro suunnitelmistasi. Saat yhteyden suoraan yrityksen yrittäjään.",
+      "belowHash": "10d72cfd962014e9bfe3fe86b3dc32c42515b1ad9ec103ca9316a52f3d19258b",
+      "belowStyles": [
+        {
+          "selector": ".contact-form",
+          "width": 690,
+          "height": 1254.015625,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgb(255, 255, 255)",
+          "padding": "35px"
+        },
+        {
+          "selector": ".contact-aside",
+          "width": 460,
+          "height": 721.21875,
+          "font": "16px \"Segoe UI\", Arial, sans-serif",
+          "color": "rgb(32, 38, 41)",
+          "background": "rgba(0, 0, 0, 0)",
+          "padding": "0px"
+        }
+      ],
+      "detail": {
+        "width": 1440,
+        "left": 0,
+        "height": 420,
+        "blur": "blur(18px) saturate(1.25)",
+        "radius": "24px",
+        "contrast": 4.633362689964098,
+        "focalVisible": true,
+        "panelInside": true,
+        "image": {
+          "src": "http://127.0.0.1:5185/kh-tech-website/website/contact-1672.webp",
+          "loading": "eager",
+          "priority": "high",
+          "position": "88% 30%"
+        }
+      },
+      "contactRows": [
+        {
+          "x": 100,
+          "y": 850.96875,
+          "width": 460,
+          "height": 86
+        },
+        {
+          "x": 100,
+          "y": 936.96875,
+          "width": 460,
+          "height": 86
+        },
+        {
+          "x": 100,
+          "y": 1022.96875,
+          "width": 460,
+          "height": 86
+        }
+      ]
+    }
+  ],
+  "home": [
+    {
+      "name": "mobile",
+      "htmlHash": "9a2faea88ab82a8b012bffe214d940251f31644659a6b3918db24444e7c400de",
+      "styles": [
+        {
+          "width": 390,
+          "height": 778.828125,
+          "padding": "0px",
+          "background": "rgb(16, 33, 44)",
+          "blur": "none",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 350,
+          "height": 500.828125,
+          "padding": "25px 22px",
+          "background": "rgba(12, 25, 35, 0.7)",
+          "blur": "blur(18px) saturate(1.25)",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 390,
+          "height": 721.140625,
+          "padding": "0px",
+          "background": "rgb(16, 33, 44)",
+          "blur": "none",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 350,
+          "height": 463.140625,
+          "padding": "25px 22px",
+          "background": "rgba(12, 25, 35, 0.7)",
+          "blur": "blur(18px) saturate(1.25)",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 390,
+          "height": 628.171875,
+          "padding": "0px",
+          "background": "rgb(16, 33, 44)",
+          "blur": "none",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 350,
+          "height": 290.171875,
+          "padding": "25px 22px",
+          "background": "rgba(8, 28, 48, 0.76)",
+          "blur": "blur(18px) saturate(1.25)",
+          "color": "rgb(247, 249, 251)"
+        }
+      ]
+    },
+    {
+      "name": "tablet",
+      "htmlHash": "9a2faea88ab82a8b012bffe214d940251f31644659a6b3918db24444e7c400de",
+      "styles": [
+        {
+          "width": 768,
+          "height": 586.21875,
+          "padding": "0px",
+          "background": "rgb(16, 33, 44)",
+          "blur": "none",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 464.6875,
+          "height": 510.21875,
+          "padding": "28px",
+          "background": "rgba(12, 25, 35, 0.7)",
+          "blur": "blur(18px) saturate(1.25)",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 768,
+          "height": 606.8125,
+          "padding": "90px 0px",
+          "background": "rgb(16, 33, 44)",
+          "blur": "none",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 429.46875,
+          "height": 426.8125,
+          "padding": "28px",
+          "background": "rgba(12, 25, 35, 0.7)",
+          "blur": "blur(18px) saturate(1.25)",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 768,
+          "height": 729.296875,
+          "padding": "0px",
+          "background": "rgb(16, 33, 44)",
+          "blur": "none",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 558,
+          "height": 279.296875,
+          "padding": "28px",
+          "background": "rgba(8, 28, 48, 0.76)",
+          "blur": "blur(18px) saturate(1.25)",
+          "color": "rgb(247, 249, 251)"
+        }
+      ]
+    },
+    {
+      "name": "desktop",
+      "htmlHash": "9a2faea88ab82a8b012bffe214d940251f31644659a6b3918db24444e7c400de",
+      "styles": [
+        {
+          "width": 1440,
+          "height": 667.828125,
+          "padding": "0px",
+          "background": "rgb(16, 33, 44)",
+          "blur": "none",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 687.46875,
+          "height": 567.828125,
+          "padding": "36px",
+          "background": "rgba(12, 25, 35, 0.7)",
+          "blur": "blur(18px) saturate(1.25)",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 1440,
+          "height": 603.84375,
+          "padding": "90px 0px",
+          "background": "rgb(16, 33, 44)",
+          "blur": "none",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 691.78125,
+          "height": 423.84375,
+          "padding": "32px",
+          "background": "rgba(12, 25, 35, 0.7)",
+          "blur": "blur(18px) saturate(1.25)",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 1440,
+          "height": 640,
+          "padding": "0px",
+          "background": "rgb(16, 33, 44)",
+          "blur": "none",
+          "color": "rgb(247, 249, 251)"
+        },
+        {
+          "width": 566,
+          "height": 279.296875,
+          "padding": "28px 32px",
+          "background": "rgba(8, 28, 48, 0.76)",
+          "blur": "blur(18px) saturate(1.25)",
+          "color": "rgb(247, 249, 251)"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

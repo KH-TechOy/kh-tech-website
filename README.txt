@@ -1,4 +1,16 @@
 KH-TECH OY – VERKKOSIVU, TYÖRAPORTTI JA PELI
+WEBSITE 2.4 – ALASIVUJEN HEROT
+  Palvelut-, Yritys- ja Yhteystiedot-sivut käyttävät samaa taustakuva-
+  komponenttia ja lasipaneelia kuin etusivu. Vain yläherot muuttuvat.
+  Alkuperäiset kuvat: docs/website_bg_4.png–website_bg_6.png.
+  Raportti: WEBSITE_2_4_SUBPAGES_REPORT.md.
+  Kuvien uusinta: python scripts/build-website-backgrounds.py --subpages
+  (Pillow; ei muuta etusivun kuvia). Selainkatselmointi:
+  node scripts/review-subpage-glass.mjs. Tuotantoajoa varten rakenna
+  sivusto ja aseta WEBSITE_PRODUCTION=1 sekä haluttu VITE_BASE_PATH.
+  Kaappaukset: docs/website24-screenshots/final/.
+  Samalla korjattu hyväksytty vanha tablettinäkymän yhteystietoruudukko.
+
 WEBSITE 2.3 – ETUSIVUN TAUSTAT JA LIQUID GLASS
   Heron, yritysesittelyn ja peliesittelyn nykyisten tekstien taakse
   lisätään toimitetut koko leveydelle ulottuvat kuvat ja lasipaneelit.

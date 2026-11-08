@@ -1,5 +1,11 @@
 # KH-Tech Oy – tuotteen määrittely
 
+## WEBSITE 2.4 – alasivujen taustat, 8.11.2026
+
+Palvelut-, Yritys- ja Yhteystiedot-sivujen nykyisiin heroihin lisätään toimitetut kuvat 4, 5 ja 6 sekä etusivun kanssa yhtenäinen lasipaneeli. Vain herojen esitystapa muuttuu. Nykyinen sisältö, etusivu, palvelukortit, yritystiedot, yhteydenottolomake ja muut sovellukset säilyvät. Optimoidut kuvat ovat paikallisia ja Pages-yhteensopivia; mobiilissa käytetään tarvittaessa omia rajauksia. Tarkistukset: `WEBSITE_2_4_SUBPAGES_REPORT.md`.
+
+Lisäksi hyväksytty rajattu CSS-korjaus: yhteystietojen puhelinlinkki ja palvelualue erotetaan omille ruudukon riveilleen tabletilla. Tekstit, linkit ja lomakkeen toiminta säilyvät.
+
 ## WEBSITE 2.3 – etusivun taustat ja lasipaneelit, 8.11.2026
 
 Kolmeen nykyiseen osioon lisätään toimitetut kuvat järjestyksessä: putkisto/venttiili heroon, kupariputket yritysesittelyyn ja Putkimestari-kuva peliesittelyyn. Taustat ulottuvat koko näytön leveydelle; nykyiset HTML-tekstit ja toiminnot säilyvät yhtenäisissä tummissa lasipaneeleissa. Poistetaan vain näiden osioiden vanhat kuvituskortit. Tekstiryhmien puolia tai muun sivuston rakennetta ei vaihdeta. Mobiilissa kuvarajaus ja pystysuuntainen tila suojaavat venttiilin, mittarin ja maskotin kasvojen näkyvyyden. Optimoidut paikalliset WebP-assetit, nykyiset muuttamattomat logot ja Pages-polut; pelin, raportin ja lomakkeen toiminta säilyy. Toteutus ja visuaalinen tarkistus: `WEBSITE_2_3_LIQUID_GLASS_REPORT.md`.

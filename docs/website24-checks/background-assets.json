@@ -1,0 +1,136 @@
+{
+  "tool": "Pillow 11.2.1",
+  "quality": 84,
+  "method": 6,
+  "images": [
+    {
+      "source": "docs/website_bg_4.png",
+      "sha256": "79cd0164732bd118610d9f92e23012fa8fe73e6247960fa1605490eb12754741",
+      "originalBytes": 1863701,
+      "mobileCrop": [
+        940,
+        80,
+        1672,
+        941
+      ],
+      "outputs": [
+        {
+          "path": "public/website/services-800.webp",
+          "width": 800,
+          "height": 450,
+          "bytes": 36804
+        },
+        {
+          "path": "public/website/services-1200.webp",
+          "width": 1200,
+          "height": 675,
+          "bytes": 64436
+        },
+        {
+          "path": "public/website/services-1672.webp",
+          "width": 1672,
+          "height": 941,
+          "bytes": 99558
+        },
+        {
+          "path": "public/website/services-mobile-480.webp",
+          "width": 480,
+          "height": 565,
+          "bytes": 42450
+        },
+        {
+          "path": "public/website/services-mobile-720.webp",
+          "width": 720,
+          "height": 847,
+          "bytes": 72508
+        }
+      ]
+    },
+    {
+      "source": "docs/website_bg_5.png",
+      "sha256": "a3197bbed2c7b8e9225bf318bebe7eaf4df0e7a45e31672377d6a84cabc4354d",
+      "originalBytes": 1975846,
+      "mobileCrop": [
+        890,
+        70,
+        1672,
+        941
+      ],
+      "outputs": [
+        {
+          "path": "public/website/about-800.webp",
+          "width": 800,
+          "height": 450,
+          "bytes": 40314
+        },
+        {
+          "path": "public/website/about-1200.webp",
+          "width": 1200,
+          "height": 675,
+          "bytes": 73334
+        },
+        {
+          "path": "public/website/about-1672.webp",
+          "width": 1672,
+          "height": 941,
+          "bytes": 114834
+        },
+        {
+          "path": "public/website/about-mobile-480.webp",
+          "width": 480,
+          "height": 535,
+          "bytes": 41010
+        },
+        {
+          "path": "public/website/about-mobile-720.webp",
+          "width": 720,
+          "height": 802,
+          "bytes": 75050
+        }
+      ]
+    },
+    {
+      "source": "docs/website_bg_6.png",
+      "sha256": "cddc4be3ede8090af2762defd4b201cc1c910216a89293d4930f07e0e4e7ecc3",
+      "originalBytes": 1814525,
+      "mobileCrop": [
+        990,
+        190,
+        1672,
+        941
+      ],
+      "outputs": [
+        {
+          "path": "public/website/contact-800.webp",
+          "width": 800,
+          "height": 450,
+          "bytes": 31456
+        },
+        {
+          "path": "public/website/contact-1200.webp",
+          "width": 1200,
+          "height": 675,
+          "bytes": 54474
+        },
+        {
+          "path": "public/website/contact-1672.webp",
+          "width": 1672,
+          "height": 941,
+          "bytes": 85330
+        },
+        {
+          "path": "public/website/contact-mobile-480.webp",
+          "width": 480,
+          "height": 529,
+          "bytes": 29986
+        },
+        {
+          "path": "public/website/contact-mobile-720.webp",
+          "width": 720,
+          "height": 793,
+          "bytes": 51648
+        }
+      ]
+    }
+  ]
+}

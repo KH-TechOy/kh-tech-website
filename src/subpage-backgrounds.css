@@ -1,0 +1,57 @@
+/* WEBSITE 2.4: reuse the homepage's SectionBackground and kh-glass primitives.
+   Every layout rule is limited to the three opt-in public page heroes. */
+.page-hero.page-hero--cinematic {
+  display: flex;
+  align-items: center;
+  min-height: 420px;
+  background: #10212c;
+  border: 0;
+}
+.page-hero--cinematic .subpage-hero-content {
+  width: min(900px, calc(100% + 64px));
+  padding: 32px;
+  margin: -32px;
+}
+.page-hero--cinematic p {
+  color: #e0e8ee;
+}
+.page-hero--services .section-background img {
+  object-position: 80% 32%;
+}
+.page-hero--about .section-background img {
+  object-position: 72% 28%;
+}
+.page-hero--contact .section-background img {
+  object-position: 88% 30%;
+}
+@media (max-width: 1100px) {
+  .page-hero--cinematic .subpage-hero-content {
+    width: min(700px, calc(100% - 220px));
+    padding: 28px;
+    margin: -28px -12px;
+  }
+}
+@media (max-width: 600px) {
+  .page-hero.page-hero--cinematic {
+    min-height: 0;
+    padding-block: 200px 28px;
+  }
+  .page-hero--cinematic .subpage-hero-content {
+    width: 100%;
+    margin: 0;
+    padding: 25px 22px;
+    border-radius: 22px;
+    /* A single, smaller blur surface on phone-sized screens. */
+    backdrop-filter: blur(12px) saturate(125%);
+    -webkit-backdrop-filter: blur(12px) saturate(125%);
+  }
+  .page-hero--services .section-background img {
+    object-position: 60% top;
+  }
+  .page-hero--about .section-background img {
+    object-position: 65% top;
+  }
+  .page-hero--contact .section-background img {
+    object-position: 70% top;
+  }
+}

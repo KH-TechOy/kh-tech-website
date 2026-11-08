@@ -1,5 +1,11 @@
 # KH-Tech Oy – toteutusohje
 
+## WEBSITE 2.4 – alasivujen herot, 8.11.2026
+
+Käyttäjä hyväksyi lisäksi 768 px:n näkymässä havaitun vanhan yhteystietoruudukon CSS-korjauksen: puhelinlinkki ja palvelualue eivät saa osua samaan ruudukon soluun. Tämä on ainoa poikkeus herojen alapuolisen tyylityksen säilyttämiseen; sisältö ja lomakelogiikka eivät muutu.
+
+Laajenna nykyinen SectionBackground/kh-glass-toteutus vain palvelu-, yritys- ja yhteystietosivujen yläheroihin. Käytä järjestyksessä `docs/website_bg_4.png`, `website_bg_5.png` ja `website_bg_6.png`; pakkaa paikalliset WebP-versiot ja säilytä PNG-lähteet muuttamattomina. Säilytä nykyiset suomenkieliset tekstit, typografia, sisältöleveys ja navigaatio. Etusivun lasiosiot, alasivujen muu sisältö, lomakelogiikka, raportti/PDF, peli ja julkaisutyönkulku eivät muutu. Tarkista kontrasti, kuvakohtaiset rajaukset, blur-varatyyli, vähennetty liike ja juuri-/Pages-polut oikeissa 390×844-, 768×1024- ja 1440×900-kaappauksissa. Raportoi `WEBSITE_2_4_SUBPAGES_REPORT.md`:ssä. Työ main-haaralla, paikallinen commit, ei pushia tai deployta.
+
 ## WEBSITE 2.3 – rajattu etusivun ulkoasupäivitys, 8.11.2026
 
 Käytä toimitettuja `docs/website_bg_1.png`, `website_bg_2.png` ja `website_bg_3.png` tässä järjestyksessä etusivun heron, yritysesittelyn ja peliesittelyn koko leveydelle ulottuvina taustoina. Poista näiden osioiden vanhat kuvituskortit ja lisää nykyisten tekstiryhmien taakse hillitty tumma Liquid Glass -paneeli. Säilytä tekstisisältö, linkit, painikkeet, keskitetty sisältöleveys ja ryhmien nykyiset puolet. Optimoi WebP-versiot public-kansioon, säilytä alkuperäiset ja varmista kuvakohtaiset mobiilirajaukset, kohteiden näkyvyys, kontrasti, blur-varatyyli ja Pages-peruspolku. Älä muuta peliä, raporttia, lomaketoimintoja tai julkaisutyönkulkua. Tarkista aidot 390×844-, 768×1024- ja 1440×900-kaappaukset sekä tee niiden perusteella korjauskierros. Raportti: `WEBSITE_2_3_LIQUID_GLASS_REPORT.md`. Paikallinen main-commit, ei pushia tai deployta.

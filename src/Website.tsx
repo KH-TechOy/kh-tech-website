@@ -16,28 +16,35 @@ import {
 import { Brand, company, services, url } from "./brand";
 import Contact from "./Contact";
 import "./homepage-backgrounds.css";
+import "./subpage-backgrounds.css";
+
+type SubpageBackground = "services" | "about" | "contact";
 
 function SectionBackground({
   image,
   primary = false,
 }: {
-  image: "hero" | "company" | "game";
+  image: "hero" | "company" | "game" | SubpageBackground;
   primary?: boolean;
 }) {
   const asset = (suffix: string) => url(`website/${image}${suffix}.webp`);
+  const subpage = image === "services" || image === "about" || image === "contact";
+  const imageWidth = subpage ? 1672 : 1774;
   return (
     <picture className="section-background" aria-hidden="true">
       <source
         media="(max-width: 600px)"
         srcSet={`${asset("-mobile-480")} 480w, ${asset("-mobile-720")} 720w`}
-        sizes="220vw"
+        sizes={subpage ? "150vw" : "220vw"}
       />
       <img
-        src={asset("-1774")}
-        srcSet={`${asset("-960")} 960w, ${asset("-1280")} 1280w, ${asset("-1774")} 1774w`}
-        sizes="(max-width: 1100px) 180vw, 100vw"
-        width="1774"
-        height="887"
+        src={asset(`-${imageWidth}`)}
+        srcSet={subpage
+          ? `${asset("-800")} 800w, ${asset("-1200")} 1200w, ${asset("-1672")} 1672w`
+          : `${asset("-960")} 960w, ${asset("-1280")} 1280w, ${asset("-1774")} 1774w`}
+        sizes={subpage ? "(max-width: 1100px) 130vw, 100vw" : "(max-width: 1100px) 180vw, 100vw"}
+        width={imageWidth}
+        height={subpage ? 941 : 887}
         alt=""
         loading={primary ? "eager" : "lazy"}
         fetchPriority={primary ? "high" : "auto"}
@@ -156,17 +163,25 @@ export function PageHero({
   eyebrow,
   title,
   copy,
+  image,
 }: {
   eyebrow: string;
   title: string;
   copy: string;
+  image?: SubpageBackground;
 }) {
+  const content = (
+    <>
+      <div className="eyebrow">{eyebrow}</div>
+      <h1>{title}</h1>
+      <p>{copy}</p>
+    </>
+  );
   return (
-    <section className="page-hero">
+    <section className={image ? `page-hero cinematic-section page-hero--cinematic page-hero--${image}` : "page-hero"}>
+      {image && <SectionBackground image={image} primary />}
       <div className="container">
-        <div className="eyebrow">{eyebrow}</div>
-        <h1>{title}</h1>
-        <p>{copy}</p>
+        {image ? <div className="subpage-hero-content kh-glass">{content}</div> : content}
       </div>
     </section>
   );
@@ -343,6 +358,7 @@ function About() {
     <>
       <PageHero
         eyebrow="YRITYS"
+        image="about"
         title="Osaamista ja asennetta. Asiakasta varten."
         copy="KH-Tech Oy tuo suomalaista LVI-osaamista koteihin ja kiinteistöihin Helsingissä ja Uudellamaalla."
       />
@@ -488,6 +504,7 @@ export default function Website({ path }: { path: string }) {
           <>
             <PageHero
               eyebrow="PALVELUT"
+              image="services"
               title="Putkityöt, jotka palvelevat arkeasi."
               copy="Huollosta saneeraukseen – LVI-työt koteihin ja kiinteistöihin Helsingissä ja Uudellamaalla."
             />
@@ -512,6 +529,7 @@ export default function Website({ path }: { path: string }) {
           <>
             <PageHero
               eyebrow="YHTEYSTIEDOT"
+              image="contact"
               title="Miten voimme auttaa?"
               copy="Kysy LVI-työstä tai kerro suunnitelmistasi. Saat yhteyden suoraan yrityksen yrittäjään."
             />
