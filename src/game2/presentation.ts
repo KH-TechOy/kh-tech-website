@@ -160,12 +160,9 @@ export class WorkshopView {
     const key=`${m.crate.x},${m.crate.y}`;
     if(key!==this.crateKey){this.crateKey=key;const c=project(center(m.crate));this.scene.tweens.killTweensOf(this.crate);this.scene.tweens.add({targets:this.crate,x:c.x,y:c.y+9,duration:this.reducedMotion?0:150,ease:'Sine.easeOut'});this.crate.setDepth(c.y+9);this.crateShadow.setPosition(c.x+6,c.y+8)}
     // Context only: no target(), solver route, floating arrow or next-object marker.
-    const action=m.usableAction();let near:Cell|undefined;
-    if(action==='valve')near=(m.level.valves||[m.level.valve]).find((c,i)=>!m.closedValves[i]&&m.near(c));
-    if(action==='repair')near=m.level.leak;
-    if(!near&&m.near(m.crate,110)&&!m.gateOpen)near=m.crate;
+    const target=m.actionTarget(),action=target?.kind,near=target?.cell;
     this.prompt.setVisible(m.phase==='playing'&&!!near);
-    if(near){const n=project(center(near));this.prompt.setText(action==='valve'?'E · SULJE':action==='repair'?'E · KORJAA':'SPACE · TYÖNNÄ').setPosition(n.x,n.y-97)}
+    if(near){const n=project(center(near));this.prompt.setText(action==='valve'?'E · SULJE':action==='repair'?'E · KORJAA':'E · TYÖNNÄ').setPosition(n.x,n.y-97)}
     if(active&&!m.valveClosed)this.waterAge=Math.min(1,this.waterAge+seconds/80);
     if(active&&m.valveClosed)this.settle=Math.max(0,this.settle-seconds*.3);
     this.water.emitting=active&&!m.valveClosed;

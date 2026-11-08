@@ -1,5 +1,7 @@
 # KH-Tech Oy – toteutusohje
 
+Nykyinen peliohjaus 8.11.2026: yksi Toiminta-painike yhdistää hanan sulkemisen, laatikon työnnön ja vuodon korjauksen. E ja välilyönti ovat saman tilannekohtaisen toiminnon pikanäppäimiä. Käytä lähintä kantaman sisällä olevaa kohdetta ja säilytä työnnön turvallisuus- sekä opastusehdot. Erillistä työntöpainiketta ei ole. Kosketuksen yhteensopivuusclick ei saa aktivoida uutta painiketta näkymän vaihtuessa. Tarkistukset: `docs/action-review/README.md`.
+
 ## GAME 3.0 – nykyinen pelityö, 7.11.2026
 
 Toteuta konseptiin `docs/Putkimestari_ 2.png` perustuva huomattava 2.5D-grafiikkauudistus nykyiseen peliin. Säilytä pelimalli ja proseduraalinen generaattori. Käytä uutta alkuperäistä rasteritaidetta, yhtenäisiä seinäpintoja ja putkiliitoksia, parempaa hahmoa, kevyttä kasvavaa vettä ja valaistusta. Älä muuta sivuston tai raportin toimintaa. Tämän osion vaatimukset korvaavat vanhojen peliosioiden suuntanuolet ja ratkaisukorostukset: poista reittiohjaus, kaukaisen seuraavan kohteen merkit ja oikean korjauspalan paljastaminen. Säilytä tavoitteet, lähellä kohdetta näkyvät toimintovihjeet, kuvitettu interaktiivinen opastus ja aidot putkivirtauksen portit.

@@ -1,0 +1,15 @@
+{
+  "base": "/kh-tech-website/",
+  "game": true,
+  "refresh": true,
+  "oneCanvas": true,
+  "noDevHook": true,
+  "workerRequests": [
+    "http://127.0.0.1:5182/kh-tech-website/assets/generation.worker-CJX3NO2a.js"
+  ],
+  "allRoutes": true,
+  "localPdfDownload": true,
+  "reportDraftPersisted": true,
+  "contactDemoStatus": true,
+  "failures": []
+}

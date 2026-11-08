@@ -1,0 +1,93 @@
+{
+  "feature": "One contextual action button: valve, crate, repair",
+  "unitTests": {
+    "passed": 55,
+    "files": 9
+  },
+  "browser": {
+    "startTime": "2026-11-08T14:23:14.762Z",
+    "duration": 259918.241,
+    "expected": 18,
+    "skipped": 3,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "production": {
+    "root": {
+      "base": "/",
+      "game": true,
+      "refresh": true,
+      "oneCanvas": true,
+      "noDevHook": true,
+      "workerRequests": [
+        "http://127.0.0.1:5182/assets/generation.worker-CJX3NO2a.js"
+      ],
+      "allRoutes": true,
+      "localPdfDownload": true,
+      "reportDraftPersisted": true,
+      "contactDemoStatus": true,
+      "failures": []
+    },
+    "pages": {
+      "base": "/kh-tech-website/",
+      "game": true,
+      "refresh": true,
+      "oneCanvas": true,
+      "noDevHook": true,
+      "workerRequests": [
+        "http://127.0.0.1:5182/kh-tech-website/assets/generation.worker-CJX3NO2a.js"
+      ],
+      "allRoutes": true,
+      "localPdfDownload": true,
+      "reportDraftPersisted": true,
+      "contactDemoStatus": true,
+      "failures": []
+    }
+  },
+  "generation": {
+    "seeds": 1000,
+    "fallbacks": 0,
+    "maxStates": 49,
+    "maxAttempts": 9,
+    "multipleValves": 353,
+    "extraTools": 600,
+    "bonusObjectives": 318,
+    "uniqueStructuralLayouts": 1000,
+    "themes": [
+      "basement",
+      "bathroom",
+      "kitchen",
+      "office",
+      "technical",
+      "utility"
+    ],
+    "dimensions": [
+      "15x11",
+      "15x13",
+      "17x11",
+      "17x13",
+      "19x11",
+      "19x13"
+    ],
+    "totalValidationMilliseconds": 2666.3175,
+    "generationMedianMs": 0.7755999999999403,
+    "generationP95Ms": 2.90319999999997,
+    "generationMaxMs": 7.712300000000141
+  },
+  "inputs": [
+    "mouse",
+    "touch",
+    "simultaneous touch",
+    "keyboard",
+    "click-only"
+  ],
+  "viewports": [
+    "1440x900",
+    "390x844",
+    "844x390"
+  ],
+  "physicalPhoneTested": false,
+  "gitBranch": "main",
+  "pushed": false,
+  "deployed": false
+}

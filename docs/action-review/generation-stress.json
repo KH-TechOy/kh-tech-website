@@ -1,0 +1,30 @@
+{
+  "seeds": 1000,
+  "fallbacks": 0,
+  "maxStates": 49,
+  "maxAttempts": 9,
+  "multipleValves": 353,
+  "extraTools": 600,
+  "bonusObjectives": 318,
+  "uniqueStructuralLayouts": 1000,
+  "themes": [
+    "basement",
+    "bathroom",
+    "kitchen",
+    "office",
+    "technical",
+    "utility"
+  ],
+  "dimensions": [
+    "15x11",
+    "15x13",
+    "17x11",
+    "17x13",
+    "19x11",
+    "19x13"
+  ],
+  "totalValidationMilliseconds": 2666.3175,
+  "generationMedianMs": 0.7755999999999403,
+  "generationP95Ms": 2.90319999999997,
+  "generationMaxMs": 7.712300000000141
+}

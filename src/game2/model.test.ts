@@ -9,6 +9,23 @@ describe('continuous movement and collision',()=>{
   it('checks the circle against rectangle corners',()=>{expect(circleIntersectsRect(9,9,4,10,10,20,20)).toBe(true);expect(circleIntersectsRect(0,0,4,10,10,20,20)).toBe(false)});
 });
 describe('gameplay state',()=>{
+  it('uses one contextual action to close water, push the crate and begin repair',()=>{
+    const model=new RescueModel(LEVELS[0]);model.start();
+    model.player=center(model.level.valve);model.interact();expect(model.valveClosed).toBe(true);
+    model.collected.fill(true);model.player=center({x:7,y:4});expect(model.usableAction()).toBe('push');
+    model.interact();expect(model.crate).toEqual({x:9,y:4});
+    model.update(.25,{x:0,y:0});model.player=center({x:8,y:4});model.interact();expect(model.gateOpen).toBe(true);
+    model.player=center(model.level.leak);expect(model.usableAction()).toBe('repair');model.interact();expect(model.phase).toBe('repair');
+  });
+  it('chooses the nearest usable object and performs only that action',()=>{
+    const model=new RescueModel({...LEVELS[0],valve:{x:7,y:4}});model.start();model.player=center({x:7,y:4});
+    expect(model.usableAction()).toBe('valve');model.interact();expect(model.valveClosed).toBe(true);expect(model.crate).toEqual(model.level.crate);
+    expect(model.usableAction()).toBe('push');model.interact();expect(model.crate).toEqual({x:9,y:4});
+  });
+  it('retains deadlock prevention when pushing through the contextual action',()=>{
+    const model=new RescueModel(LEVELS[0]);model.start();model.player=center({x:8,y:3});
+    expect(model.usableAction()).toBe('push');model.interact();expect(model.crate).toEqual(model.level.crate);expect(model.gateOpen).toBe(false);
+  });
   it('operates the valve only when close',()=>{const model=new RescueModel(LEVELS[0]);model.start();model.interact();expect(model.valveClosed).toBe(false);model.player=center(model.level.valve);model.interact();expect(model.valveClosed).toBe(true)});
   it('collects each tool once and requires both for repair',()=>{const model=new RescueModel(LEVELS[0]);model.start();model.player=center(model.level.tools[0]);model.update(.1,{x:0,y:0});model.update(.1,{x:0,y:0});expect(model.collected).toEqual([true,false]);expect(model.drainEvents().filter(e=>e.type==='pickup')).toHaveLength(1);model.player=center(model.level.leak);model.valveClosed=true;model.interact();expect(model.phase).toBe('playing');model.collected[1]=true;model.gateOpen=true;model.interact();expect(model.phase).toBe('repair')});
   it('pushes grid-aligned boxes, opens the switch door, and supports undo',()=>{const model=new RescueModel(LEVELS[0]);model.start();model.player=center({x:7,y:4});model.facing='right';expect(model.push()).toBe(true);expect(model.crate).toEqual({x:9,y:4});model.update(.25,{x:0,y:0});model.player=center({x:8,y:4});expect(model.push()).toBe(true);expect(model.gateOpen).toBe(true);model.undoPush();expect(model.crate).toEqual({x:9,y:4});expect(model.gateOpen).toBe(true)});

@@ -1,0 +1,1869 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\mfi0alta\\AppData\\Local\\Microsoft\\WinGet\\Packages\\OpenJS.NodeJS.LTS_Microsoft.Winget.Source_8wekyb3d8bbwe\\node-v24.20.0-win-x64\\node.exe",
+      "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--workers",
+      "1",
+      "--reporter=list,json"
+    ],
+    "configFile": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\playwright.config.ts",
+    "rootDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/.playwright-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/game.playwright.ts"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/.playwright-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "portrait",
+        "name": "portrait",
+        "testDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/game.playwright.ts"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/.playwright-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "landscape",
+        "name": "landscape",
+        "testDir": "C:/Users/mfi0alta/Desktop/SoftwareDevelopment/kh-tech_sivut/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/game.playwright.ts"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\.playwright-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "snapshotDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/game.playwright.ts",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "headless": true,
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "launchOptions": {
+            "executablePath": "C:/Users/mfi0alta/AppData/Local/ms-playwright/chromium-1248/chrome-win64/chrome.exe",
+            "args": []
+          },
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\.playwright-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "portrait",
+        "testDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "snapshotDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/game.playwright.ts",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "headless": true,
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "launchOptions": {
+            "executablePath": "C:/Users/mfi0alta/AppData/Local/ms-playwright/chromium-1248/chrome-win64/chrome.exe",
+            "args": []
+          },
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "isMobile": true,
+          "hasTouch": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "portrait"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\.playwright-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "landscape",
+        "testDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "snapshotDir": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/game.playwright.ts",
+        "timeout": 180000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5173",
+          "headless": true,
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "launchOptions": {
+            "executablePath": "C:/Users/mfi0alta/AppData/Local/ms-playwright/chromium-1248/chrome-win64/chrome.exe",
+            "args": []
+          },
+          "viewport": {
+            "width": 844,
+            "height": 390
+          },
+          "isMobile": true,
+          "hasTouch": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "landscape"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": {
+      "command": "npm.cmd run dev -- --host 127.0.0.1 --port 5173 --strictPort",
+      "url": "http://127.0.0.1:5173/peli/",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "game.playwright.ts",
+      "file": "game.playwright.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "homepage game teaser uses the current mascot and fits narrow phones",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5299,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:02:41.460Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-c509d886108f2c9137a8",
+          "file": "game.playwright.ts",
+          "line": 20,
+          "column": 1
+        },
+        {
+          "title": "exploration has no route markers, context is local and closing water freezes coverage",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8663,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:02:48.232Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-c40661453409f0689f47",
+          "file": "game.playwright.ts",
+          "line": 36,
+          "column": 1
+        },
+        {
+          "title": "frame delivery measurement without tracing or screenshot capture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10706,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:02:56.930Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-199bde0780e3ccbebc16",
+          "file": "game.playwright.ts",
+          "line": 65,
+          "column": 1
+        },
+        {
+          "title": "orientation, safe areas, reduced motion and optional audio retain one canvas",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Orientation is checked once.",
+                  "location": {
+                    "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                    "line": 72,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 3568,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:03:07.667Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Orientation is checked once.",
+                      "location": {
+                        "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                        "line": 72,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "9fa8e687da029d735797-2f1ee48111b0d8c50332",
+          "file": "game.playwright.ts",
+          "line": 71,
+          "column": 1
+        },
+        {
+          "title": "keyboard, simultaneous mobile touch, cancellation, pause and responsive layout",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6531,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:03:11.277Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-8596abb15930f69334e7",
+          "file": "game.playwright.ts",
+          "line": 87,
+          "column": 1
+        },
+        {
+          "title": "screen action buttons work through their icons with mouse and touch",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14346,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:03:17.842Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-09619077381388bbbfb3",
+          "file": "game.playwright.ts",
+          "line": 138,
+          "column": 1
+        },
+        {
+          "title": "focused buttons use their own Space and Enter activation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7640,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:03:32.211Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-e581fe9e41760985f4d5",
+          "file": "game.playwright.ts",
+          "line": 142,
+          "column": 1
+        },
+        {
+          "title": "click-only action activation works and far-away presses explain the missing range",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5613,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:03:39.877Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-b417468434e6d2a7e9ed",
+          "file": "game.playwright.ts",
+          "line": 156,
+          "column": 1
+        },
+        {
+          "title": "pausing during a held joystick does not strand the next touch",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Two simultaneous touches require mobile emulation.",
+                  "location": {
+                    "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                    "line": 168,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 3086,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:03:45.516Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Two simultaneous touches require mobile emulation.",
+                      "location": {
+                        "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                        "line": 168,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "9fa8e687da029d735797-30be079ac6b0619fc0d1",
+          "file": "game.playwright.ts",
+          "line": 167,
+          "column": 1
+        },
+        {
+          "title": "pause menu buttons undo, show help, save settings and restart",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11973,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:03:48.632Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-959aaa1dea1ab2b262cb",
+          "file": "game.playwright.ts",
+          "line": 193,
+          "column": 1
+        },
+        {
+          "title": "interactive tutorial from movement to victory, next generated job and contact link",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17817,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:04:00.632Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-8ceda6c0b0de598b4ffe",
+          "file": "game.playwright.ts",
+          "line": 212,
+          "column": 1
+        },
+        {
+          "title": "replay code, worker responsiveness, structural variation and generated-level completion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 58767,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:04:18.486Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-942e05fa015c8d67bee5",
+          "file": "game.playwright.ts",
+          "line": 220,
+          "column": 1
+        },
+        {
+          "title": "skip begins a real countdown, expiry loses and restart restores the same level",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 95950,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:05:17.281Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-13431d5d4477be7e48f6",
+          "file": "game.playwright.ts",
+          "line": 242,
+          "column": 1
+        },
+        {
+          "title": "unavailable worker yields a validated fallback and route navigation cleans up the scene",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6314,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:06:53.264Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-4e15d352faa9a8c9720d",
+          "file": "game.playwright.ts",
+          "line": 249,
+          "column": 1
+        },
+        {
+          "title": "homepage game teaser uses the current mascot and fits narrow phones",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "portrait",
+              "projectName": "portrait",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5867,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:07:02.840Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-a18a1d5abde98770775a",
+          "file": "game.playwright.ts",
+          "line": 20,
+          "column": 1
+        },
+        {
+          "title": "exploration has no route markers, context is local and closing water freezes coverage",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "portrait",
+              "projectName": "portrait",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8602,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:07:10.224Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-2a84721341ec8e28e131",
+          "file": "game.playwright.ts",
+          "line": 36,
+          "column": 1
+        },
+        {
+          "title": "frame delivery measurement without tracing or screenshot capture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "portrait",
+              "projectName": "portrait",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10403,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:07:18.857Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-d10ad999bbe6646e3ea6",
+          "file": "game.playwright.ts",
+          "line": 65,
+          "column": 1
+        },
+        {
+          "title": "orientation, safe areas, reduced motion and optional audio retain one canvas",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "portrait",
+              "projectName": "portrait",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7282,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:07:29.292Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-8dfb63e427e7f01b47cb",
+          "file": "game.playwright.ts",
+          "line": 71,
+          "column": 1
+        },
+        {
+          "title": "keyboard, simultaneous mobile touch, cancellation, pause and responsive layout",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "portrait",
+              "projectName": "portrait",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5741,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:07:36.608Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-c3a040100aeefe6cacf4",
+          "file": "game.playwright.ts",
+          "line": 87,
+          "column": 1
+        },
+        {
+          "title": "screen action buttons work through their icons with mouse and touch",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "portrait",
+              "projectName": "portrait",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12971,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:07:42.388Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-d9bc35061296d17c06de",
+          "file": "game.playwright.ts",
+          "line": 138,
+          "column": 1
+        },
+        {
+          "title": "focused buttons use their own Space and Enter activation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "portrait",
+              "projectName": "portrait",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7845,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:07:55.395Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-f4018d062a5ac45eb109",
+          "file": "game.playwright.ts",
+          "line": 142,
+          "column": 1
+        },
+        {
+          "title": "click-only action activation works and far-away presses explain the missing range",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "portrait",
+              "projectName": "portrait",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5376,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:08:03.282Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-c585eb7d67f4c11938f9",
+          "file": "game.playwright.ts",
+          "line": 156,
+          "column": 1
+        },
+        {
+          "title": "pausing during a held joystick does not strand the next touch",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "portrait",
+              "projectName": "portrait",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5563,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:08:08.679Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-d818f268e5efb363b35a",
+          "file": "game.playwright.ts",
+          "line": 167,
+          "column": 1
+        },
+        {
+          "title": "pause menu buttons undo, show help, save settings and restart",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "portrait",
+              "projectName": "portrait",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10147,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:08:14.266Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-2fccfe3a4a75263a597f",
+          "file": "game.playwright.ts",
+          "line": 193,
+          "column": 1
+        },
+        {
+          "title": "interactive tutorial from movement to victory, next generated job and contact link",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "portrait",
+              "projectName": "portrait",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14568,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:08:24.441Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-91e5989c6404490bf6de",
+          "file": "game.playwright.ts",
+          "line": 212,
+          "column": 1
+        },
+        {
+          "title": "replay code, worker responsiveness, structural variation and generated-level completion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Stress and generated gameplay are checked once in browser.",
+                  "location": {
+                    "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                    "line": 221,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "portrait",
+              "projectName": "portrait",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 3202,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:08:39.037Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Stress and generated gameplay are checked once in browser.",
+                      "location": {
+                        "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                        "line": 221,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "9fa8e687da029d735797-c61c2191b73a8976ff6e",
+          "file": "game.playwright.ts",
+          "line": 220,
+          "column": 1
+        },
+        {
+          "title": "skip begins a real countdown, expiry loses and restart restores the same level",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Real countdown checked once.",
+                  "location": {
+                    "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                    "line": 243,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "portrait",
+              "projectName": "portrait",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 2977,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:08:42.279Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Real countdown checked once.",
+                      "location": {
+                        "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                        "line": 243,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "9fa8e687da029d735797-0d057d33fefd2abe5ae3",
+          "file": "game.playwright.ts",
+          "line": 242,
+          "column": 1
+        },
+        {
+          "title": "unavailable worker yields a validated fallback and route navigation cleans up the scene",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Worker failure checked once.",
+                  "location": {
+                    "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                    "line": 250,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "portrait",
+              "projectName": "portrait",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 3216,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:08:45.279Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Worker failure checked once.",
+                      "location": {
+                        "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                        "line": 250,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "9fa8e687da029d735797-467459bc2e15c22a3c7c",
+          "file": "game.playwright.ts",
+          "line": 249,
+          "column": 1
+        },
+        {
+          "title": "homepage game teaser uses the current mascot and fits narrow phones",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "landscape",
+              "projectName": "landscape",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5740,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:08:51.250Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-e0fb2d881942b3728d3a",
+          "file": "game.playwright.ts",
+          "line": 20,
+          "column": 1
+        },
+        {
+          "title": "exploration has no route markers, context is local and closing water freezes coverage",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "landscape",
+              "projectName": "landscape",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8361,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:08:58.335Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-6597ffdd0c0f3c881da4",
+          "file": "game.playwright.ts",
+          "line": 36,
+          "column": 1
+        },
+        {
+          "title": "frame delivery measurement without tracing or screenshot capture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "landscape",
+              "projectName": "landscape",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10200,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:09:06.732Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-ad5212f0d503f7b1840c",
+          "file": "game.playwright.ts",
+          "line": 65,
+          "column": 1
+        },
+        {
+          "title": "orientation, safe areas, reduced motion and optional audio retain one canvas",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Orientation is checked once.",
+                  "location": {
+                    "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                    "line": 72,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "landscape",
+              "projectName": "landscape",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 2995,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:09:16.961Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Orientation is checked once.",
+                      "location": {
+                        "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                        "line": 72,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "9fa8e687da029d735797-e4d601a880bc9eb58dc7",
+          "file": "game.playwright.ts",
+          "line": 71,
+          "column": 1
+        },
+        {
+          "title": "keyboard, simultaneous mobile touch, cancellation, pause and responsive layout",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "landscape",
+              "projectName": "landscape",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5417,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:09:19.984Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-1f6178da17ed32526809",
+          "file": "game.playwright.ts",
+          "line": 87,
+          "column": 1
+        },
+        {
+          "title": "screen action buttons work through their icons with mouse and touch",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "landscape",
+              "projectName": "landscape",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 27781,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Homma hoidettu!', exact: true })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('heading', { name: 'Homma hoidettu!', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Homma hoidettu!', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Homma hoidettu!', exact: true })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('heading', { name: 'Homma hoidettu!', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Homma hoidettu!', exact: true })\u001b[22m\n\n    at playLevel (C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts:136:79)\n    at C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts:139:21",
+                    "location": {
+                      "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                      "column": 79,
+                      "line": 136
+                    },
+                    "snippet": "  134 |     if(pointerActions&&test.info().project.name!=='desktop')await page.getByTestId('pipe-'+index).tap();else await page.getByTestId('pipe-'+index).click();\n  135 |   }\n> 136 |   await expect(page.getByRole('heading',{name:'Homma hoidettu!',exact:true})).toBeVisible();\n      |                                                                               ^\n  137 | }\n  138 | test('screen action buttons work through their icons with mouse and touch',async({page})=>{\n  139 |   await begin(page);await playLevel(page,true,true);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                        "column": 79,
+                        "line": 136
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Homma hoidettu!', exact: true })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('heading', { name: 'Homma hoidettu!', exact: true }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Homma hoidettu!', exact: true })\u001b[22m\n\n\n  134 |     if(pointerActions&&test.info().project.name!=='desktop')await page.getByTestId('pipe-'+index).tap();else await page.getByTestId('pipe-'+index).click();\n  135 |   }\n> 136 |   await expect(page.getByRole('heading',{name:'Homma hoidettu!',exact:true})).toBeVisible();\n      |                                                                               ^\n  137 | }\n  138 | test('screen action buttons work through their icons with mouse and touch',async({page})=>{\n  139 |   await begin(page);await playLevel(page,true,true);\n    at playLevel (C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts:136:79)\n    at C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts:139:21"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:09:25.446Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\.playwright-artifacts\\game.playwright.ts-screen--c70d0--icons-with-mouse-and-touch-landscape\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\.playwright-artifacts\\game.playwright.ts-screen--c70d0--icons-with-mouse-and-touch-landscape\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                    "column": 79,
+                    "line": 136
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-2b73b23562422a882c12",
+          "file": "game.playwright.ts",
+          "line": 138,
+          "column": 1
+        },
+        {
+          "title": "focused buttons use their own Space and Enter activation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "landscape",
+              "projectName": "landscape",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8277,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:09:56.447Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-0eb963811c2e3a82858f",
+          "file": "game.playwright.ts",
+          "line": 142,
+          "column": 1
+        },
+        {
+          "title": "click-only action activation works and far-away presses explain the missing range",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "landscape",
+              "projectName": "landscape",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5369,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:10:05.622Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-7656f839dae68bf30f19",
+          "file": "game.playwright.ts",
+          "line": 156,
+          "column": 1
+        },
+        {
+          "title": "pausing during a held joystick does not strand the next touch",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "landscape",
+              "projectName": "landscape",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6241,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:10:11.024Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-9399e3ec5d2fe69e9511",
+          "file": "game.playwright.ts",
+          "line": 167,
+          "column": 1
+        },
+        {
+          "title": "pause menu buttons undo, show help, save settings and restart",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "landscape",
+              "projectName": "landscape",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11063,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:10:17.297Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-11277a8a57fa13b94522",
+          "file": "game.playwright.ts",
+          "line": 193,
+          "column": 1
+        },
+        {
+          "title": "interactive tutorial from movement to victory, next generated job and contact link",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "landscape",
+              "projectName": "landscape",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14942,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:10:28.389Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9fa8e687da029d735797-e36c3866aa0eb1f81c02",
+          "file": "game.playwright.ts",
+          "line": 212,
+          "column": 1
+        },
+        {
+          "title": "replay code, worker responsiveness, structural variation and generated-level completion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Stress and generated gameplay are checked once in browser.",
+                  "location": {
+                    "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                    "line": 221,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "landscape",
+              "projectName": "landscape",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 3282,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:10:43.355Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Stress and generated gameplay are checked once in browser.",
+                      "location": {
+                        "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                        "line": 221,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "9fa8e687da029d735797-3a08f6550a972c57ca39",
+          "file": "game.playwright.ts",
+          "line": 220,
+          "column": 1
+        },
+        {
+          "title": "skip begins a real countdown, expiry loses and restart restores the same level",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Real countdown checked once.",
+                  "location": {
+                    "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                    "line": 243,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "landscape",
+              "projectName": "landscape",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 3893,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:10:46.664Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Real countdown checked once.",
+                      "location": {
+                        "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                        "line": 243,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "9fa8e687da029d735797-1f8ad6c1732e7bc4fc40",
+          "file": "game.playwright.ts",
+          "line": 242,
+          "column": 1
+        },
+        {
+          "title": "unavailable worker yields a validated fallback and route navigation cleans up the scene",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Worker failure checked once.",
+                  "location": {
+                    "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                    "line": 250,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "landscape",
+              "projectName": "landscape",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 4278,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-08T14:10:50.590Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Worker failure checked once.",
+                      "location": {
+                        "file": "C:\\Users\\mfi0alta\\Desktop\\SoftwareDevelopment\\kh-tech_sivut\\e2e\\game.playwright.ts",
+                        "line": 250,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "9fa8e687da029d735797-511a852fadb6db2b1d42",
+          "file": "game.playwright.ts",
+          "line": 249,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-08T14:02:39.548Z",
+    "duration": 498887.20399999997,
+    "expected": 32,
+    "skipped": 9,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

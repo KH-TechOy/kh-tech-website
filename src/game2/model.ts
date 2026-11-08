@@ -8,10 +8,10 @@ export type GameEvent={type:'pickup'|'valve'|'push'|'gate'|'repair'|'win'|'lost'
 export const PLAYER_RADIUS=18,PLAYER_SPEED=226;
 export const TUTORIAL_STEPS=[
   {title:'Liiku putkimiehellä!',detail:'Kokeile sinistä ohjainta tai nuolinäppäimiä.',art:'joystick'},
-  {title:'Sulje vesihana!',detail:'Mene punaisen hanan luo. Paina kättä tai E.',art:'valve'},
+  {title:'Sulje vesihana!',detail:'Mene punaisen hanan luo. Paina Toiminta-painiketta tai E.',art:'valve'},
   {title:'Kerää työkalut!',detail:'Etsi työkalupakki ja tiiviste. Keräät ne kävelemällä niiden luo.',art:'toolbox'},
-  {title:'Siirrä laatikko!',detail:'Mene laatikon taakse. Paina laatikkopainiketta.',art:'crate'},
-  {title:'Korjaa vuoto!',detail:'Mene vuodon luo. Paina kättä tai E.',art:'leak'},
+  {title:'Siirrä laatikko!',detail:'Mene laatikon taakse. Työnnä samalla Toiminta-painikkeella tai E:llä.',art:'crate'},
+  {title:'Korjaa vuoto!',detail:'Mene vuodon luo. Paina Toiminta-painiketta tai E.',art:'leak'},
   {title:'Hyvä! Homma hoidettu!',detail:'Olet valmis seuraavaan työhön!',art:'spark'},
 ];
 export function normalizeMovement(x:number,y:number,deadZone=0){const length=Math.hypot(x,y);if(length<=deadZone)return{x:0,y:0};const magnitude=Math.min(1,(length-deadZone)/(1-deadZone));return{x:x/length*magnitude,y:y/length*magnitude}}
@@ -47,17 +47,26 @@ export class RescueModel {
     if(this.level.bonus&&!this.bonusCollected&&this.near(this.level.bonus,36)){this.bonusCollected=true;this.remaining+=5;this.lastProgress=this.elapsed;this.events.push({type:'bonus',text:'Lisätarkastus tehty! +5 s',...center(this.level.bonus)})}
   }
   near(cell:Cell,distance=88){const p=center(cell);return Math.hypot(this.player.x-p.x,this.player.y-p.y)<=distance}
-  usableAction(){return(this.level.valves||[this.level.valve]).some((cell,i)=>!this.closedValves[i]&&this.near(cell))?'valve':this.near(this.level.leak,105)&&this.valveClosed&&this.collected.every(Boolean)&&this.gateOpen?'repair':'none'}
+  actionTarget(){
+    const targets:Array<{kind:'valve'|'push'|'repair';cell:Cell;range:number}>=[];
+    (this.level.valves||[this.level.valve]).forEach((cell,i)=>{if(!this.closedValves[i])targets.push({kind:'valve',cell,range:88})});
+    targets.push({kind:'push',cell:this.crate,range:135},{kind:'repair',cell:this.level.leak,range:105});
+    const distance=(cell:Cell)=>{const p=center(cell);return Math.hypot(this.player.x-p.x,this.player.y-p.y)};
+    return targets.filter(target=>distance(target.cell)<=target.range).sort((a,b)=>distance(a.cell)-distance(b.cell))[0];
+  }
+  usableAction(){return this.actionTarget()?.kind||'none'}
   target(){if(!this.valveClosed)return(this.level.valves||[this.level.valve]).find((_,i)=>!this.closedValves[i])!;const tool=this.level.tools.find((_,i)=>!this.collected[i]);if(tool)return tool;if(!this.gateOpen)return this.crate;return this.level.leak}
   interact(){
-    if(this.phase!=='playing')return;if(this.guided&&this.tutorialStep===0){this.note(TUTORIAL_STEPS[0].title);return}
-    const valves=this.level.valves||[this.level.valve],index=valves.findIndex((cell,i)=>!this.closedValves[i]&&this.near(cell));
+    if(this.phase!=='playing')return;if(this.guided&&this.tutorialStep===0){this.note(TUTORIAL_STEPS[0].detail);return}
+    const target=this.actionTarget();
+    if(target?.kind==='push'){this.push();return}
+    const valves=this.level.valves||[this.level.valve],index=target?.kind==='valve'?valves.findIndex(cell=>sameCell(cell,target.cell)):-1;
     if(index>=0){this.closedValves[index]=true;this.lastProgress=this.elapsed;this.events.push({type:'valve',text:this.valveClosed?'Hyvä! Hana on kiinni.':'Yksi hana kiinni!',...center(valves[index]),index});return}
-    if(this.near(this.level.leak,105)){if(!this.valveClosed){this.note('Sulje ensin punaiset hanat.');return}if(!this.collected.every(Boolean)){this.note('Kerää ensin hohtavat välineet.');return}if(!this.gateOpen){this.note('Työnnä laatikko painokytkimelle.');return}this.phase='repair';this.moving=false;this.lastProgress=this.elapsed;this.events.push({type:'repair',text:'Napauta putkia. Yhdistä sininen ja keltainen.'});return}
-    this.note(this.contextHint());
+    if(target?.kind==='repair'){if(!this.valveClosed){this.note('Sulje ensin punaiset hanat.');return}if(!this.collected.every(Boolean)){this.note('Kerää ensin työkalut ja osat.');return}if(!this.gateOpen){this.note('Työnnä laatikko painokytkimelle.');return}this.phase='repair';this.moving=false;this.lastProgress=this.elapsed;this.events.push({type:'repair',text:'Napauta putkia. Yhdistä sininen ja keltainen.'});return}
+    this.note('Siirry lähemmäs kohdetta ja yritä uudelleen.');
   }
   push(){
-    if(this.phase!=='playing'||this.pushCooldown>0)return false;if(this.guided&&this.tutorialStep<3){this.note(TUTORIAL_STEPS[this.tutorialStep].title);return false}
+    if(this.phase!=='playing'||this.pushCooldown>0)return false;if(this.guided&&this.tutorialStep<3){this.note('Tee ensin opastuksen nykyinen tehtävä.');return false}
     const p=center(this.crate),dx=p.x-this.player.x,dy=p.y-this.player.y;this.facing=Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up');const d=DIRECTIONS[this.facing],behind={x:p.x-d.x*TILE,y:p.y-d.y*TILE};
     if(Math.hypot(this.player.x-behind.x,this.player.y-behind.y)>55){this.note('Mene aivan laatikon taakse.');return false}
     if(!canPush(this.level,this.crate,this.facing,this.gateOpen)){this.note('Ei tilaa. Kokeile toista puolta!');return false}
@@ -75,9 +84,9 @@ export class RescueModel {
     if(this.guided){if(this.phase==='repair')return this.tutorialTurns?'Hyvä! Yhdistä sininen tulo keltaiseen lähtöön.':'Napauta putkea: osa kääntyy neljänneskierroksen.';return TUTORIAL_STEPS[this.tutorialStep].title}
     if(this.phase==='repair')return 'Yhdistä sininen tulo keltaiseen lähtöön.';
     const action=this.usableAction();
-    if(action==='valve')return 'Paina kättä tai E: Sulje hana';
-    if(action==='repair')return 'Paina kättä tai E: Korjaa vuoto';
-    if(this.near(this.crate,135)&&!this.gateOpen)return 'Paina laatikkoa tai välilyöntiä: Työnnä';
+    if(action==='valve')return 'Toiminta / E / välilyönti: Sulje hana';
+    if(action==='repair')return 'Toiminta / E / välilyönti: Korjaa vuoto';
+    if(action==='push')return 'Toiminta / E / välilyönti: Työnnä laatikkoa';
     return 'Tutki huonetta ja ratkaise korjaustyö. Tavoitteet näkyvät ylhäällä.';
   }
 }

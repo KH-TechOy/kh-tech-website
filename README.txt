@@ -1,4 +1,11 @@
 KH-TECH OY – VERKKOSIVU, TYÖRAPORTTI JA PELI
+TOIMINTA-PAINIKE – 8.11.2026
+  Pelissä on yksi Toiminta-painike. Se sulkee hanan, työntää laatikkoa
+  tai avaa korjauksen lähimmän kohteen mukaan. E ja välilyönti tekevät
+  saman toiminnon. Laatikkoa työnnetään edelleen sen takaa; törmäys- ja
+  jumitustarkistukset säilyvät. Opastus ja ohjeet käyttävät yhtä painiketta.
+  Tarkistusraportti: docs/action-review/README.md.
+
 PUTKIMESTARI 3.0 – NYKYINEN PELIVERSIO
   Peli /peli/ käyttää alkuperäistä varjostettua rasteritaidetta, yhtenäisiä
   2.5D-seiniä, uusia hahmoja, kalusteita, putkia ja animoitua vettä.

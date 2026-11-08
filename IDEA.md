@@ -1,5 +1,7 @@
 # KH-Tech Oy – tuotteen määrittely
 
+Pelin ohjauspäivitys 8.11.2026: yksi Toiminta-painike hoitaa hanat, laatikon työnnöt ja korjauksen lähimmän kantaman sisällä olevan kohteen mukaan. E ja välilyönti käynnistävät saman toiminnon. Kaksi erillistä toimintopainiketta korvataan tällä ohjauksella; laatikon fyysiset työnnöt, ratkeavuustarkistukset ja opastus säilyvät. Tarkistusraportti: `docs/action-review/README.md`.
+
 ## GAME 3.0 – nykyinen pelityö, 7.11.2026
 
 Pelin nykyinen tavoite on kokonainen 2.5D-grafiikkauudistus: alkuperäiset pehmeästi varjostetut rasterihahmot ja kalusteet, jatkuvat teksturoidut seinäpinnat, yhteensopivat putkiliitokset, kasvava ja hanasta pysähtyvä visuaalinen vesi sekä viimeistelty HUD. Ensisijainen referenssi on edelleen `docs/Putkimestari_ 2.png`. Renderöinti tiivistää lattian y-akselin kertoimella 0,72; pelimallin koordinaatit, törmäykset, säännöt ja seeded-generaattori säilyvät.

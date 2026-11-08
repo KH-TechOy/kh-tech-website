@@ -12,12 +12,12 @@ export type Snapshot={
   ready:boolean;phase:Phase;level:number;title:string;location:string;tip:string;remaining:number;elapsed:number;
   valveClosed:boolean;gateOpen:boolean;collected:boolean[];hint:string;message:string;puzzle:PipePuzzle;
   muted:boolean;quality:'full'|'light';
-  totalTime:number;guided:boolean;tutorialStep:number;tutorialTurns:number;interaction:string;pushNearby:boolean;
+  totalTime:number;guided:boolean;tutorialStep:number;tutorialTurns:number;interaction:string;
   valvesClosed:number;valvesTotal:number;seedCode:string;difficulty:number;bonus:boolean;bonusCollected:boolean;
   generation?:GenerationInfo;workerUsed:boolean;
 };
 export type PerformanceStats={samples:number;meanFps:number;p95FrameMs:number;renderer:string;quality:string;implementation:string};
-export type GameCommand='play'|'begin'|'interact'|'push'|'pause'|'restart'|'next'|'undo'|'mute'|'title'|'skip'|'fresh'|'hint';
+export type GameCommand='play'|'begin'|'interact'|'pause'|'restart'|'next'|'undo'|'mute'|'title'|'skip'|'fresh'|'hint';
 class SoundKit {
   private context:AudioContext|null=null;
   muted=true;
@@ -84,17 +84,16 @@ export class RescueScene extends Phaser.Scene {
     for(const event of this.model.drainEvents())this.handleEvent(event);
     this.view.update(time,delta/1000);
     if((before==='playing'||before==='repair')&&delta>0){this.samples.push(delta);if(this.samples.length>600)this.samples.shift();if(this.samples.length>90&&this.quality==='full'&&1000/(this.samples.reduce((a,b)=>a+b,0)/this.samples.length)<40){this.quality='light';this.view.setQuality(true)}}
-    const signature=`${this.model.phase}|${Math.ceil(this.model.remaining)}|${this.model.closedValves.join()}|${this.model.gateOpen}|${this.model.collected.join()}|${this.model.contextHint()}|${this.model.tutorialStep}|${this.model.guided}|${this.model.bonusCollected}|${this.model.usableAction()}|${this.model.near(this.model.crate,135)}|${this.time.now<this.messageUntil?this.message:''}`;
+    const signature=`${this.model.phase}|${Math.ceil(this.model.remaining)}|${this.model.closedValves.join()}|${this.model.gateOpen}|${this.model.collected.join()}|${this.model.contextHint()}|${this.model.tutorialStep}|${this.model.guided}|${this.model.bonusCollected}|${this.model.usableAction()}|${this.time.now<this.messageUntil?this.message:''}`;
     if(signature!==this.hudSignature||this.lastPhase!==this.model.phase){this.hudSignature=signature;this.lastPhase=this.model.phase;this.emitSnapshot()}
   }
-  emitSnapshot(){const model=this.model;this.publish({ready:this.ready,phase:model.phase,level:this.levelIndex,title:model.level.title,location:model.level.location,tip:model.level.tip,remaining:model.remaining,totalTime:model.level.time,elapsed:model.elapsed,valveClosed:model.valveClosed,gateOpen:model.gateOpen,collected:[...model.collected],hint:model.contextHint(),message:this.time.now<this.messageUntil?this.message:'',puzzle:{...model.puzzle,masks:[...model.puzzle.masks]},muted:this.sfx.muted,quality:this.quality,guided:model.guided,tutorialStep:model.tutorialStep,tutorialTurns:model.tutorialTurns,interaction:model.usableAction(),pushNearby:model.near(model.crate,135),valvesClosed:model.closedValves.filter(Boolean).length,valvesTotal:model.closedValves.length,seedCode:model.level.tutorial?'OPASTUS':replayCode(model.level.seed||0,model.level.difficulty||1),difficulty:model.level.difficulty||0,bonus:!!model.level.bonus,bonusCollected:model.bonusCollected,generation:model.level.generation,workerUsed:this.factory.usedWorker})}
+  emitSnapshot(){const model=this.model;this.publish({ready:this.ready,phase:model.phase,level:this.levelIndex,title:model.level.title,location:model.level.location,tip:model.level.tip,remaining:model.remaining,totalTime:model.level.time,elapsed:model.elapsed,valveClosed:model.valveClosed,gateOpen:model.gateOpen,collected:[...model.collected],hint:model.contextHint(),message:this.time.now<this.messageUntil?this.message:'',puzzle:{...model.puzzle,masks:[...model.puzzle.masks]},muted:this.sfx.muted,quality:this.quality,guided:model.guided,tutorialStep:model.tutorialStep,tutorialTurns:model.tutorialTurns,interaction:model.usableAction(),valvesClosed:model.closedValves.filter(Boolean).length,valvesTotal:model.closedValves.length,seedCode:model.level.tutorial?'OPASTUS':replayCode(model.level.seed||0,model.level.difficulty||1),difficulty:model.level.difficulty||0,bonus:!!model.level.bonus,bonusCollected:model.bonusCollected,generation:model.level.generation,workerUsed:this.factory.usedWorker})}
   command(command:GameCommand){
     if(!this.ready||(this.model.phase==='generating'&&command!=='title'))return;
     switch(command){
       case 'play':{const params=new URLSearchParams(location.search),seed=params.get('seed');if(seed&&/^[0-9a-f]{1,8}$/i.test(seed)){void this.replay(parseInt(seed,16),Math.max(1,Math.min(12,Number(params.get('difficulty'))||1)))}else this.model.phase='intro';break}
       case 'begin':this.model.start();break;
       case 'interact':this.model.interact();break;
-      case 'push':this.model.push();break;
       case 'pause':this.model.togglePause();this.resetInput();break;
       case 'restart':this.applyLevel(this.model.level,this.levelIndex,true,this.model.guided);break;
       case 'next':void this.startGenerated(this.levelIndex+1);break;

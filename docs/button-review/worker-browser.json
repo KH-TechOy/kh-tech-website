@@ -1,0 +1,93 @@
+{
+  "samples": [
+    {
+      "seed": 11329536,
+      "theme": "bathroom",
+      "hash": "b9a06470",
+      "milliseconds": 11.099999994039536,
+      "worker": true
+    },
+    {
+      "seed": 11329927,
+      "theme": "bathroom",
+      "hash": "ef020a4a",
+      "milliseconds": 7,
+      "worker": true
+    },
+    {
+      "seed": 11330318,
+      "theme": "kitchen",
+      "hash": "26ee2c19",
+      "milliseconds": 4.699999988079071,
+      "worker": true
+    },
+    {
+      "seed": 11330709,
+      "theme": "basement",
+      "hash": "ad3ace4f",
+      "milliseconds": 2,
+      "worker": true
+    },
+    {
+      "seed": 11331100,
+      "theme": "kitchen",
+      "hash": "45452cff",
+      "milliseconds": 1.800000011920929,
+      "worker": true
+    },
+    {
+      "seed": 11331491,
+      "theme": "basement",
+      "hash": "ed390acf",
+      "milliseconds": 2.0999999940395355,
+      "worker": true
+    },
+    {
+      "seed": 11331882,
+      "theme": "utility",
+      "hash": "2df3e81f",
+      "milliseconds": 2.7000000178813934,
+      "worker": true
+    },
+    {
+      "seed": 11332273,
+      "theme": "office",
+      "hash": "7aed4fd2",
+      "milliseconds": 1.5999999940395355,
+      "worker": true
+    },
+    {
+      "seed": 11332664,
+      "theme": "basement",
+      "hash": "16308e29",
+      "milliseconds": 4.300000011920929,
+      "worker": true
+    },
+    {
+      "seed": 11333055,
+      "theme": "kitchen",
+      "hash": "9d619905",
+      "milliseconds": 1.199999988079071,
+      "worker": true
+    },
+    {
+      "seed": 11333446,
+      "theme": "basement",
+      "hash": "c3830995",
+      "milliseconds": 2,
+      "worker": true
+    },
+    {
+      "seed": 11333837,
+      "theme": "utility",
+      "hash": "5c12711f",
+      "milliseconds": 1.199999988079071,
+      "worker": true
+    }
+  ],
+  "timing": {
+    "frames": 840,
+    "maxGapMs": 150,
+    "durationMs": 15550.4
+  }
+}
