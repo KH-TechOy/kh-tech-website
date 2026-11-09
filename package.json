@@ -13,7 +13,11 @@
     "test:game": "playwright test",
     "brand:assets": "node scripts/build-brand-assets.mjs",
     "test:website": "playwright test --config playwright.website.config.ts",
-    "test:privacy": "playwright test --config playwright.privacy.config.ts"
+    "test:privacy": "playwright test --config playwright.privacy.config.ts",
+    "check:contact": "tsc -p contact/tsconfig.json",
+    "test:contact": "vitest run contact/backend.test.ts",
+    "contact:bundle": "wrangler deploy --dry-run --config contact/wrangler.jsonc --outdir ../.playwright-artifacts/contact30-worker",
+    "test:contact-ui": "playwright test --config playwright.contact.config.ts"
   },
   "dependencies": {
     "jspdf": "^4.2.1",
@@ -23,13 +27,16 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261102.1",
     "@playwright/test": "^1.64.1",
     "@types/node": "^26.6.6",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^5.2.0",
+    "miniflare": "^5.20261101.0-beta",
     "typescript": "~5.6.2",
     "vite": "^7.3.5",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "wrangler": "^4.156.1"
   }
 }

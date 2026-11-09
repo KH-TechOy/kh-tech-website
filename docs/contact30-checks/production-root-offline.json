@@ -1,0 +1,33 @@
+{
+  "base": "/",
+  "offlineReload": true,
+  "offlinePdf": true,
+  "cache": {
+    "keys": [
+      "kh-tech-shell-website2-54c3b5215b96"
+    ],
+    "assets": [
+      "http://127.0.0.1:5183/",
+      "http://127.0.0.1:5183/report/",
+      "http://127.0.0.1:5183/manifest.webmanifest",
+      "http://127.0.0.1:5183/brand/kh-tech-logo.png",
+      "http://127.0.0.1:5183/brand/kh-tech-icon.png",
+      "http://127.0.0.1:5183/brand/icon-192.png",
+      "http://127.0.0.1:5183/brand/icon-512.png",
+      "http://127.0.0.1:5183/assets/PrivacyNotice-Cd8g-Icj.js",
+      "http://127.0.0.1:5183/assets/Report-D9WteKnJ.js",
+      "http://127.0.0.1:5183/assets/Website-C5dHlHq1.css",
+      "http://127.0.0.1:5183/assets/Website-COoFghxI.js",
+      "http://127.0.0.1:5183/assets/arrow-left-CM6S1Y28.js",
+      "http://127.0.0.1:5183/assets/brand-DYfWVdMa.js",
+      "http://127.0.0.1:5183/assets/html2canvas.esm-DXEQVQnt.js",
+      "http://127.0.0.1:5183/assets/index.es-DV__PYgX.js",
+      "http://127.0.0.1:5183/assets/main-CGlOw84t.css",
+      "http://127.0.0.1:5183/assets/main-D5yOBEQu.js",
+      "http://127.0.0.1:5183/assets/pdf-DSp9Z9ql.js",
+      "http://127.0.0.1:5183/assets/purify.es-18JuyMri.js",
+      "http://127.0.0.1:5183/assets/wrench-Bro0mX3a.js",
+      "http://127.0.0.1:5183/assets/x-C5zBiFrX.js"
+    ]
+  }
+}

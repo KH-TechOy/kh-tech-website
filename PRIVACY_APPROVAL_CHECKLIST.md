@@ -1,13 +1,24 @@
 # Tietosuojan ja tuotantojulkaisun hyväksyntälista
 
+## CONTACT 3.0 — lisäehdot ennen lomakelähetyksen avaamista, 9.11.2026
+
+- [ ] Vahvista omistajan Google-kuluttajatilin ja Cloudflare Free / Turnstile / SQLite -tilien soveltuvuus yrityksen henkilötietojen käsittelyyn. Tilin omistaminen ei todista DPA:ta tai siirtoperustetta. Jos ehdot eivät riitä, älä aktivoi lähetystä.
+- [ ] Vahvista sähköpostin todellinen säilytysaika, käyttöoikeudet, poistovastuu ja palveluntarjoajien lokit/siirrot. Uuden teknisen ledgerin 48 h ei ole postilaatikon säilytysaika.
+- [ ] Hyväksy roskapostisuojan käyttötapaus ja Turnstilen henkilötietokäsittely ennen sen lataamista asiakkaille. Se ladataan vain konfiguroidun lomakkeen käyttäjän käynnistämästä tarkistuksesta; ei markkinointiseurantaa.
+- [ ] Varmista Workerin alarmit ja Googlen tunnin välein ajettava cleanup: tekniset merkinnät poistuvat tarkistusjakson jälkeen. Ei sisältöä palvelimen tietokantaan tai viestilokeihin.
+- [ ] Tarkista palvelimella hallittu vastaanottaja ja HMAC-avaimet yksityisesti; niitä ei dokumentoida julkiseen repoon. Rajaa tilit vähimmillä oikeuksilla.
+- [ ] Hyväksy ja suorita [oikea toimitustesti](CONTACT_3_0_EMAIL_ACCEPTANCE.md); saapumista ei ole vielä todistettu. Aktivoi Vite-asetukset/julkaisubuild vasta tämän ja tietosuojan hyväksymisen jälkeen.
+
+Muut aiemmat julkaisuesteet säilyvät. [Käyttöönotto](CONTACT_3_0_SETUP.md) ja [CONTACT_3_0_REPORT.md](CONTACT_3_0_REPORT.md) erottavat lähdekoodin, paikalliset testivastineet ja vielä puuttuvan oikean käyttöönoton.
+
 Päiväys 8.11.2026. **Julkaisua ei ole hyväksytty.** Toteutuksen tekninen tarkistus ja kattava selosteteksti eivät yksin tee palvelusta GDPR:n mukaista tai tuotantovalmiiksi. Tätä listaa ei ole korvattu oletetuilla säilytysajoilla, sopimuksilla, suostumuksilla tai siirtosuojilla.
 
 ## Jo todennettu — ei tarkoita oikeudellista hyväksyntää
 
 - [x] Yrityksen nimi, Y-tunnus, osoite, Tomi Honka sekä julkinen sähköposti/puhelin vastaavat [yrityksen omaa sivustoa](https://kh-tech.fi/) ja `src/brand.tsx`:ää (8.11.2026).
 - [x] Sovelluksen tietovirrat, tallennusavaimet, irrallinen GAS-koodi sekä julkaisutapa on tarkastettu: [auditointi](PRIVACY_DATA_FLOW_AUDIT.md).
-- [x] React-sivuston sähköpostitoimitukselle tai henkilöstöistunnolle ei löydy toteutettua integraatiota. Niitä ei merkitä toimiviksi eikä todellisesta toimitustestistä ole näyttöä.
-- [x] Ei löydetty sovellukseen integroituja analytiikka-/mainontaskriptejä, kartta-/videoupotuksia tai Cloudflare-palvelua.
+- [x] CONTACT 3.0:n yhteydenottopolun lähdekoodi on toteutettu, mutta palvelimia ei julkaistu tai todellista toimitusta testattu. Henkilöstöistuntoa ei ole toteutettu. Niitä ei merkitä tuotantokäytössä toimiviksi.
+- [x] Ei analytiikka-/mainontaskriptejä tai kartta-/videoupotuksia. Cloudflare/Turnstile-koodi on lisätty CONTACT 3.0:ssa; ilman uusia Vite-asetuksia sitä ei käytetä selaimessa.
 
 ## 1. Julkinen sivusto ja visuaalinen hyväksyntä
 

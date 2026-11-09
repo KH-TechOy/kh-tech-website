@@ -1,6 +1,6 @@
 # Tuotantoon siirtymisen tarkistuslista
 
-Päivitetty 8.11.2026. Julkaisua ei ole hyväksytty. Yksityiskohtaiset vahvistettavat faktat, omistajan päätökset ja todisteet: [PRIVACY_APPROVAL_CHECKLIST.md](PRIVACY_APPROVAL_CHECKLIST.md). Nykytilan tekninen näyttö: [PRIVACY_DATA_FLOW_AUDIT.md](PRIVACY_DATA_FLOW_AUDIT.md).
+Päivitetty 9.11.2026. Julkaisua ei ole hyväksytty. Yksityiskohtaiset vahvistettavat faktat, omistajan päätökset ja todisteet: [PRIVACY_APPROVAL_CHECKLIST.md](PRIVACY_APPROVAL_CHECKLIST.md). Nykytilan tekninen näyttö: [PRIVACY_DATA_FLOW_AUDIT.md](PRIVACY_DATA_FLOW_AUDIT.md). Yhteydenoton palvelinlähde ja paikallinen testaus on toteutettu CONTACT 3.0:ssa; palvelinten käyttöönotto ja oikea vastaanottotesti puuttuvat. [Manuaaliset käyttöönottoaskeleet](CONTACT_3_0_SETUP.md).
 
 1. Julkinen sivusto ja visuaalinen hyväksyntä.
    - [ ] Sisältö, viralliset tunnukset ja responsiivisuus hyväksytty.
@@ -9,7 +9,8 @@ Päivitetty 8.11.2026. Julkaisua ei ole hyväksytty. Yksityiskohtaiset vahvistet
    - [ ] Oikeusperusteet, roolit, toimittajat/sopimukset, säilytys, siirrot, oikeuspyynnöt ja loukkausmenettelyt vahvistettu.
    - [ ] Lopullisen hostin evästeet ja pyynnöt tarkistettu; ei-välttämät tekniikat estetty ennen asianmukaista suostumusta tai poistettu.
 3. Oikea yhteydenottosähköposti.
-   - [ ] Palvelin, salainen vastaanottaja, validointi, väärinkäytön torjunta ja virhe-/kaksoislähetysmenettelyt toteutettu.
+   - [x] Palvelinlähde, salainen vastaanottajakonfiguraatio, validointi, väärinkäytön torjunta ja virhe-/kaksoislähetysmenettelyt toteutettu ja paikallisesti testattu testivastineilla.
+   - [ ] Oikeat Google/Cloudflare-palvelimet, avaimet, widget, siivousajastus ja palvelusopimukset määritetty sekä hyväksytty.
    - [ ] Todellinen viesti vastaanotettu ja virhetapaukset testattu. Lähetyspainike avataan vasta tämän jälkeen.
 4. Turvallinen henkilöstötodennus.
    - [ ] Palvelinpuolinen identiteetti, valtuutus, vanheneva istunto, uloskirjautuminen ja oikeuksien peruminen testattu. Ei selaimen salasanaratkaisua tai jaettua GAS-salasanaa tuotantoturvana.

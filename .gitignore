@@ -8,5 +8,9 @@ dist/
 .playwright-artifacts/
 playwright-report/
 test-results/
+.wrangler/
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
 /docs/kh-tech-character-reference.jpg
 /docs/kh-tech-character-reference.jpeg

@@ -8,7 +8,7 @@ export default defineConfig({
   ...websiteConfig,
   testMatch: "**/privacy.playwright.ts",
   outputDir: ".playwright-artifacts/privacy",
-  reporter: [["list"], ["json", { outputFile: `docs/website25-checks/privacy-${variant}.json` }]],
+  reporter: [["list"], ["json", { outputFile: `${process.env.PRIVACY_CHECKS || "docs/website25-checks"}/privacy-${variant}.json` }]],
   projects: [
     { name: "desktop", use: { viewport: { width: 1440, height: 900 } } },
     { name: "mobile", use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },

@@ -1,0 +1,143 @@
+{
+  "base": "/kh-tech-website/",
+  "production": true,
+  "environment": "Headless Chromium; mobile viewport and touch emulation on the development computer, not physical phones.",
+  "status": "passed",
+  "durationMs": 130845.408,
+  "projects": [
+    {
+      "name": "desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "touch": false
+    },
+    {
+      "name": "portrait",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "touch": true
+    },
+    {
+      "name": "landscape",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "touch": true
+    }
+  ],
+  "tests": [
+    {
+      "project": "desktop",
+      "title": "official branding, verified services, responsive pages and lazy game loading",
+      "status": "passed",
+      "durationMs": 16424
+    },
+    {
+      "project": "desktop",
+      "title": "keyboard skip link and mobile navigation work without overflow",
+      "status": "passed",
+      "durationMs": 3294
+    },
+    {
+      "project": "desktop",
+      "title": "contact validation, preferred channel and urgency retain entered data without false delivery",
+      "status": "passed",
+      "durationMs": 3366
+    },
+    {
+      "project": "desktop",
+      "title": "report progress, photos, preview, PDF download and draft persistence",
+      "status": "passed",
+      "durationMs": 12279
+    },
+    {
+      "project": "desktop",
+      "title": "legacy report migrates safely and blocked storage still permits a local PDF",
+      "status": "passed",
+      "durationMs": 4875
+    },
+    {
+      "project": "desktop",
+      "title": "installed report shell reloads and generates a branded PDF offline",
+      "status": "passed",
+      "durationMs": 6462
+    },
+    {
+      "project": "portrait",
+      "title": "official branding, verified services, responsive pages and lazy game loading",
+      "status": "passed",
+      "durationMs": 12077
+    },
+    {
+      "project": "portrait",
+      "title": "keyboard skip link and mobile navigation work without overflow",
+      "status": "passed",
+      "durationMs": 3272
+    },
+    {
+      "project": "portrait",
+      "title": "contact validation, preferred channel and urgency retain entered data without false delivery",
+      "status": "passed",
+      "durationMs": 3566
+    },
+    {
+      "project": "portrait",
+      "title": "report progress, photos, preview, PDF download and draft persistence",
+      "status": "passed",
+      "durationMs": 7349
+    },
+    {
+      "project": "portrait",
+      "title": "legacy report migrates safely and blocked storage still permits a local PDF",
+      "status": "skipped",
+      "durationMs": 1322
+    },
+    {
+      "project": "portrait",
+      "title": "installed report shell reloads and generates a branded PDF offline",
+      "status": "skipped",
+      "durationMs": 1273
+    },
+    {
+      "project": "landscape",
+      "title": "official branding, verified services, responsive pages and lazy game loading",
+      "status": "passed",
+      "durationMs": 10859
+    },
+    {
+      "project": "landscape",
+      "title": "keyboard skip link and mobile navigation work without overflow",
+      "status": "passed",
+      "durationMs": 3206
+    },
+    {
+      "project": "landscape",
+      "title": "contact validation, preferred channel and urgency retain entered data without false delivery",
+      "status": "passed",
+      "durationMs": 3328
+    },
+    {
+      "project": "landscape",
+      "title": "report progress, photos, preview, PDF download and draft persistence",
+      "status": "passed",
+      "durationMs": 10368
+    },
+    {
+      "project": "landscape",
+      "title": "legacy report migrates safely and blocked storage still permits a local PDF",
+      "status": "skipped",
+      "durationMs": 1184
+    },
+    {
+      "project": "landscape",
+      "title": "installed report shell reloads and generates a branded PDF offline",
+      "status": "skipped",
+      "durationMs": 1024
+    }
+  ]
+}

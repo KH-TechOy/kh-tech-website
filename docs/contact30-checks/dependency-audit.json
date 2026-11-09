@@ -1,0 +1,13 @@
+{
+  "checked": "2026-11-09",
+  "command": "npm audit --omit=dev --json",
+  "exitCode": 0,
+  "reportedProductionVulnerabilities": 0,
+  "dependencies": {
+    "prod": 16,
+    "dev": 208,
+    "optional": 104,
+    "total": 241
+  },
+  "limitation": "Dependency advisory check only; not a security or release approval."
+}

@@ -1,0 +1,10 @@
+{
+  "unitAndLocalRuntimePassed": 69,
+  "browserPassed": 70,
+  "intentionalBrowserDuplicateSkips": 8,
+  "rootAndPagesProductionBuildsPassed": true,
+  "finalLocalBuild": "root, contact API/site key unset",
+  "actualEmailDeliveryTested": false,
+  "deploymentPerformed": false,
+  "pushPerformed": false
+}

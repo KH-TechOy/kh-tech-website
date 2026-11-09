@@ -1,4 +1,19 @@
-# Tietovirta-auditointi — KH-Tech Oy, 8.11.2026
+# Tietovirta-auditointi — KH-Tech Oy, päivitetty 9.11.2026
+
+## CONTACT 3.0 — täydentävä tietovirta-auditointi 9.11.2026
+
+Alla oleva 8.11.2026-auditointi on lähtötilan historiaa. Uusi lähdekoodi sisältää nyt Cloudflare Worker / Turnstile / erillinen Google MailApp -integraation. Sitä **ei julkaistu tai yhdistetty oikeisiin palvelutileihin** tässä erässä. Tavallinen build ilman uusia VITE-asetuksia pysyy lähettämättömänä eikä lataa Turnstilea. Konfiguroitu build kuvaa uudet palvelut tietosuojasivulla; käyttäjän käynnistämä turvatarkistus on ainoa ulkoinen selainohjelma. Ei muutoksia raportin tietovirtoihin.
+
+| Vaihe | Tiedot ja suojaus | Tekninen säilytys |
+| --- | --- | --- |
+| Lomake → Worker | Alkuperäiset kentät, kertakäyttöinen Turnstile-token ja satunnainen idempotenssiavain; HTTPS JSON, 16 KiB. Ei vastaanottajaa tai palvelinavainta. | Kentät vain React-muistissa; sessionStorageen vain tarkistusavain ja mahdollinen pyyntötunnus. Ei viestin sisältöä. Säilyy välilehden istunnon mukaan, poistuu uuden pyynnön aloituksessa. |
+| Turnstile | IP ja selaimen tekniset tarkistussignaalit Cloudflarelle. Worker tarkistaa tokenin success/action/hostname. | Ei token-lokia sovelluksessa; palveluntarjoajan retentio/ehdot omistajan vahvistettava. |
+| Worker SQLite | Sisältötiiviste, satunnainen viite, ajat ja lähetyksen tila. IP-rajoittimen nimi avaimellisesta 10 minuutin jaksokohtaisesta tiivisteestä; ei raakaa IP:tä omassa tietokannassa. | Pyyntö 48 h / alarm; rajoitin 10 min, tunti tai vuorokausi. Ajastusten viat voivat viivästyttää poistoa. Ei viestisisältöä tietokantaan. |
+| Worker → Google Apps Script | Lomakekentät ja palvelimen muodostama tunnus/aika, SHA-256-tiiviste, allekirjoitettu JSON. Google tarkistaa HMACin, iän, kentät ja kiintiön, lukitsee idempotenssin ennen MailAppia. | Script Properties: vain tiiviste, viite, tila ja expiry. 48 h tarkistusjakso, poisto seuraavassa onnistuneessa tuntiajossa. Ei Driveä tai Sheetsia. |
+| MailApp → yrityksen postilaatikko | Yksi palvelimen RECIPIENT_EMAIL, asiakkaan sähköposti tarvittaessa Reply-To. Tekstiviesti, ei HTML:ää tai liitteitä. Lähettäjä on julkaiseva Google-tili. | Sähköposti jää laatikkoon; yrityksen todellinen säilytys ja käyttöoikeudet yhä vahvistamatta. |
+| Vastaus / tarkistus | Vain tunnus, tilaluokka ja ajat. HMAC-allekirjoitettu Google-vastaus; ei yksityistä osoitetta. Epäselvää toimitusta ei lähetetä uudelleen, status vain lukee. | Vanhentunutta 48 h avainta ei hyväksytä uudelleen, vaikka ledger olisi poistunut. |
+
+Free-tilin sopimukset, käsittelijäroolit, ETA-siirrot, Turnstilen käyttötapauksen arviointi, palveluntarjoajan lokit ja postilaatikon säilytys **eivät ole vahvistettuja**. Lähdekoodi ei ole käyttöönoton todiste. [Käyttöönotto ja ensisijaiset lähteet](CONTACT_3_0_SETUP.md), [oikean toimituksen menettely](CONTACT_3_0_EMAIL_ACCEPTANCE.md), [tulokset ja rajat](CONTACT_3_0_REPORT.md).
 
 Rajaus: tämän repositorion Vite/React/TypeScript-sivusto, Phaser-peli, paikallinen raportti/PDF, service worker, GitHub Pages -työnkulku sekä irrallinen Apps Script -lähdekoodi. Ei väitettä aiemmin julkaistun kh-tech.fi-sivuston palvelinasetusten, sähköpostitilin tai yrityksen muun asiakasrekisterin auditoinnista. Ulkoisia sähköposteja ei lähetetä eikä palveluita julkaista.
 

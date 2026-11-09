@@ -1,0 +1,5 @@
+{
+  "checkedJavaScriptFiles": 15,
+  "serverConfigurationAndFixtureStringsAbsent": true,
+  "note": "Static exclusion check; not a general secret scanner or delivery test."
+}

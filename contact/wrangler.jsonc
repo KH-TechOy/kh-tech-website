@@ -1,0 +1,14 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "kh-tech-contact",
+  "main": "worker.ts",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  "observability": { "enabled": false },
+  "vars": {
+    "ALLOWED_ORIGINS": "https://kh-techoy.github.io",
+    "TURNSTILE_HOSTNAMES": "kh-techoy.github.io"
+  },
+  "durable_objects": { "bindings": [{ "name": "CONTACT_GUARD", "class_name": "ContactGuard" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["ContactGuard"] }]
+}

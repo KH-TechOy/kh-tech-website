@@ -1,0 +1,6 @@
+{
+  "reportAuthenticationModelAndPdfSourceUnchanged": true,
+  "allSevenOriginalBackgroundPngsUnchanged": true,
+  "githubPagesWorkflowOnlyAddsPublicContactBuildVariables": true,
+  "noWorkflowExecutionOrRepositoryVariableChangesPerformed": true
+}

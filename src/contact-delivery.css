@@ -1,0 +1,10 @@
+.contact-form fieldset:disabled { opacity: .78; }
+.contact-challenge { margin: 22px 0; }
+.contact-challenge > p { font-size: 12px; line-height: 1.8; }
+.contact-challenge a, .contact-confirmation a { text-decoration: underline; text-underline-offset: 3px; }
+.contact-challenge > div { margin-block: 14px; }
+.contact-confirmation { margin-top: 24px; padding: 22px; border: 1px solid #b4c9bd; background: #f0f6f2; border-radius: 12px; }
+.contact-confirmation h3 { font-size: 18px; line-height: 1.5; }
+.contact-reference { display: block; overflow-wrap: anywhere; font-size: 17px; color: #203e31; }
+.contact-confirmation .button { margin-top: 12px; }
+.contact-recovery strong { overflow-wrap: anywhere; }

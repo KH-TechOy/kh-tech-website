@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { company } from "./brand";
+import { contactConfigured } from "./contactDelivery";
 
 const sections: Array<{ id: string; title: string; content: ReactNode }> = [
   { id: "rekisterinpitaja", title: "Kuka vastaa henkilötietojen käsittelystä?", content: <>
@@ -11,7 +12,7 @@ const sections: Array<{ id: string; title: string; content: ReactNode }> = [
   </> },
   { id: "tiedot", title: "Mitä henkilötietoja käsitellään?", content: <>
     <p>Puhelin- tai sähköpostiyhteydenotossa käsitellään antamiasi yhteystietoja ja asian selvittämiseen tarvittavaa viestin sisältöä, esimerkiksi työn tarvetta, kohdetta ja ajankohtaa.</p>
-    <p>Verkkolomakkeen kenttiä ovat nimi, puhelin, sähköposti, sijainti, palvelu, työn ajankohta, toivottu yhteydenottotapa ja kuvaus. <strong>Verkkolähetys ei ole käytössä:</strong> kenttiin kirjoitettuja tietoja ei välitetä KH-Techille eikä sovellus tallenna niistä luonnosta selaimen pysyvään tallennustilaan.</p>
+    <p>Verkkolomakkeen kenttiä ovat nimi, puhelin, sähköposti, sijainti, palvelu, työn ajankohta, toivottu yhteydenottotapa ja kuvaus. {contactConfigured ? <>Lähettämäsi tiedot välitetään Cloudflaren kautta Googlen Apps Script- ja MailApp-palveluun, joka lähettää ilmoituksen yrityksen määrittämään sähköpostilaatikkoon. Pyyntö saa satunnaisen tunnuksen. Roskapostisuoja käsittelee IP-osoitetta ja turvatarkistuksen teknisiä tietoja.</> : <><strong>Verkkolähetys ei ole käytössä:</strong> kenttiin kirjoitettuja tietoja ei välitetä KH-Techille.</>} Sovellus ei tallenna kenttien sisällöstä pysyvää selainluonnosta.</p>
     <p>Työraporttityökalun nykyinen paikallinen toiminto käsittelee asiakkaan tai yrityksen nimeä, kohteen osoitetta, työntekijää, työn kuvausta, päivää ja aikoja, viitettä, materiaaleja, tunteja, tehtäviä, huomioita, jatkotoimia, vapaaehtoista tekstimuotoista asiakaskuittausta sekä enintään kuutta työkuvaa. Raportilla on yksilöllinen tunnus. Työkalun henkilöstötodennus ja sähköpostitoimitus eivät ole käytössä.</p>
     <p>Sivun lataus välittää julkaisupalvelulle IP-osoitteen ja verkkopyyntöön liittyviä teknisiä tietoja. Pelin paikallinen ohjainasetus ei sisällä nimeä, yhteystietoa tai pelaajatunnistetta.</p>
   </> },
@@ -22,7 +23,7 @@ const sections: Array<{ id: string; title: string; content: ReactNode }> = [
   { id: "tarkoitukset", title: "Miksi tietoja käsitellään?", content: <>
     <p>Yhteydenottotietoja tarvitaan kysymykseen vastaamiseen, työn tarpeen selvittämiseen sekä pyytämäsi tarjouksen tai toimeksiannon valmisteluun ja hoitamiseen.</p>
     <p>Raportin paikallisia tietoja käytetään työn dokumentointiin ja käyttäjän pyytämän PDF-tiedoston muodostamiseen. Ohjainasetus säilyttää itse valitsemasi pelituntuman. Offline-välimuisti mahdollistaa aiemmin ladatun raporttityökalun käytön ilman verkkoyhteyttä.</p>
-    <p>Tässä verkkosovelluksessa ei ole uutiskirjettä, kohdennettua markkinointia tai kävijäanalytiikkaa. Julkaisupalvelun teknisiä tietoja voidaan käsitellä sen turvallisuustarkoituksiin.</p>
+    <p>Tässä verkkosovelluksessa ei ole uutiskirjettä, kohdennettua markkinointia tai kävijäanalytiikkaa. Julkaisupalvelun teknisiä tietoja voidaan käsitellä sen turvallisuustarkoituksiin. {contactConfigured && <>Lomakkeen turvatarkistus, pyyntörajoitukset ja tekninen lähetysloki torjuvat väärinkäyttöä ja saman lähetyksen tahatonta toistamista. Asiakkaalle ei lähetetä automaattista markkinointi- tai vahvistussähköpostia.</>}</p>
   </> },
   { id: "oikeusperusteet", title: "Mihin käsittelyn oikeusperusteet perustuvat?", content: <>
     <p>Kun luonnollinen henkilö pyytää tarjousta tai tilaa palvelun itselleen, tarpeellisten yhteydenottotietojen käsittely voi perustua sopimusta edeltäviin toimiin tai sopimuksen täyttämiseen (GDPR 6 artiklan 1 kohdan b alakohta).</p>
@@ -36,9 +37,9 @@ const sections: Array<{ id: string; title: string; content: ReactNode }> = [
     <p>Paikallisen raportin PDF tarvitsee asiakkaan tai yrityksen, kohteen osoitteen, työntekijän ja työn kuvauksen. Asiakaskuittaus ja valokuvat ovat vapaaehtoisia. Älä anna tietoja laajemmin kuin työn dokumentointi edellyttää.</p>
   </> },
   { id: "tallennus", title: "Käytetäänkö evästeitä tai paikallista tallennusta?", content: <>
-    <p>Verkkosovellus ei aseta omia HTTP-evästeitä eikä käytä analytiikka- tai markkinointiseurantaa. Selaimen paikallinen tallennus ja offline-välimuisti ovat eri asioita kuin palvelimelle lähettäminen.</p>
+    <p>Verkkosovellus ei aseta omia HTTP-evästeitä eikä käytä analytiikka- tai markkinointiseurantaa. Selaimen paikallinen tallennus ja offline-välimuisti ovat eri asioita kuin palvelimelle lähettäminen. {contactConfigured && <>Turnstile ladataan vasta, kun käynnistät lomakkeen turvatarkistuksen. Tarkistus muodostaa yhteyden Cloudflareen.</>}</p>
     <dl className="privacy-storage">
-      <div><dt>Yhteydenottolomake</dt><dd>Kentät ovat sivun muistissa. Sovellus ei tallenna niitä localStorageen tai lähetä niitä taustapalveluun. Selaimen oma lomaketäyttö ja historia riippuvat selaimesi asetuksista.</dd></div>
+      <div><dt>Yhteydenottolomake</dt><dd>Kentät ovat sivun muistissa. Sovellus ei tallenna niitä localStorageen. {contactConfigured ? <>Lähetyksen tarkistusavain ja mahdollinen pyyntötunnus muistetaan välilehden sessionStorage-muistissa. Viestin sisältöä ei tallenneta tähän merkintään. Merkintä poistuu uuden yhteydenoton aloituksessa tai selaimen poistaessa istuntotiedot. Lähetyksen tilan tarkistaminen ei lähetä uutta sähköpostia.</> : <>Lomaketietoja ei lähetetä taustapalveluun.</>} Selaimen oma lomaketäyttö ja historia riippuvat selaimesi asetuksista.</dd></div>
       <div><dt>Raporttiluonnos ja kuvat</dt><dd>Tallentuvat raporttia käytettäessä automaattisesti tämän selaimen localStorageen. Tiedot pysyvät, kunnes luonnos poistetaan tai selain poistaa ne. Automaattista aikarajaa ei ole.</dd></div>
       <div><dt>Pelin ohjainasetus</dt><dd>Itse liukusäätimellä valitsemasi ohjainasetus säilyy paikallisesti ilman asetettua vanhenemisaikaa. Tämän version peli ei tallenna voittoja tai parasta tasoa pysyvästi. Aiemman version tasomerkintä voi jäädä selaimeen, kunnes poistat sivustotiedot.</dd></div>
       <div><dt>Offline-välimuisti</dt><dd>Raporttityökalun käynnistys voi tallentaa sivukuoren, ohjelmat ja kuvat Cache Storage -välimuistiin. Vanhat sovellusvälimuistit korvataan päivityksessä. Välimuisti ei ole raporttiluonnoksen säilytyspaikka.</dd></div>
@@ -48,29 +49,30 @@ const sections: Array<{ id: string; title: string; content: ReactNode }> = [
   </> },
   { id: "kasittelijat", title: "Ketkä käsittelevät henkilötietoja KH-Techin lukuun?", content: <>
     <p>Yhteydenotot on tarkoitettu KH-Tech Oy:lle. Sähköposti-, puhelin- ja mahdollisten muiden toimittajien roolit sekä henkilötietojen käsittelyä koskevat sopimukset on vahvistettava yrityksen todellisten palvelusopimusten perusteella.</p>
-    <p>Tämän sovelluksen lomake ja raportti eivät ole yhdistettyjä sähköpostipalveluun, asiakastietokantaan tai henkilöstötodennuksen palveluun. Niiden palveluntarjoajista tai sopimuksista ei anneta vahvistamatonta lupausta.</p>
+    <p>{contactConfigured ? <>Lomakkeen tekniseen välitykseen osallistuvat Cloudflare ja Google. Niiden roolit, sopimukset ja käsittelymaat on vahvistettava yrityksen käyttämien palvelutilien perusteella.</> : <>Lomakkeen sähköpostipalvelua ei ole otettu käyttöön.</>} Raporttia ei ole yhdistetty sähköpostipalveluun, asiakastietokantaan tai henkilöstötodennuksen palveluun. Palvelusopimuksista ei anneta vahvistamatonta lupausta.</p>
   </> },
   { id: "palveluntarjoajat", title: "Mitä ulkopuolisia palveluja verkkosivu käyttää?", content: <>
     <p>Tämän sivustoversion julkaisumääritys käyttää GitHub Pagesia. GitHub ilmoittaa tallentavansa Pages-kävijöiden IP-osoitteita turvallisuustarkoituksiin. Lue <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages#data-collection" rel="noreferrer">GitHub Pagesin tietojen keruusta</a> ja <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" rel="noreferrer">GitHubin tietosuojalausuma</a>.</p>
-    <p>Sovelluksen kuvat, fonttivalinnat ja ohjelmat toimitetaan paikallisina sivustoresursseina. Sivulla ei ole kolmannen osapuolen karttaa, videota, chatia, analytiikkapikseliä tai ulkoista fonttipalvelua. Tavallinen ulkoinen linkki avaa toisen palvelun vasta, kun valitset sen.</p>
+    <p>Sovelluksen kuvat ja fonttivalinnat toimitetaan paikallisina sivustoresursseina. Sivulla ei ole kolmannen osapuolen karttaa, videota, chatia, analytiikkapikseliä tai ulkoista fonttipalvelua. Tavallinen ulkoinen linkki avaa toisen palvelun vasta, kun valitset sen.</p>
+    {contactConfigured && <p>Lomakkeen turvatarkistus käyttää Cloudflare Turnstilea ja lähetys Cloudflare Workersia sekä Googlen Apps Script-, MailApp- ja sähköpostipalvelua. Turvatarkistus käsittelee muun muassa IP-osoitetta ja selaimen teknisiä signaaleja. Lue <a href="https://www.cloudflare.com/privacypolicy/" rel="noreferrer">Cloudflaren tietosuojasta</a> ja <a href="https://policies.google.com/privacy?hl=fi" rel="noreferrer">Googlen tietosuojasta</a>. Yleiset selosteet eivät yksin vahvista KH-Techin sopimuksia.</p>}
     <p>Puhelin- ja sähköpostilinkit avaavat oman sovelluksesi. Näiden viestien välitykseen osallistuvat puhelin- ja sähköpostipalvelut. Yrityksen lopullinen julkaisuympäristö ja viestipalvelujen toimittajaluettelo on vielä vahvistettava ennen tuotantojulkaisua.</p>
   </> },
   { id: "luovutukset", title: "Luovutetaanko tietoja muille?", content: <>
-    <p>Verkkosovellus ei lähetä lomakkeen sisältöä, raporttia tai sen kuvia ulkopuolisille palveluille. Jos itse lähetät sähköpostin, soitat tai jaat ladatun PDF:n, viestin tai tiedoston sisältö välittyy valitsemaasi kanavaa pitkin vastaanottajalle.</p>
+    <p>{contactConfigured ? <>Lomakkeen sisältö kulkee Cloudflaren ja Googlen kautta KH-Techin määrittämään vastaanottolaatikkoon. Tietoja ei käytetä avoimeen viestinvälitykseen, eikä lomakkeen käyttäjä voi valita ilmoituksen vastaanottajaa.</> : <>Verkkosovellus ei lähetä lomakkeen sisältöä ulkopuolisille palveluille.</>} Raporttia tai sen kuvia ei lähetetä. Jos itse lähetät sähköpostin, soitat tai jaat ladatun PDF:n, viestin tai tiedoston sisältö välittyy valitsemaasi kanavaa pitkin vastaanottajalle.</p>
     <p>Yrityksen mahdolliset muut tietojen vastaanottajaryhmät, viranomaisluovutusten perusteet ja asiakirjojen käsittelykäytännöt on vahvistettava ennen sähköisen asioinnin käyttöönottoa. Paikallisesti toimiva sovellus ei osoita, ettei yrityksellä olisi erillistä käsittelyä sähköpostissa tai muissa järjestelmissä.</p>
   </> },
   { id: "siirrot", title: "Siirretäänkö tietoja EU- tai ETA-alueen ulkopuolelle?", content: <>
     <p>Pelkästään laitteella käsiteltäviä raportteja ei tämän sovelluksen toimesta siirretä ulkomaiselle palvelimelle. Tämä ei koske julkaisupalvelun teknisiä pyyntötietoja tai itse lähettämääsi sähköpostia.</p>
-    <p>GitHub on kansainvälinen palveluntarjoaja. Yrityksen käytössä olevien sopimusten mukaisia käsittelymaita, mahdollisia ETA-alueen ulkopuolisia siirtoja ja niiden sovellettavia suojatoimia ei ole vielä vahvistettu. Emme siksi lupaa, että kaikki tiedot pysyisivät Suomessa tai ETA-alueella.</p>
+    <p>GitHub{contactConfigured ? ", Cloudflare ja Google ovat kansainvälisiä palveluntarjoajia" : " on kansainvälinen palveluntarjoaja"}. Yrityksen käytössä olevien sopimusten mukaisia käsittelymaita, mahdollisia ETA-alueen ulkopuolisia siirtoja ja niiden sovellettavia suojatoimia ei ole vielä vahvistettu. Emme siksi lupaa, että kaikki tiedot pysyisivät Suomessa tai ETA-alueella.</p>
     <p>Sovellettava siirtoperuste, mahdolliset lisäsuojat ja tapa saada niistä jäljennös on vahvistettava ennen tuotantokäyttöä. Yleinen palveluntarjoajan tietosuojalausuma ei yksin todista KH-Techin sopimukseen sovellettua siirtosuojaa. Lisätietoa saat tämän selosteen yhteyshenkilöltä.</p>
   </> },
   { id: "sailytys", title: "Kuinka kauan tietoja säilytetään?", content: <>
-    <p>Sovellus ei tallenna yhteydenottolomakkeen luonnosta pysyvästi. Raportin luonnos ja itse valitsemasi peliasetus eivät vanhene sovelluksessa automaattisesti. Niiden poistaminen on kuvattu paikallisen tallennuksen kohdassa. Selain voi poistaa tietoja myös omien tallennusrajojensa tai asetustensa vuoksi.</p>
+    <p>Sovellus ei tallenna yhteydenottolomakkeen luonnosta pysyvästi. {contactConfigured && <>Lähetyksen tekninen avain, sisältötiiviste, tunnus, aikaleima ja tila säilytetään palvelinpuolella 48 tunnin tarkistusjaksoa varten. Ajastettu siivous poistaa Googlen merkinnät jakson jälkeen; sen toiminta on varmistettava käyttöönotossa. Pyyntörajoittimien laskurit säilyvät enintään vuorokauden. Nämä eivät sisällä viestin tekstiä. Sähköpostiin toimitettu viesti säilyy erikseen yrityksen postilaatikossa.</>} Raportin luonnos ja itse valitsemasi peliasetus eivät vanhene sovelluksessa automaattisesti. Niiden poistaminen on kuvattu paikallisen tallennuksen kohdassa. Selain voi poistaa tietoja myös omien tallennusrajojensa tai asetustensa vuoksi.</p>
     <p>PDF jää laitteen tiedostoihin, kunnes se poistetaan siellä. Luonnoksen poistaminen tai sovelluksen päivittäminen ei poista ladattua PDF:ää. Selaimen välimuistin ja luonnoksen poistot ovat erillisiä toimintoja.</p>
     <p>Yrityksen sähköposti-, asiakas- ja lokitietojen tarkkoja säilytysaikoja tai niiden vahvistettuja määräytymisperusteita ei ole saatu tätä käyttöönottoa varten. Niitä ei korvata keksityillä päivämäärillä tai aikarajoilla. Nämä tiedot on vahvistettava ennen tuotantojulkaisua; tekninen paikallisen tallennuksen kesto ei ole yrityksen säilytyspolitiikka.</p>
   </> },
   { id: "tietoturva", title: "Miten tiedot suojataan?", content: <>
-    <p>Lomake- ja raporttitiedot eivät kulje tästä sovelluksesta taustapalveluun. Selainluonnos ei kuitenkaan ole sovelluksen käyttäjäkohtaisesti salaama tai henkilöstökirjautumisella suojattu. Samaa laitetta ja selainprofiilia käyttävä henkilö voi päästä paikallisiin tietoihin.</p>
+    <p>{contactConfigured ? <>Lomake välitetään HTTPS-yhteyksillä. Palvelin tarkistaa kentät, turvatarkistuksen ja pyyntörajoitukset ennen sähköpostiyritystä. Nämä eivät takaa viestin saapumista tai täydellistä roskapostin estoa.</> : <>Lomaketiedot eivät kulje tästä sovelluksesta taustapalveluun.</>} Raporttitiedot pysyvät laitteella. Selainluonnos ei kuitenkaan ole sovelluksen käyttäjäkohtaisesti salaama tai henkilöstökirjautumisella suojattu. Samaa laitetta ja selainprofiilia käyttävä henkilö voi päästä paikallisiin tietoihin.</p>
     <p>Käytä raporttitoimintoa vain omalla laitteellasi, vältä yhteiskäyttöprofiilia ja poista luonnos käytön jälkeen. Oikean henkilöstötodennuksen, palvelinpuolisten käyttöoikeuksien ja hyväksyttyjen säilytyskäytäntöjen puuttuessa työkalua ei ole avattu tuotantokäyttöön asiakastiedoilla.</p>
     <p>HTTPS-asetukset, palveluntarjoajien käyttöoikeudet, lokit, varmuuskopiot ja tietoturvaloukkausten toimintamalli on tarkistettava lopullisessa julkaisuympäristössä. Tässä selosteessa ei väitetä testaamattomia suojatoimia toteutetuiksi.</p>
   </> },
@@ -96,8 +98,8 @@ const sections: Array<{ id: string; title: string; content: ReactNode }> = [
     <p><a href="https://tietosuoja.fi/ilmoitus-tietosuojavaltuutetulle" rel="noreferrer">Ohje ja ilmoitus tietosuojavaltuutetulle</a>. Evästeiden ja vastaavien päätelaitetekniikoiden sääntelyä valvoo Suomessa <a href="https://kyberturvallisuuskeskus.fi/fi/viestintaverkkojen-ja-palveluiden-saantely/evasteet" rel="noreferrer">Traficom</a>.</p>
   </> },
   { id: "paivitykset", title: "Milloin selostetta päivitetään?", content: <>
-    <p>Selosteen tiedot on tarkistettu <time dateTime="2026-11-08">8.11.2026</time>. Selostetta on muutettava, jos tietojen käyttötarkoitus, vastaanottajat, säilytys tai palveluntarjoajat muuttuvat. Uudesta tarkoituksesta ja sen perusteista on kerrottava ennen uutta käsittelyä, ja mahdollinen suostumus pyydettävä erikseen.</p>
-    <p>Tämä seloste kuvaa nykyistä verkkosovellusta, ei vahvista keskeneräisiä toimintoja käyttöön otetuiksi. Sähköinen lomakelähetys ja henkilöstön suojattu raporttiasiointi ovat pois käytöstä. Niiden käyttöönotto sekä edellä yksilöidyt toimittaja-, säilytys- ja siirtotiedot edellyttävät vahvistusta ennen tuotantojulkaisua.</p>
+    <p>Selosteen tiedot on tarkistettu <time dateTime="2026-11-09">9.11.2026</time>. Selostetta on muutettava, jos tietojen käyttötarkoitus, vastaanottajat, säilytys tai palveluntarjoajat muuttuvat. Uudesta tarkoituksesta ja sen perusteista on kerrottava ennen uutta käsittelyä, ja mahdollinen suostumus pyydettävä erikseen.</p>
+    <p>Tämä seloste kuvaa nykyistä verkkosovellusta, ei vahvista keskeneräisiä toimintoja käyttöön otetuiksi. {contactConfigured ? "Sähköinen lomakelähetys on määritetty käyttöön; todellinen toimitus ja palvelutilien ehdot on varmennettava käyttöönotossa." : "Sähköinen lomakelähetys on pois käytöstä."} Henkilöstön suojattu raporttiasiointi ei ole käytössä. Edellä yksilöidyt toimittaja-, säilytys- ja siirtotiedot edellyttävät vahvistusta ennen tuotantojulkaisua.</p>
     <p>Selosteen perustana ovat toteutuksen tarkistus ja <a href="https://eur-lex.europa.eu/legal-content/FI/TXT/?uri=CELEX:32016R0679" rel="noreferrer">EU:n yleinen tietosuoja-asetus</a>. Seloste ei yksin osoita koko palvelun lainmukaisuutta.</p>
   </> },
 ];
@@ -105,8 +107,8 @@ const sections: Array<{ id: string; title: string; content: ReactNode }> = [
 export default function PrivacyNotice() {
   return <div className="container privacy-notice">
     <div className="privacy-intro">
-      <p className="eyebrow">TIETOSUOJASELOSTE · PÄIVITETTY <time dateTime="2026-11-08">8.11.2026</time></p>
-      <p>Tämä seloste koskee KH-Tech Oy:n verkkopalvelun yhteydenottoja, selaimen paikallisia toimintoja ja teknisiä tietoja. Saat yhteyden yritykseen puhelimitse tai sähköpostilla. Verkkolomakkeen lähetys ja henkilöstön suojattu raporttipalvelu eivät ole käytössä.</p>
+      <p className="eyebrow">TIETOSUOJASELOSTE · PÄIVITETTY <time dateTime="2026-11-09">9.11.2026</time></p>
+      <p>Tämä seloste koskee KH-Tech Oy:n verkkopalvelun yhteydenottoja, selaimen paikallisia toimintoja ja teknisiä tietoja. Saat yhteyden yritykseen puhelimitse tai sähköpostilla. {contactConfigured ? "Lomakkeen lähetys käyttää erillisiä turvatarkistus- ja sähköpostipalveluita." : "Verkkolomakkeen lähetys ei ole käytössä."} Henkilöstön suojattu raporttipalvelu ei ole käytössä.</p>
       <details className="privacy-index"><summary>Siirry suoraan aiheeseen</summary><nav aria-label="Tietosuojaselosteen aiheet"><ol>{sections.map(section => <li key={section.id}><a href={"#" + section.id}>{section.title}</a></li>)}</ol></nav></details>
     </div>
     {sections.map((section, index) => <section className="privacy-section" id={section.id} key={section.id} tabIndex={-1} aria-labelledby={section.id + "-title"}>

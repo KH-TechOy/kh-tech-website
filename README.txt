@@ -1,4 +1,22 @@
 KH-TECH OY – VERKKOSIVU, TYÖRAPORTTI JA PELI
+
+CONTACT 3.0 — 9.11.2026
+  Todellinen lähetyskoodi: contact/worker.ts ja apps-script/contact/Code.gs.
+  Käyttöönotto: CONTACT_3_0_SETUP.md. Oikean postilaatikkotestin menettely:
+  CONTACT_3_0_EMAIL_ACCEPTANCE.md. Raporttiliitos: CONTACT_3_0_REPORT_LINKING.md.
+  Toteutus ja testit: CONTACT_3_0_REPORT.md.
+  npm.cmd run check:contact   (Worker TypeScript)
+  npm.cmd run test:contact    (paikallinen workerd/SQLite + testivastineet)
+  npm.cmd run test:contact-ui (eristetty käyttöliittymätesti; ei oikeaa postia)
+  npm.cmd run contact:bundle  (Wrangler dry-run; ei deployta)
+  .env.example sisältää vain julkiset API-URL/site key -asetukset. Ilman niitä
+  lähetys pysyy pois käytöstä. Google/Cloudflare-salaisuudet vain palvelimella.
+  Pages-build lukee julkiset repository variables -arvot CONTACT_API_URL ja
+  TURNSTILE_SITE_KEY. Aseta ne vasta hyväksytyn oikean toimitustestin jälkeen.
+  Vanha apps-script/Code.gs on historiallinen raportti-/salasanaluonnos,
+  sitä ei julkaista yhteydenottopalveluksi. Main-haara, paikallinen commit.
+  Ei pushia, deployta tai oikeaa testipostia ilman erillistä hyväksyntää.
+
 WEBSITE 2.5 – TUOTANTOON VALMISTELU JA TIETOSUOJA
   Tavoite on oikea tuotantopalvelu. Vanhojen erien demo- ja
   salasanaluonnokset ovat historiaa, eivät tuotannon käyttöoikeusratkaisu.
