@@ -5,7 +5,10 @@
   "compatibility_date": "2026-11-01",
   "workers_dev": true,
   "observability": { "enabled": false },
-  "vars": { "ALLOWED_ORIGINS": "https://kh-techoy.github.io" },
+  "vars": {
+  "FIREBASE_PROJECT_ID": "kh-tech-report",
+  "ALLOWED_ORIGINS": "https://kh-techoy.github.io"
+  },
   "durable_objects": { "bindings": [{ "name": "REPORT_RATE", "class_name": "ReportRate" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["ReportRate"] }]
 }
