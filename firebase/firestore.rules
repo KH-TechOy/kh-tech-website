@@ -1,0 +1,84 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function profile() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
+    function active() {
+      return signedIn() && profile().active == true
+        && profile().role in ['admin', 'employee']
+        && request.auth.token.auth_time >= profile().validAfter;
+    }
+    function admin() { return active() && profile().role == 'admin'; }
+    function assigned(data) { return active() && (data.ownerUid == request.auth.uid || request.auth.uid in data.assignedTo || admin()); }
+    function uidAt(values, index) { return values.size() <= index || (values[index] is string && values[index].matches('[A-Za-z0-9_-]{1,128}')); }
+    function assignees(values) {
+      return values is list && values.size() <= 10 && values.toSet().size() == values.size()
+        && uidAt(values,0) && uidAt(values,1) && uidAt(values,2) && uidAt(values,3) && uidAt(values,4)
+        && uidAt(values,5) && uidAt(values,6) && uidAt(values,7) && uidAt(values,8) && uidAt(values,9);
+    }
+    function metadata(data) {
+      return data.keys().hasOnly(['schemaVersion', 'ownerUid', 'assignedTo', 'title', 'status', 'createdAt', 'updatedAt', 'quotationReference', 'workOrderId'])
+        && data.keys().hasAll(['schemaVersion', 'ownerUid', 'assignedTo', 'title', 'status', 'createdAt', 'updatedAt'])
+        && data.schemaVersion == 1 && data.ownerUid is string && data.ownerUid.matches('[A-Za-z0-9_-]{1,128}')
+        && assignees(data.assignedTo)
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 200
+        && data.status in ['draft', 'submitted', 'completed']
+        && data.createdAt is timestamp && data.updatedAt == request.time
+        && (!('quotationReference' in data) || (data.quotationReference is string && data.quotationReference.matches('KHT-[0-9]{8}-[A-F0-9]{12}')))
+        && (!('workOrderId' in data) || (data.workOrderId is string && data.workOrderId.size() <= 128));
+    }
+    match /users/{uid} {
+      // Own access-state remains readable so a disabled user's UI can close immediately.
+      allow get: if signedIn() && request.auth.uid == uid || admin();
+      allow list: if admin() && request.query.limit <= 100;
+      allow write: if false;
+    }
+    match /reports/{id} {
+      allow get: if assigned(resource.data);
+      allow list: if assigned(resource.data) && request.query.limit <= 50;
+      allow create: if active() && metadata(request.resource.data)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.ownerUid == request.auth.uid
+        && (admin() || request.resource.data.assignedTo.size() == 0)
+        && request.resource.data.status == 'draft';
+      allow update: if assigned(resource.data) && metadata(request.resource.data)
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && request.resource.data.createdAt == resource.data.createdAt
+        && (admin() || (request.resource.data.assignedTo == resource.data.assignedTo
+          && request.resource.data.status in ['draft', 'submitted']
+          && resource.data.status != 'completed'));
+      allow delete: if admin();
+    }
+    match /workOrders/{id} {
+      allow get: if assigned(resource.data);
+      allow list: if assigned(resource.data) && request.query.limit <= 50;
+      allow create: if admin() && metadata(request.resource.data) && request.resource.data.createdAt == request.time;
+      allow update: if admin() && metadata(request.resource.data)
+        && request.resource.data.ownerUid == resource.data.ownerUid && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if admin();
+    }
+    match /materialCatalog/{id} {
+      allow get: if active();
+      allow list: if active() && request.query.limit <= 100;
+      allow create, update: if admin()
+        && request.resource.data.keys().hasOnly(['name', 'unit', 'code', 'active', 'updatedAt'])
+        && request.resource.data.keys().hasAll(['name', 'unit', 'code', 'active', 'updatedAt'])
+        && request.resource.data.name is string && request.resource.data.name.size() <= 120
+        && request.resource.data.unit is string && request.resource.data.unit.size() <= 20
+        && request.resource.data.code is string && request.resource.data.code.size() <= 40
+        && request.resource.data.active is bool && request.resource.data.updatedAt == request.time;
+      allow delete: if admin();
+    }
+    match /archiveMetadata/{id} {
+      allow get: if assigned(resource.data);
+      allow list: if assigned(resource.data) && request.query.limit <= 50;
+      // Archiving is a future trusted workflow, not a client-controlled access shortcut.
+      allow write: if false;
+    }
+    match /auditEvents/{id} {
+      allow read: if admin() && (request.method == 'get' || request.query.limit <= 100);
+      allow write: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

@@ -1,5 +1,23 @@
 KH-TECH OY – VERKKOSIVU, TYÖRAPORTTI JA PELI
 
+REPORT 2.0 A — 10.11.2026
+  Henkilökohtainen Firebase email/password, Admin/Employee ja erillinen
+  Cloudflare Workers Free -käyttäjähallinta. Spark, ei korttia tai Blazea.
+  Raportti avataan suoraan NFC-URL:stä; julkisessa navigaatiossa ei linkkiä.
+  Ilman oikeita asetuksia raportti on suljettu. Ei jaettua salasanaa.
+  Editorin/PDF:n tietomalli säilyy. Uusi luonnos on UID-kohtainen
+  sessionStorage-luonnos, joka poistuu uloskirjautumisessa tai käyttöestossa.
+  Vanha yhteinen localStorage ei avaudu automaattisesti; admin voi tuoda
+  sen nimenomaisesti. Vanha tieto on poistettava erikseen laitteelta.
+  Pilviraporttien/tilausten/arkiston täysi työnkulku on seuraava vaihe.
+  Käyttöönotto ja ensimmäinen admin: REPORT_2_0_FIREBASE_SETUP.md.
+  Valtuutus ja tietomalli: REPORT_2_0_SECURITY.md.
+  Tulokset ja todelliset julkaisuesteet: REPORT_2_0_A_RESULT.md.
+  npm.cmd test / npm.cmd run check:report / npm.cmd run test:report
+  npm.cmd run build / npm.cmd run report:bundle (vain dry-run)
+  Testit käyttävät vain demo-emulaattoria; ei oikeaa postia tai avaimia.
+  Main-haara, paikallinen commit. Ei pushia, deployta tai laskutusta.
+
 CONTACT 3.1 — 10.11.2026
   Lomake käynnistää Managed Turnstilen automaattisesti yhdestä lähetyksestä.
   Ei erillistä aktivointipainiketta tai pysyvää sinistä ohjelaatikkoa.

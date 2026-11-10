@@ -282,8 +282,8 @@ function compressPhoto(file: File): Promise<string> {
     image.src = source;
   });
 }
-export default function Report() {
-  const [state, setState] = React.useState(readReport),
+export default function Report({ draftStorage }: { draftStorage?: import('./reportModel').DraftStorage }) {
+  const [state, setState] = React.useState(() => readReport(draftStorage)),
     [message, setMessage] = React.useState(""),
     [storage, setStorage] = React.useState<"saved" | "saving" | "error">(
       "saved",
@@ -302,7 +302,7 @@ export default function Report() {
     mounted.current = true;
     const flush = () => {
       try {
-        saveReport(current.current);
+        saveReport(current.current, draftStorage);
       } catch {
         /* The visible storage warning handles failures. */
       }
@@ -319,7 +319,7 @@ export default function Report() {
     setStorage("saving");
     const timer = setTimeout(() => {
       try {
-        saveReport(state);
+        saveReport(state, draftStorage);
         setStorage("saved");
       } catch {
         setStorage("error");
@@ -441,8 +441,8 @@ export default function Report() {
       setChecked(false);
       setMessage("Luonnos poistettu tältä laitteelta. Ladattu PDF ei poistu.");
       try {
-        localStorage.removeItem("kht-report-draft");
-        localStorage.removeItem("kht-report-id");
+        (draftStorage || localStorage).removeItem("kht-report-draft");
+        (draftStorage || localStorage).removeItem("kht-report-id");
       } catch {
         setStorage("error");
       }
@@ -482,7 +482,7 @@ export default function Report() {
             <Info size={19} />
             <span>
               Paikallinen PDF-työkalu
-              <small>Henkilöstötodennus ja sähköpostitoimitus eivät ole käytössä. Ei tuotantokäyttöön asiakastiedoilla.</small>
+              <small>{draftStorage ? 'Henkilökohtainen istunto. PDF ladataan laitteelle; pilvitallennus ja sähköpostitoimitus eivät ole käytössä.' : 'Henkilöstötodennus ja sähköpostitoimitus eivät ole käytössä. Ei tuotantokäyttöön asiakastiedoilla.'}</small>
             </span>
           </div>
         </div>
@@ -560,8 +560,7 @@ export default function Report() {
             <div className="privacy-alert">
               <Info />
               <p>
-                Luonnos ja kuvat tallentuvat tämän laitteen selaimeen. Käytä
-                omaa laitettasi ja poista luonnos työn jälkeen.{" "}
+                {draftStorage ? 'Luonnos ja kuvat säilyvät tämän välilehden istunnossa. Lataa PDF ennen uloskirjautumista tai välilehden sulkemista. ' : 'Luonnos ja kuvat tallentuvat tämän laitteen selaimeen. Käytä omaa laitettasi ja poista luonnos työn jälkeen. '}
                 <a href={url("tietosuoja/")}>Tietojen käsittely</a>
               </p>
             </div>

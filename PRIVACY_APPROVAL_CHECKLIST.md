@@ -1,5 +1,19 @@
 # Tietosuojan ja tuotantojulkaisun hyväksyntälista
 
+## REPORT 2.0 A — henkilöstöpalvelun julkaisuportit, 10.11.2026
+
+Paikallinen Firebase-/Worker-toteutus ja emulaattorit eivät merkitse seuraavia kohtia hyväksytyiksi. Alempien historiallisten osioiden avoin todennus tarkoittaa nyt erityisesti lopullisen ympäristön varmennusta. [Toteutus](REPORT_2_0_A_RESULT.md), [asetukset](REPORT_2_0_FIREBASE_SETUP.md), [turvarajat](REPORT_2_0_SECURITY.md).
+
+- [ ] Vahvista yrityksen omistamat Firebase Spark- ja Workers Free -tilit, ei korttia/laskutusta, kiintiöiden seurannan vastuuhenkilö ja käyttökatkojen hyväksyntä.
+- [ ] Hyväksy Firebase Authin, Firestoren ja Cloudflaren todelliset sopimukset/DPA:t, käsittelijäroolit, valittu EU-tietokanta-alue ja mahdolliset kansainväliset siirrot suojineen. EU-Firestore ei tarkoita, että Auth ja Cloudflare käsittelisivät kaiken ETA:ssa.
+- [ ] Vahvista työntekijöiden profiilien/roolien/auditoinnin oikeusperuste ja henkilöstön informointi. Ei keksittyä suostumusta tai automaattista oikeusperustehyväksyntää.
+- [ ] Määritä profiilien, inaktiivisten tilien ja auditoinnin säilytys-/poistomenettely, tietopyynnöt, lokien todellinen retentio, pääsynvalvonta ja vastuuhenkilöt. Koodissa ei ole automaattista auditoinnin vanhenemista tai maksullista TTL:ää.
+- [ ] Tunnista ja vie/poista vanhat yhteiset localStorage-luonnokset. Uusi kirjautuminen ei salaa aiempaa paikallista tietoa. Hyväksy tab-kohtaisen plaintext-luonnoksen rajat ja hallittujen henkilökohtaisten laitteiden käytäntö.
+- [ ] Varmenna ensimmäinen admin luotetulla operaattorilla, laskuri, toinen ylläpitäjä, IAM/MFA, palvelutiliavaimen turvallinen säilytys/rotaatio sekä profiili ensin -hätäesto ja palautumismenettely. Ei julkista bootstrap-endpointia.
+- [ ] Hyväksy keskeneräisten luontien ja attempting-tilaan jääneiden palautusviestien manuaalinen selvitys ilman sokeaa uudelleenlähetystä.
+- [ ] Testaa oikean projektin kirjautuminen, sähköpostipalautuksen todellinen vastaanotto/kertakäyttö, Firestore Rules, eston vaikutus vanhaan tokeniin, viimeinen admin ja Free CPU -raja. Testaa fyysiset NFC-kortit ja asennettu PWA työntekijöiden laitteilla.
+- [ ] Sovi maksuton varmuuskopio-/palautussuunnitelma ja kiintiöiden täyttymisen menettely. Pilviraportit, liitteiden arkisto ja raporttien sähköposti eivät ole vielä operatiivisia; niitä ei julkaista toimivina.
+
 ## CONTACT 3.1 — tilapäivitys 10.11.2026
 
 Käyttäjä ilmoittaa aiemman oikean sähköpostitoimituksen varmennetuksi. Tämä ei yksin vahvista tietosuojasopimuksia, siirtoperusteita tai raportin henkilöstötodennusta; niiden avoimet kohdat säilyvät. Uuden version automaattinen Turnstile, molemmat-yhteydenottotapa ja kopiointi testataan paikallisesti, ja käyttöönoton jälkeinen live-toimitus varmennetaan erikseen. Katso [CONTACT_3_1_REPORT.md](CONTACT_3_1_REPORT.md). Alla olevat päivätyt CONTACT 3.0 -havainnot kuvaavat sen paikallisen toteutuserän tilaa.

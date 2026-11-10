@@ -31,15 +31,12 @@ try{
   await page.getByRole('button',{name:'Työhön!',exact:true}).click();
   const routePage=await browser.newPage();
   routePage.on('pageerror',error=>failures.push(error.message));
-  for(const [route,selector] of [['','h1'],['palvelut/','h1'],['yritys/','h1'],['tietosuoja/','h1'],['yhteystiedot/','.contact-form'],['report/','.report-form']]){await routePage.goto(origin+base+route);await routePage.locator(selector).waitFor()}
-  await routePage.locator('[name=customer]').fill('Paikallinen QA-asiakas');await routePage.locator('[name=address]').fill('Testikatu 1');await routePage.locator('[name=worker]').fill('Testaaja');await routePage.locator('textarea[name=description]').fill('Paikallinen PDF-tarkistus.');
-  const downloadPromise=routePage.waitForEvent('download');await routePage.getByRole('button',{name:'Luo ja lataa PDF'}).click();const download=await downloadPromise;
-  assert.match(download.suggestedFilename(),/KHT-.*\.pdf$/);assert((await readFile(await download.path())).subarray(0,4).equals(Buffer.from('%PDF')));
-  await routePage.reload();assert.equal(await routePage.locator('[name=customer]').inputValue(),'Paikallinen QA-asiakas');
+  for(const [route,selector] of [['','h1'],['palvelut/','h1'],['yritys/','h1'],['tietosuoja/','h1'],['yhteystiedot/','.contact-form'],['report/','.access-login']]){await routePage.goto(origin+base+route);await routePage.locator(selector).waitFor()}
+  assert.equal(await routePage.locator('.report-form').count(),0,'Unconfigured report must stay closed');
   await routePage.goto(origin+base+'yhteystiedot/');await routePage.locator('[name=name]').fill('QA-tarkistus');await routePage.locator('[name=phone]').fill('0401234567');await routePage.locator('textarea[name=description]').fill('Paikallinen lomakekäyttöliittymän tarkistus.');
   assert(await routePage.getByRole('button',{name:'Verkkolähetys ei ole käytössä',exact:true}).isDisabled());await routePage.locator('.contact-form').evaluate(form=>form.requestSubmit());assert.match(await routePage.getByRole('status').innerText(),/Pyyntöä ei lähetetty/);
   await mkdir(screenshots,{recursive:true});await mkdir(checks,{recursive:true});await page.screenshot({path:`${screenshots}/production-${base==='/'?'root':'pages'}-gameplay.png`,animations:'disabled'});
   assert.deepEqual(failures,[],'Production page had a runtime or request failure');
-  await writeFile(`${checks}/production-${base==='/'?'root':'pages'}.json`,JSON.stringify({base,game:true,refresh:true,oneCanvas:true,noDevHook:true,workerRequests,allRoutes:true,localPdfDownload:true,reportDraftPersisted:true,contactDeliveryDisabled:true,failures},null,2));
-  console.log(`Production preview passed: ${base}peli/, direct refresh, one canvas, no dev hook, worker and official assets; all routes, contact delivery unavailable, report draft and actual PDF download.`);
+  await writeFile(`${checks}/production-${base==='/'?'root':'pages'}.json`,JSON.stringify({base,game:true,refresh:true,oneCanvas:true,noDevHook:true,workerRequests,allRoutes:true,reportAuthenticationRequired:true,contactDeliveryDisabled:true,failures},null,2));
+  console.log(`Production preview passed: ${base}peli/, direct refresh, one canvas, no dev hook, worker and official assets; all routes, contact delivery unavailable, report authentication gate.`);
 }finally{await browser?.close();server.kill()}

@@ -17,9 +17,15 @@
     "check:contact": "tsc -p contact/tsconfig.json",
     "test:contact": "vitest run contact/backend.test.ts contact/contactMethods.test.ts",
     "contact:bundle": "wrangler deploy --dry-run --config contact/wrangler.jsonc --outdir ../.playwright-artifacts/contact30-worker",
-    "test:contact-ui": "playwright test --config playwright.contact.config.ts"
+    "test:contact-ui": "playwright test --config playwright.contact.config.ts",
+    "check:report": "tsc -p report-api/tsconfig.json",
+    "report:bundle": "wrangler deploy --dry-run --config report-api/wrangler.jsonc --outdir ../.playwright-artifacts/report/worker",
+    "test:report": "node scripts/run-report-tests.mjs",
+    "test:report:inside": "vitest run --config vitest.report.config.ts && playwright test --config playwright.report.config.ts"
   },
   "dependencies": {
+    "firebase": "^13.2.0",
+    "jose": "^6.2.15",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.468.0",
     "phaser": "^3.90.0",
@@ -28,15 +34,21 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261102.1",
+    "@firebase/rules-unit-testing": "^6.0.0",
     "@playwright/test": "^1.64.1",
     "@types/node": "^26.6.6",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^5.2.0",
+    "firebase-admin": "^14.5.0",
+    "firebase-tools": "^15.34.2",
     "miniflare": "^5.20261101.0-beta",
     "typescript": "~5.6.2",
     "vite": "^7.3.5",
     "vitest": "^4.1.11",
     "wrangler": "^4.156.1"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "1.13.6"
   }
 }

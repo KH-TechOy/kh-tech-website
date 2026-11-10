@@ -67,11 +67,13 @@ export function emptyReport(): ReportState {
     photos: [],
   };
 }
-export function readReport(): ReportState {
+export type DraftStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+export function readReport(store?: DraftStorage): ReportState {
   const state = emptyReport();
   try {
+    const storage = store || localStorage;
     const parsed: unknown = JSON.parse(
-      localStorage.getItem("kht-report-draft") || "{}",
+      storage.getItem("kht-report-draft") || "{}",
     );
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed))
       return state;
@@ -111,7 +113,7 @@ export function readReport(): ReportState {
             : [],
         )
         .slice(0, 6);
-    const id = localStorage.getItem("kht-report-id");
+    const id = storage.getItem("kht-report-id");
     if (id && /^KHT-\d{8}-[A-F0-9]{6}$/.test(id)) state.id = id;
   } catch {
     /* Storage is optional; the editable report and local PDF still work. */
@@ -129,13 +131,14 @@ export function reportIsEmpty(state: ReportState) {
     )
   );
 }
-export function saveReport(state: ReportState) {
+export function saveReport(state: ReportState, store?: DraftStorage) {
+  const storage = store || localStorage;
   if (reportIsEmpty(state)) {
-    localStorage.removeItem("kht-report-draft");
-    localStorage.removeItem("kht-report-id");
+    storage.removeItem("kht-report-draft");
+    storage.removeItem("kht-report-id");
     return;
   }
-  localStorage.setItem(
+  storage.setItem(
     "kht-report-draft",
     JSON.stringify({
       ...state.form,
@@ -143,7 +146,7 @@ export function saveReport(state: ReportState) {
       photoCategories: state.photos.map((photo) => photo.category),
     }),
   );
-  localStorage.setItem("kht-report-id", state.id);
+  storage.setItem("kht-report-id", state.id);
 }
 export function reportErrors(
   form: ReportForm,

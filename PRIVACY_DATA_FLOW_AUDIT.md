@@ -1,5 +1,20 @@
 # Tietovirta-auditointi — KH-Tech Oy, päivitetty 9.11.2026
 
+## REPORT 2.0 A — päivitys 10.11.2026
+
+Tämä osio korvaa alempien historiallisten raportti-/todennushavaintojen nykytilan. Firebase email/password ja Cloudflare Worker -roolihallinta on toteutettu paikallisesti; oikeaa projektia tai käyttöönottoa ei ole varmennettu. Konfiguroimattomassa buildissa raportin käyttö on suljettu. Julkisilla sivuilla ei alusteta Firebase SDK:ta eikä aloiteta Auth-/Firestore-yhteyksiä; tietosuojateksti käyttää vain julkista asetuslippua. Ei muutosta CONTACT 3.1:n viestien toimitukseen tai peliin.
+
+| Virta | Tiedot / säilytys |
+| --- | --- |
+| Selain → Firebase Auth | Yksilöllinen sähköposti/salasana, palautuspyyntö ja palvelun tekniset pyyntötiedot. Salasanat vain Authissa, eivät Firestoressa. Istunto välilehden sessionStoragessa; logout päättää sen. |
+| Selain → Report Worker → Google Auth/Firestore | Bearer ID-token tarkistetaan; tuore profiili ja Auth-tilan esto varmistetaan. Profiili: UID, nimi, sähköposti, rooli, active, validAfter ja ajat. Auditointi: toimija, kohde, toiminto, tila ja ajat. Ei raporttitekstiä, kuvia, salasanoja tai token-lokia. |
+| Admin → palautus | Googlelle sähköposti ja Cloudflaren välittämä todellinen caller IP abuse-tarkistukseen; ei IP:tä omassa auditoinnissa. Pyyntö palveluun ei todista postilaatikon vastaanottoa. |
+| Worker SQLite DO | 30 hallintapyyntöä / 10 min / UID. Vain laskuri ja jakson loppu; alarm-poisto, jonka häiriö voi viivästyttää siivousta. |
+| Kirjautunut editori | Nykyinen raportti/kuvat vain UID-nimetyssä plaintext sessionStorage -luonnoksessa ja PDF paikallisesti. Logout/esto poistaa uuden luonnoksen. Offline sulkee editorin mutta säilyttää luonnoksen saman käyttäjän uudelleenvarmennukseen. Firestore vain memory-cache. |
+| Vanha localStorage | Ei automaattista lukua uuteen käyttöön. Adminin nimenomainen tuonti säilyttää tietomallin/tunnuksen. Vanhat yhteiset avaimet jäävät laitteelle, kunnes omistaja poistaa ne erikseen. Uusi todennus ei salaa vanhoja tietoja. |
+
+Firestore Rules ja minimimetadatakokoelmat on toteutettu; editori ei vielä kirjoita raportteja pilveen. Ei Storagea, maksullista TTL:ää, pilvi-PDF-arkistoa tai raporttisähköpostia. Profiili-/auditointiretention, operaattorien oikeudet, palvelutiliavaimen rotaatio, henkilöstön informointi/oikeusperuste, DPA ja kansainväliset siirrot odottavat omistajan vahvistusta. [Turvallisuus ja rajat](REPORT_2_0_SECURITY.md), [käyttöönotto](REPORT_2_0_FIREBASE_SETUP.md), [paikalliset tulokset](REPORT_2_0_A_RESULT.md).
+
 ## CONTACT 3.1 — rajattu päivitys 10.11.2026
 
 Käyttäjä ilmoittaa aiemman oikean lomakesähköpostin toimituksen varmennetuksi. Tätä ei esitetä uuden version käyttöönoton jälkeisenä riippumattomana testinä. Nyt Turnstile käynnistyy lähetyksen tai status-tarkistuksen painalluksesta; erillistä aktivointipainiketta ei enää ole. Molemmat-yhteydenottotapa edellyttää puhelinta ja sähköpostia kaikissa kolmessa validointikerroksessa. Tunnuksen kopiointi käyttää Clipboard API:a ilman uutta selain- tai palvelintallennusta. Vastaanottaja, tietosisällön rajat, HMAC, rajoittimet, ledger/retentio ja raportin tietovirrat säilyvät. Alla olevat 8.–9.11. tiedot ovat aikaisempien erien havaintoja; sopimus-/säilytys-/siirtovahvistuksia ei merkitä automaattisesti hyväksytyiksi. [Nykyinen toteutus ja testirajat](CONTACT_3_1_REPORT.md).

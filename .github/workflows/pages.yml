@@ -28,6 +28,11 @@ jobs:
           # Public build configuration only. Empty repository variables keep contact delivery disabled.
           VITE_CONTACT_API_URL: ${{ vars.CONTACT_API_URL }}
           VITE_TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
+          VITE_FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_API_KEY: ${{ vars.FIREBASE_API_KEY }}
+          VITE_FIREBASE_APP_ID: ${{ vars.FIREBASE_APP_ID }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.FIREBASE_AUTH_DOMAIN }}
+          VITE_REPORT_API_URL: ${{ vars.REPORT_API_URL }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

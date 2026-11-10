@@ -1,0 +1,11 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "kh-tech-report-access",
+  "main": "worker.ts",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  "observability": { "enabled": false },
+  "vars": { "ALLOWED_ORIGINS": "https://kh-techoy.github.io" },
+  "durable_objects": { "bindings": [{ "name": "REPORT_RATE", "class_name": "ReportRate" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["ReportRate"] }]
+}

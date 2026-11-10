@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { mkdirSync, readFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 
 const base = process.env.VITE_BASE_PATH || "/";
 const out = process.env.PRIVACY_SCREENSHOTS || "docs/website25-screenshots/final";
@@ -26,7 +26,7 @@ test("privacy notice: nineteen topics, metadata, glass, keyboard anchors and rea
     await expect(page.locator(".privacy-notice")).toContainText(value);
   await expect(page.locator(".privacy-notice")).not.toContainText(/esittelytilassa|TODO|\[yrityksen/);
   await expect(page.locator("#siirrot")).toContainText("ei ole vielä vahvistettu");
-  await expect(page.locator("#sailytys")).toContainText("eivät vanhene sovelluksessa automaattisesti");
+  await expect(page.locator("#sailytys")).toContainText("eivät vanhene automaattisesti");
   await expect(page.locator("#lahteet")).toContainText("ensimmäisen luovutuksen yhteydessä");
   const hero = page.locator(".page-hero--privacy"), image = hero.locator(".section-background img");
   await image.evaluate((image: HTMLImageElement) => image.decode());
@@ -124,33 +124,11 @@ test("public data flows: no report links, cookies, contact transmission or unsol
   expect(await page.evaluate(async () => (await indexedDB.databases()).map(db => db.name))).toEqual([]);
 });
 
-test("NFC direct URL preserves the report, manifest, local PDF and deletion without pretending authentication", async ({ page }) => {
-  const posts: string[] = [];
-  page.on("request", request => { if (request.method() === "POST") posts.push(request.url()); });
-  await page.goto(base + "report/");
-  await page.locator(".report-form").waitFor();
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex,nofollow");
-  await expect(page.locator(".report-mode")).toContainText("Henkilöstötodennus ja sähköpostitoimitus eivät ole käytössä");
-  const manifest = await page.evaluate(async base => {
-    const response = await fetch(base + "manifest.webmanifest");
-    return { data: await response.json(), url: response.url };
-  }, base);
-  expect(new URL(manifest.data.start_url, manifest.url).pathname).toBe(base + "report/");
-  expect(manifest.data.lang).toBe("fi");
-  await page.locator('[name="customer"]').fill("NFC QA, ei asiakastietoa");
-  await page.locator('[name="address"]').fill("Testiosoite");
-  await page.locator('[name="worker"]').fill("Testaaja");
-  await page.locator('textarea[name="description"]').fill("Suoran URL:n paikallinen PDF-tarkistus.");
-  await expect(page.locator(".report-save")).toContainText("Luonnos tallennettu");
-  await page.reload();
-  await expect(page.locator('[name="customer"]')).toHaveValue("NFC QA, ei asiakastietoa");
-  const result = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Luo ja lataa PDF", exact: true }).click();
-  const download = await result;
-  expect(readFileSync((await download.path())!).subarray(0, 4).toString()).toBe("%PDF");
-  expect(posts).toEqual([]);
-  page.once("dialog", dialog => dialog.accept());
-  await page.getByRole("button", { name: "Poista luonnos", exact: true }).click();
-  await expect(page.locator('[name="customer"]')).toHaveValue("");
-  await expect.poll(() => page.evaluate(() => Object.keys(localStorage))).toEqual([]);
+test("NFC direct URL retains manifest and requires configured employee authentication", async ({ page }) => {
+  const posts: string[]=[];page.on("request",request=>{if(request.method()==="POST")posts.push(request.url());});
+  await page.goto(base+"report/");await expect(page.locator(".access-login")).toBeVisible();await expect(page.locator(".report-form")).toHaveCount(0);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content","noindex,nofollow");
+  const manifest=await page.evaluate(async base=>{const response=await fetch(base+"manifest.webmanifest");return {data:await response.json(),url:response.url};},base);
+  expect(new URL(manifest.data.start_url,manifest.url).pathname).toBe(base+"report/");expect(manifest.data.lang).toBe("fi");
+  await page.reload();await expect(page.locator(".access-login")).toBeVisible();expect(posts).toEqual([]);
 });

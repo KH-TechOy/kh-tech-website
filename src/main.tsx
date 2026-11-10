@@ -4,7 +4,7 @@ import { resolveRoute } from "./utils";
 import "./style.css";
 
 const Website = React.lazy(() => import("./Website"));
-const Report = React.lazy(() => import("./Report"));
+const Report = React.lazy(() => import("./reportAuth/ReportApp"));
 const GamePage = React.lazy(() => import("./game2/GamePage"));
 const base = import.meta.env.BASE_URL,
   path = resolveRoute(location.pathname, base);
