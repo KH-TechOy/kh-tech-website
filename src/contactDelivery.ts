@@ -37,7 +37,7 @@ export async function contactRequest(pending: ContactPending, token: string, dat
   throw new DeliveryError(known.includes(result.error) ? result.error : "unknown");
 }
 export function deliveryErrorText(code: string): string {
-  if (code === "challenge" || code === "challenge_unavailable") return "Turvatarkistus ei onnistunut. Tee tarkistus uudelleen tai ota yhteyttä puhelimitse.";
+  if (code === "challenge" || code === "challenge_unavailable") return "Lähetyksen tarkistus ei onnistunut. Yritä uudelleen tai ota yhteyttä puhelimitse.";
   if (code === "rate_limited") return "Pyyntöjä on tehty liian monta. Odota vähintään 10 minuuttia ennen uutta yritystä tai soita yritykselle.";
   if (code === "validation") return "Palvelin hylkäsi lomakkeen tiedot. Tarkista kentät ja yhteystietojen muoto.";
   if (code === "expired_request") return "Lähetyksen tarkistusaika on päättynyt. Älä lähetä samaa pyyntöä uudelleen varmistamatta asiaa puhelimitse. Kerro mahdollinen pyyntötunnus.";

@@ -1,3 +1,4 @@
+import { CONTACT_METHODS, contactRequirements, validContactEmail, validContactPhone } from "../contact/shared";
 export type ContactData = {
   name: string;
   email: string;
@@ -32,20 +33,17 @@ export function contactErrors(
   if (!d.name.trim()) errors.name = "Lisää nimesi.";
   else if (d.name.length > 120)
     errors.name = "Nimi voi olla enintään 120 merkkiä.";
-  if (!d.email.trim() && !d.phone.trim())
-    errors.phone = "Lisää sähköpostiosoite tai puhelinnumero.";
-  else if (d.method === "phone" && !d.phone.trim())
-    errors.phone = "Lisää puhelinnumero tai valitse vastaukseksi sähköposti.";
-  else if (d.method === "email" && !d.email.trim())
-    errors.email = "Lisää sähköpostiosoite tai valitse yhteydenotoksi soitto.";
+  const required = contactRequirements(d.method);
+  if (required.phone && !d.phone.trim())
+    errors.phone = "Anna puhelinnumerosi, jotta voimme soittaa sinulle.";
+  if (required.email && !d.email.trim())
+    errors.email = "Anna sähköpostiosoitteesi, jotta voimme vastata sinulle.";
   if (
-    d.email &&
-    (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email) || d.email.length > 160)
+    (d.email.trim() && !validContactEmail(d.email.trim())) || d.email.length > 160
   )
     errors.email = "Tarkista sähköpostiosoite.";
   if (
-    d.phone &&
-    (d.phone.length > 40 || !/^\+?[\d\s()\-]{5,40}$/.test(d.phone.trim()))
+    (d.phone.trim() && !validContactPhone(d.phone.trim())) || d.phone.length > 40
   )
     errors.phone = "Tarkista puhelinnumero.";
   if (d.location.length > 120)
@@ -56,7 +54,7 @@ export function contactErrors(
     errors.description = "Kuvaus voi olla enintään 3000 merkkiä.";
   if (!["normal", "soon", "urgent"].includes(d.urgency))
     errors.urgency = "Valitse työn ajankohta uudelleen.";
-  if (!["phone", "email"].includes(d.method))
+  if (!CONTACT_METHODS.includes(d.method))
     errors.method = "Valitse yhteydenottotapa uudelleen.";
   if (d.honey) errors.honey = "Lomaketta ei voitu käsitellä.";
   return errors;

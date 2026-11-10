@@ -84,10 +84,10 @@ function contactValidate_(raw) {
     data[k] = raw[k].trim().replace(/\r\n?/g,'\n');
   });
   if (!data.name || !data.description || data.honey || CONTACT_SERVICES_.indexOf(data.service) < 0) throw new Error('validation');
-  if (['normal','soon','urgent'].indexOf(data.urgency) < 0 || ['phone','email'].indexOf(data.method) < 0) throw new Error('validation');
-  if (data.method === 'phone' ? !data.phone : !data.email) throw new Error('validation');
+  if (['normal','soon','urgent'].indexOf(data.urgency) < 0 || ['phone','email','both'].indexOf(data.method) < 0) throw new Error('validation');
+  if (((data.method === 'phone' || data.method === 'both') && !data.phone) || ((data.method === 'email' || data.method === 'both') && !data.email)) throw new Error('validation');
   if (data.email && !contactEmail_(data.email)) throw new Error('validation');
-  if (data.phone && !/^\+?[\d ()-]{5,40}$/.test(data.phone)) throw new Error('validation');
+  if (data.phone && (!/^\+?[\d ()-]{5,40}$/.test(data.phone) || data.phone.replace(/\D/g,'').length < 5)) throw new Error('validation');
   return data;
 }
 
@@ -105,7 +105,7 @@ function contactEmailContent_(data, reference, submittedAt) {
       'Vastaanotettu: ' + Utilities.formatDate(new Date(submittedAt), 'Europe/Helsinki', 'dd.MM.yyyy HH:mm:ss z'),
       'Nimi: ' + data.name, 'Puhelin: ' + (data.phone || 'Ei annettu'), 'Sähköposti: ' + (data.email || 'Ei annettu'),
       'Työn sijainti: ' + (data.location || 'Ei annettu'), 'Palvelu: ' + (data.service || 'Ei valittu'),
-      'Ajankohta: ' + urgency, 'Toivottu yhteydenottotapa: ' + (data.method === 'phone' ? 'Soitto puhelimeen' : 'Vastaus sähköpostilla'),
+      'Ajankohta: ' + urgency, 'Toivottu yhteydenottotapa: ' + ({phone:'Soitto puhelimeen',email:'Vastaus sähköpostilla',both:'Puhelin ja sähköposti'})[data.method],
       '', 'Työn kuvaus (asiakkaan kirjoittama):', '---', data.description, '---', '',
       'Kiireellisyysmerkintä ei takaa päivystystä tai välitöntä vastausta.',
       'Säilytä pyyntötunnus mahdollista työraporttia varten. Tämä viesti ei sisällä liitteitä.'

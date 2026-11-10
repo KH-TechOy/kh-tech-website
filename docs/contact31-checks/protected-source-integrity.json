@@ -1,0 +1,15 @@
+{
+  "unchangedFromStartingMain": [
+    "contact/worker.ts",
+    "contact/wrangler.jsonc",
+    "apps-script/contact/appsscript.json",
+    ".github/workflows/pages.yml",
+    "src/Report.tsx",
+    "src/reportModel.ts",
+    "src/pdf.ts",
+    "src/Website.tsx",
+    "src/homepage-backgrounds.css",
+    "src/subpage-backgrounds.css"
+  ],
+  "note": "Worker validation changes through its shared.ts dependency; deployed Worker bundle must be updated."
+}

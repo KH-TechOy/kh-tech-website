@@ -1,0 +1,71 @@
+{
+  "base": "/",
+  "production": true,
+  "environment": "Headless Chromium; mobile viewport and touch emulation on the development computer, not physical phones.",
+  "status": "passed",
+  "durationMs": 50599.236999999994,
+  "projects": [
+    {
+      "name": "desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "touch": false
+    },
+    {
+      "name": "portrait",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "touch": true
+    },
+    {
+      "name": "landscape",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "touch": true
+    }
+  ],
+  "tests": [
+    {
+      "project": "desktop",
+      "title": "official branding, verified services, responsive pages and lazy game loading",
+      "status": "passed",
+      "durationMs": 15553
+    },
+    {
+      "project": "desktop",
+      "title": "keyboard skip link and mobile navigation work without overflow",
+      "status": "passed",
+      "durationMs": 2675
+    },
+    {
+      "project": "desktop",
+      "title": "contact validation, preferred channel and urgency retain entered data without false delivery",
+      "status": "passed",
+      "durationMs": 3196
+    },
+    {
+      "project": "desktop",
+      "title": "report progress, photos, preview, PDF download and draft persistence",
+      "status": "passed",
+      "durationMs": 10180
+    },
+    {
+      "project": "desktop",
+      "title": "legacy report migrates safely and blocked storage still permits a local PDF",
+      "status": "passed",
+      "durationMs": 3374
+    },
+    {
+      "project": "desktop",
+      "title": "installed report shell reloads and generates a branded PDF offline",
+      "status": "passed",
+      "durationMs": 4001
+    }
+  ]
+}

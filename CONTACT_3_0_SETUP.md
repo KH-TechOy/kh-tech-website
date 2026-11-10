@@ -1,5 +1,7 @@
 # CONTACT 3.0 — omistajan käyttöönotto
 
+**CONTACT 3.1, 10.11.2026:** käyttäjä ilmoittaa aiemman toimituksen varmennetuksi. Älä luo tilejä/avaimia/widgetiä uudelleen päivitystä varten. Käytä nykyisiä tuotantoasetuksia ja [CONTACT_3_1_REPORT.md](CONTACT_3_1_REPORT.md)-päivitysohjetta: GAS → Worker → frontend. Managed-widget tukee clientin `execution: execute` / `appearance: interaction-only` -asetuksia ilman Dashboard-muutosta. Tarkistus käynnistyy nyt Lähetä pyyntö -painikkeesta, eikä erillistä aktivointipainiketta ole. Alla oleva alkuperäinen ohje on uuden ympäristön perustamista varten; uuden version käyttöönoton jälkeinen live-testi tarvitaan erikseen.
+
 Päivitetty 9.11.2026. Nämä ovat **manuaaliset ohjeet**, eivät suoritetun julkaisun tai postilaatikkotestin kuvaus. Älä julkaise tai lähetä testiviestejä ennen omaa nimenomaista hyväksyntääsi. Paikalliset testit korvaavat ulkoiset palvelut testivastineilla; tuotantokoodissa ei ole testipalvelua tai näennäistä onnistumista.
 
 ## Ratkaisu ja hyväksyntä ennen aktivointia

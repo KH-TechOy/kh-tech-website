@@ -1,5 +1,16 @@
 KH-TECH OY – VERKKOSIVU, TYÖRAPORTTI JA PELI
 
+CONTACT 3.1 — 10.11.2026
+  Lomake käynnistää Managed Turnstilen automaattisesti yhdestä lähetyksestä.
+  Ei erillistä aktivointipainiketta tai pysyvää sinistä ohjelaatikkoa.
+  Puhelin/sähköposti/molemmat validoidaan selaimessa, Workerissa ja GASissa.
+  Vahvistuksessa palvelimen tunnus ja oikea Clipboard API -kopiointi.
+  Nykyiset site key / salaisuudet / origin- ja hostname-asetukset säilyvät.
+  Managed-widgetille ei tarvita Dashboard-muutosta. Käyttöönottopäivitysten
+  järjestys: GAS uusi versio -> Worker -> frontend. Älä pushaa/deployaa
+  automaattisesti. Uuden version live-testistä ei ole tässä työssä näyttöä.
+  Raportti, testit ja tarkat päivitysohjeet: CONTACT_3_1_REPORT.md.
+
 CONTACT 3.0 — 9.11.2026
   Todellinen lähetyskoodi: contact/worker.ts ja apps-script/contact/Code.gs.
   Käyttöönotto: CONTACT_3_0_SETUP.md. Oikean postilaatikkotestin menettely:

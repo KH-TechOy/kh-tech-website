@@ -1,5 +1,9 @@
 # Tietovirta-auditointi — KH-Tech Oy, päivitetty 9.11.2026
 
+## CONTACT 3.1 — rajattu päivitys 10.11.2026
+
+Käyttäjä ilmoittaa aiemman oikean lomakesähköpostin toimituksen varmennetuksi. Tätä ei esitetä uuden version käyttöönoton jälkeisenä riippumattomana testinä. Nyt Turnstile käynnistyy lähetyksen tai status-tarkistuksen painalluksesta; erillistä aktivointipainiketta ei enää ole. Molemmat-yhteydenottotapa edellyttää puhelinta ja sähköpostia kaikissa kolmessa validointikerroksessa. Tunnuksen kopiointi käyttää Clipboard API:a ilman uutta selain- tai palvelintallennusta. Vastaanottaja, tietosisällön rajat, HMAC, rajoittimet, ledger/retentio ja raportin tietovirrat säilyvät. Alla olevat 8.–9.11. tiedot ovat aikaisempien erien havaintoja; sopimus-/säilytys-/siirtovahvistuksia ei merkitä automaattisesti hyväksytyiksi. [Nykyinen toteutus ja testirajat](CONTACT_3_1_REPORT.md).
+
 ## CONTACT 3.0 — täydentävä tietovirta-auditointi 9.11.2026
 
 Alla oleva 8.11.2026-auditointi on lähtötilan historiaa. Uusi lähdekoodi sisältää nyt Cloudflare Worker / Turnstile / erillinen Google MailApp -integraation. Sitä **ei julkaistu tai yhdistetty oikeisiin palvelutileihin** tässä erässä. Tavallinen build ilman uusia VITE-asetuksia pysyy lähettämättömänä eikä lataa Turnstilea. Konfiguroitu build kuvaa uudet palvelut tietosuojasivulla; käyttäjän käynnistämä turvatarkistus on ainoa ulkoinen selainohjelma. Ei muutoksia raportin tietovirtoihin.

@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-10",
+  "unitAndRuntimePassed": 90,
+  "contactUnitAndRuntimePassed": 35,
+  "configuredFormBrowserPassed": 60,
+  "existingDesktopRegressionPassed": 18,
+  "totalBrowserPassed": 78,
+  "browserSkips": 0,
+  "rootAndPagesBuildsPassed": true,
+  "finalLocalBuild": "root without fixture configuration",
+  "priorLiveDelivery": "Reported successful by user; not an independent test of this release",
+  "liveEmailTestOfThisReleasePerformed": false,
+  "pushPerformed": false,
+  "deploymentPerformed": false
+}

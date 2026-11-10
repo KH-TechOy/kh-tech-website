@@ -106,6 +106,21 @@ describe("real workerd + SQLite Durable Object + Apps Script protocol (all exter
     const status: any = await (await submit({ requestKey, token: "fresh" }, "/contact/status")).json();
     expect(status.state).toBe("sent"); expect(status.reference).toBe(first.reference); expect(fixture.sent.length).toBe(before + 1);
   });
+  it.each(["phone", "email", "both"])("enforces %s through the Worker and sends the matching MailApp notification", async method => {
+    const fields = { ...data, method, phone: method === "email" ? "" : "0401234567", email: method === "phone" ? "" : data.email };
+    const before = fixture.sent.length;
+    const response = await submit({ requestKey: key(), token: "valid-fixture", data: fields });
+    expect(response.status).toBe(200);
+    const result: any = await response.json(); expect(result.state).toBe("sent");
+    expect(fixture.sent.length).toBe(before + 1);
+    const mail = fixture.sent.at(-1)!;
+    expect(mail.body).toContain(({ phone: "Soitto puhelimeen", email: "Vastaus sähköpostilla", both: "Puhelin ja sähköposti" })[method]);
+    expect(mail.replyTo).toBe(method === "phone" ? undefined : data.email);
+    for (const field of method === "both" ? ["phone", "email"] : [method]) {
+      expect((await submit({ requestKey: key(), token: "valid-fixture", data: { ...fields, [field]: "" } })).status).toBe(422);
+    }
+    expect(fixture.sent.length).toBe(before + 1);
+  });
   it("does not treat redirect attacks, invalid receipts or network failures as success", async () => {
     for (const value of ["evilRedirect", "badSignature", "network"]) {
       mode = value; const result: any = await (await submit({ requestKey: key(), token: "ok", data })).json(); expect(result.state).toBe("unknown");
@@ -124,8 +139,9 @@ describe("real workerd + SQLite Durable Object + Apps Script protocol (all exter
     const before = fixture.sent.length;
     const result: any = await (await submit({ requestKey: key(), token: "ok", data })).json();
     expect(result.state).toBe("not_sent"); expect(fixture.sent.length).toBe(before);
-    mkdirSync("docs/contact30-checks", { recursive: true });
-    writeFileSync("docs/contact30-checks/local-runtime.json", JSON.stringify({ environment: "local workerd + SQLite Durable Objects, Google/Turnstile/MailApp substituted, no real email", outboundEndpointsRestricted: unexpected === 0, relayCalls, simulatedEmails: fixture.sent.length, actualDeliveryTested: false }, null, 2));
+    const checks = process.env.CONTACT_CHECKS || "docs/contact31-checks";
+    mkdirSync(checks, { recursive: true });
+    writeFileSync(checks + "/local-runtime.json", JSON.stringify({ environment: "local workerd + SQLite Durable Objects, Google/Turnstile/MailApp substituted, no real email", outboundEndpointsRestricted: unexpected === 0, relayCalls, simulatedEmails: fixture.sent.length, actualDeliveryTested: false }, null, 2));
   });
 });
 describe("Apps Script independent security boundary", () => {

@@ -33,11 +33,11 @@ const sections: Array<{ id: string; title: string; content: ReactNode }> = [
   </> },
   { id: "tarpeellisuus", title: "Onko tietojen antaminen pakollista?", content: <>
     <p>Sivuston ja tietosuojaselosteen lukeminen ei vaadi nimen tai yhteystietojen antamista. Sivun lataaminen kuitenkin edellyttää teknistä verkkopyyntöä julkaisupalveluun.</p>
-    <p>Yhteydenottoon vastaaminen tarvitsee toimivan vastauskanavan ja riittävät tiedot asiasta. Lomakkeen validaatiossa vaaditaan nimi, kuvaus ja valittua vastaustapaa vastaava puhelin tai sähköposti. Muu yhteystieto, sijainti ja palvelu ovat valinnaisia. Lomakkeen täyttäminen ei lähetä pyyntöä.</p>
+    <p>Yhteydenottoon vastaaminen tarvitsee toimivan vastauskanavan ja riittävät tiedot asiasta. Lomakkeella tarvitaan nimi ja kuvaus sekä valitun vastaustavan mukainen puhelinnumero tai sähköpostiosoite. Jos valitset puhelimen ja sähköpostin, molemmat yhteystiedot tarvitaan. Muussa tapauksessa toinen yhteystieto on vapaaehtoinen. Sijainti ja palvelu ovat valinnaisia. Lomakkeen täyttäminen ei lähetä pyyntöä.</p>
     <p>Paikallisen raportin PDF tarvitsee asiakkaan tai yrityksen, kohteen osoitteen, työntekijän ja työn kuvauksen. Asiakaskuittaus ja valokuvat ovat vapaaehtoisia. Älä anna tietoja laajemmin kuin työn dokumentointi edellyttää.</p>
   </> },
   { id: "tallennus", title: "Käytetäänkö evästeitä tai paikallista tallennusta?", content: <>
-    <p>Verkkosovellus ei aseta omia HTTP-evästeitä eikä käytä analytiikka- tai markkinointiseurantaa. Selaimen paikallinen tallennus ja offline-välimuisti ovat eri asioita kuin palvelimelle lähettäminen. {contactConfigured && <>Turnstile ladataan vasta, kun käynnistät lomakkeen turvatarkistuksen. Tarkistus muodostaa yhteyden Cloudflareen.</>}</p>
+    <p>Verkkosovellus ei aseta omia HTTP-evästeitä eikä käytä analytiikka- tai markkinointiseurantaa. Selaimen paikallinen tallennus ja offline-välimuisti ovat eri asioita kuin palvelimelle lähettäminen. {contactConfigured && <>Turnstile käynnistyy automaattisesti lomakkeen lähetyksen tai lähetyksen tilan tarkistuksen yhteydessä. Tarkistus muodostaa yhteyden Cloudflareen ja voi tarvittaessa pyytää sinulta vahvistuksen.</>}</p>
     <dl className="privacy-storage">
       <div><dt>Yhteydenottolomake</dt><dd>Kentät ovat sivun muistissa. Sovellus ei tallenna niitä localStorageen. {contactConfigured ? <>Lähetyksen tarkistusavain ja mahdollinen pyyntötunnus muistetaan välilehden sessionStorage-muistissa. Viestin sisältöä ei tallenneta tähän merkintään. Merkintä poistuu uuden yhteydenoton aloituksessa tai selaimen poistaessa istuntotiedot. Lähetyksen tilan tarkistaminen ei lähetä uutta sähköpostia.</> : <>Lomaketietoja ei lähetetä taustapalveluun.</>} Selaimen oma lomaketäyttö ja historia riippuvat selaimesi asetuksista.</dd></div>
       <div><dt>Raporttiluonnos ja kuvat</dt><dd>Tallentuvat raporttia käytettäessä automaattisesti tämän selaimen localStorageen. Tiedot pysyvät, kunnes luonnos poistetaan tai selain poistaa ne. Automaattista aikarajaa ei ole.</dd></div>
@@ -98,7 +98,7 @@ const sections: Array<{ id: string; title: string; content: ReactNode }> = [
     <p><a href="https://tietosuoja.fi/ilmoitus-tietosuojavaltuutetulle" rel="noreferrer">Ohje ja ilmoitus tietosuojavaltuutetulle</a>. Evästeiden ja vastaavien päätelaitetekniikoiden sääntelyä valvoo Suomessa <a href="https://kyberturvallisuuskeskus.fi/fi/viestintaverkkojen-ja-palveluiden-saantely/evasteet" rel="noreferrer">Traficom</a>.</p>
   </> },
   { id: "paivitykset", title: "Milloin selostetta päivitetään?", content: <>
-    <p>Selosteen tiedot on tarkistettu <time dateTime="2026-11-09">9.11.2026</time>. Selostetta on muutettava, jos tietojen käyttötarkoitus, vastaanottajat, säilytys tai palveluntarjoajat muuttuvat. Uudesta tarkoituksesta ja sen perusteista on kerrottava ennen uutta käsittelyä, ja mahdollinen suostumus pyydettävä erikseen.</p>
+    <p>Selosteen tiedot on tarkistettu <time dateTime="2026-11-10">10.11.2026</time>. Selostetta on muutettava, jos tietojen käyttötarkoitus, vastaanottajat, säilytys tai palveluntarjoajat muuttuvat. Uudesta tarkoituksesta ja sen perusteista on kerrottava ennen uutta käsittelyä, ja mahdollinen suostumus pyydettävä erikseen.</p>
     <p>Tämä seloste kuvaa nykyistä verkkosovellusta, ei vahvista keskeneräisiä toimintoja käyttöön otetuiksi. {contactConfigured ? "Sähköinen lomakelähetys on määritetty käyttöön; todellinen toimitus ja palvelutilien ehdot on varmennettava käyttöönotossa." : "Sähköinen lomakelähetys on pois käytöstä."} Henkilöstön suojattu raporttiasiointi ei ole käytössä. Edellä yksilöidyt toimittaja-, säilytys- ja siirtotiedot edellyttävät vahvistusta ennen tuotantojulkaisua.</p>
     <p>Selosteen perustana ovat toteutuksen tarkistus ja <a href="https://eur-lex.europa.eu/legal-content/FI/TXT/?uri=CELEX:32016R0679" rel="noreferrer">EU:n yleinen tietosuoja-asetus</a>. Seloste ei yksin osoita koko palvelun lainmukaisuutta.</p>
   </> },
@@ -107,7 +107,7 @@ const sections: Array<{ id: string; title: string; content: ReactNode }> = [
 export default function PrivacyNotice() {
   return <div className="container privacy-notice">
     <div className="privacy-intro">
-      <p className="eyebrow">TIETOSUOJASELOSTE · PÄIVITETTY <time dateTime="2026-11-09">9.11.2026</time></p>
+      <p className="eyebrow">TIETOSUOJASELOSTE · PÄIVITETTY <time dateTime="2026-11-10">10.11.2026</time></p>
       <p>Tämä seloste koskee KH-Tech Oy:n verkkopalvelun yhteydenottoja, selaimen paikallisia toimintoja ja teknisiä tietoja. Saat yhteyden yritykseen puhelimitse tai sähköpostilla. {contactConfigured ? "Lomakkeen lähetys käyttää erillisiä turvatarkistus- ja sähköpostipalveluita." : "Verkkolomakkeen lähetys ei ole käytössä."} Henkilöstön suojattu raporttipalvelu ei ole käytössä.</p>
       <details className="privacy-index"><summary>Siirry suoraan aiheeseen</summary><nav aria-label="Tietosuojaselosteen aiheet"><ol>{sections.map(section => <li key={section.id}><a href={"#" + section.id}>{section.title}</a></li>)}</ol></nav></details>
     </div>

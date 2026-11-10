@@ -1,5 +1,9 @@
 # KH-Tech Oy – tuotteen määrittely
 
+## CONTACT 3.1 — yksi lähetyspainallus, 10.11.2026
+
+Käyttäjän mukaan aiempi oikea sähköpostitoimitus on varmennettu. Uusi versio sujuvoittaa lomakkeen ilman pysyvää turvatarkistuslaatikkoa tai aktivointipainiketta: Managed Turnstile suoritetaan vasta lähetyksen alkaessa, tarvittaessa haaste avautuu automaattisesti. Puhelin/email/molemmat määräävät pakolliset yhteystiedot myös Workerissa ja Apps Scriptissä. Onnistumisessa lyhyt kiitos, palvelimen pyyntötunnus, oikea Clipboard API -kopiointi ja uusi yhteydenotto. Ei muutoksia HMACiin, rajoittimiin, viitteisiin, idempotenssiin, vastaanottajiin tai raportin/PDF:n toimintaan. CONTACT_3_1_REPORT.md erottaa paikalliset testit, käyttäjän ilmoittaman aiemman toimitusvarmennuksen ja uuden version vielä puuttuvan käyttöönoton jälkeisen live-testin. Ei pushia, deployta tai oikeaa testipostia tässä työssä.
+
 ## CONTACT 3.0 — nykyinen yhteydenottotyö, 9.11.2026
 
 Lomakkeen oikea sähköpostipolku valmistellaan Cloudflare Free + Turnstile + erillinen Google Apps Script / MailApp -ratkaisulla. Yksi yrityksen määrittämä vastaanottaja palvelimella, asiakkaan osoite vain tarvittaessa Reply-To. Kryptografinen pyyntötunnus, pysyvä kaksoislähetyssuoja, turvallinen epäselvän tilan tarkistus ja rehelliset virhe-/vahvistusnäkymät. Ei automaattista asiakas- tai markkinointipostia. Raportin ID ja vapaaehtoinen asiakasviite pysyvät erillisinä; raporttitodennusta/PDF-työnkulkua ei muuteta. Omistajan Google-/Cloudflare-asetukset, palvelusopimukset, tietosuojatiedot ja hyväksytty oikea vastaanottotesti ovat edelleen aktivoinnin ehtoja. Lopullisen julkaisun tulevat prioriteetit säilyvät WEBSITE 2.5 -ohjeen mukaisina. Ei pushia, deployta tai oikeaa testisähköpostia tässä paikallisessa toteutuksessa.

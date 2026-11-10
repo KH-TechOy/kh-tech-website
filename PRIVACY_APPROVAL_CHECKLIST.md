@@ -1,5 +1,9 @@
 # Tietosuojan ja tuotantojulkaisun hyväksyntälista
 
+## CONTACT 3.1 — tilapäivitys 10.11.2026
+
+Käyttäjä ilmoittaa aiemman oikean sähköpostitoimituksen varmennetuksi. Tämä ei yksin vahvista tietosuojasopimuksia, siirtoperusteita tai raportin henkilöstötodennusta; niiden avoimet kohdat säilyvät. Uuden version automaattinen Turnstile, molemmat-yhteydenottotapa ja kopiointi testataan paikallisesti, ja käyttöönoton jälkeinen live-toimitus varmennetaan erikseen. Katso [CONTACT_3_1_REPORT.md](CONTACT_3_1_REPORT.md). Alla olevat päivätyt CONTACT 3.0 -havainnot kuvaavat sen paikallisen toteutuserän tilaa.
+
 ## CONTACT 3.0 — lisäehdot ennen lomakelähetyksen avaamista, 9.11.2026
 
 - [ ] Vahvista omistajan Google-kuluttajatilin ja Cloudflare Free / Turnstile / SQLite -tilien soveltuvuus yrityksen henkilötietojen käsittelyyn. Tilin omistaminen ei todista DPA:ta tai siirtoperustetta. Jos ehdot eivät riitä, älä aktivoi lähetystä.

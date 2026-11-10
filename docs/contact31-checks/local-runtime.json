@@ -1,0 +1,7 @@
+{
+  "environment": "local workerd + SQLite Durable Objects, Google/Turnstile/MailApp substituted, no real email",
+  "outboundEndpointsRestricted": true,
+  "relayCalls": 14,
+  "simulatedEmails": 11,
+  "actualDeliveryTested": false
+}

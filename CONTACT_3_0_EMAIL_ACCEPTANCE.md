@@ -1,5 +1,7 @@
 # Oikean sähköpostitoimituksen hyväksymistesti
 
+**CONTACT 3.1, 10.11.2026:** käyttäjä ilmoittaa aiemman version oikean toimituksen onnistuneeksi. Se ei ole tämän uuden version käyttöönoton jälkeinen testitulos. Päivitetyn lomakkeen testi alkaa yhdestä Lähetä pyyntö -painalluksesta; Turnstile käynnistyy itse ja näyttää haasteen vain tarvittaessa. Tarkista nyt myös puhelin/sähköposti/molemmat, tunnuksen kopiointi sekä tuore token jokaisella uudelleenyrityksellä. Ei oikeita testisähköposteja tämän paikallisen työn osana.
+
 Tila 9.11.2026: **ei suoritettu, ei lupaa oikeiden viestien lähettämiseen**. Tämä menettely ei lähetä mitään automaattisesti. Käytä vain selvästi synteettisiä tietoja ja hyväksyttyjä testiyhteystietoja. Älä kirjaa yksityistä vastaanottajaosoitetta, koko viestiä, tokenia tai palvelinavainta julkiseen raporttiin.
 
 ## Edellytykset

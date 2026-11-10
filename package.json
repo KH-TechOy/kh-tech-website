@@ -15,7 +15,7 @@
     "test:website": "playwright test --config playwright.website.config.ts",
     "test:privacy": "playwright test --config playwright.privacy.config.ts",
     "check:contact": "tsc -p contact/tsconfig.json",
-    "test:contact": "vitest run contact/backend.test.ts",
+    "test:contact": "vitest run contact/backend.test.ts contact/contactMethods.test.ts",
     "contact:bundle": "wrangler deploy --dry-run --config contact/wrangler.jsonc --outdir ../.playwright-artifacts/contact30-worker",
     "test:contact-ui": "playwright test --config playwright.contact.config.ts"
   },

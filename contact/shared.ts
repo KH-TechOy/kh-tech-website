@@ -4,6 +4,16 @@ export const SERVICES = ["", "LVI-huolto", "Putkimuutostyöt", "Verkostojen tasa
 export const MAX_BODY_BYTES = 16_384;
 export const REQUEST_LIFETIME = 48 * 60 * 60 * 1000;
 export const REFERENCE = /^KHT-\d{8}-[A-F0-9]{12}$/;
+export const CONTACT_METHODS = ["phone", "email", "both"];
+export function contactRequirements(method: string) {
+  return { phone: method === "phone" || method === "both", email: method === "email" || method === "both" };
+}
+export function validContactEmail(email: string): boolean {
+  return email.length <= 160 && /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,63}$/.test(email);
+}
+export function validContactPhone(phone: string): boolean {
+  return /^\+?[\d ()-]{5,40}$/.test(phone) && phone.replace(/\D/g, "").length >= 5;
+}
 export function validKey(key: unknown, now = Date.now()): key is string {
   if (typeof key !== "string" || !/^v1\.\d{13}\.[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(key)) return false;
   const age = now - Number(key.split(".")[1]);
@@ -22,10 +32,11 @@ export function normalizeContact(input: unknown): ContactFields | null {
     data[key] = value.trim().replace(/\r\n?/g, "\n");
   }
   if (!data.name || !data.description || data.honey || !SERVICES.includes(data.service)) return null;
-  if (!["normal", "soon", "urgent"].includes(data.urgency) || !["phone", "email"].includes(data.method)) return null;
-  if (data.method === "phone" ? !data.phone : !data.email) return null;
-  if (data.email && !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,63}$/.test(data.email)) return null;
-  if (data.phone && !/^\+?[\d ()-]{5,40}$/.test(data.phone)) return null;
+  if (!["normal", "soon", "urgent"].includes(data.urgency) || !CONTACT_METHODS.includes(data.method)) return null;
+  const required = contactRequirements(data.method);
+  if ((required.phone && !data.phone) || (required.email && !data.email)) return null;
+  if (data.email && !validContactEmail(data.email)) return null;
+  if (data.phone && !validContactPhone(data.phone)) return null;
   return data;
 }
 export function newReference(now = new Date()): string {

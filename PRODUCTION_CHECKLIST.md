@@ -1,5 +1,7 @@
 # Tuotantoon siirtymisen tarkistuslista
 
+CONTACT 3.1, 10.11.2026: käyttäjä ilmoittaa aiemman lomaketoimituksen varmennetuksi. Uuden version paikalliset testit ja järjestys GAS → Worker → frontend kuvataan [CONTACT_3_1_REPORT.md](CONTACT_3_1_REPORT.md):ssä; käyttöönoton jälkeistä oikeaa testiä ei ole tehty tässä työssä. Muut oikeudelliset, raporttitodennuksen ja laitetestauksen hyväksynnät säilyvät avoimina. Alla oleva 9.11. lähtötilanne ei ole uuden version live-testitulos.
+
 Päivitetty 9.11.2026. Julkaisua ei ole hyväksytty. Yksityiskohtaiset vahvistettavat faktat, omistajan päätökset ja todisteet: [PRIVACY_APPROVAL_CHECKLIST.md](PRIVACY_APPROVAL_CHECKLIST.md). Nykytilan tekninen näyttö: [PRIVACY_DATA_FLOW_AUDIT.md](PRIVACY_DATA_FLOW_AUDIT.md). Yhteydenoton palvelinlähde ja paikallinen testaus on toteutettu CONTACT 3.0:ssa; palvelinten käyttöönotto ja oikea vastaanottotesti puuttuvat. [Manuaaliset käyttöönottoaskeleet](CONTACT_3_0_SETUP.md).
 
 1. Julkinen sivusto ja visuaalinen hyväksyntä.

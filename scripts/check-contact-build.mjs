@@ -6,6 +6,7 @@ for (const name of js) {
   const text = await readFile("dist/assets/" + name, "utf8");
   for (const value of forbidden) assert(!text.includes(value), `Unexpected server configuration or test fixture in ${name}`);
 }
-await mkdir("docs/contact30-checks", { recursive: true });
-await writeFile("docs/contact30-checks/build-exclusions.json", JSON.stringify({ checkedJavaScriptFiles: js.length, serverConfigurationAndFixtureStringsAbsent: true, note: "Static exclusion check; not a general secret scanner or delivery test." }, null, 2) + "\n");
+const checks = process.env.CONTACT_CHECKS || "docs/contact31-checks";
+await mkdir(checks, { recursive: true });
+await writeFile(checks + "/build-exclusions.json", JSON.stringify({ checkedJavaScriptFiles: js.length, serverConfigurationAndFixtureStringsAbsent: true, note: "Static exclusion check; not a general secret scanner or delivery test." }, null, 2) + "\n");
 console.log("Contact production assets exclude server configuration and browser test fixtures.");
