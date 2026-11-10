@@ -1,6 +1,15 @@
 KH-TECH OY – VERKKOSIVU, TYÖRAPORTTI JA PELI
 
 REPORT 2.0 A — 10.11.2026
+  A.1-päivitys: REPORT_2_0_A_1_RESULT.md korvaa alla olevat vanhan A-version
+  luonnoksen poistoa ja erillistä kutsulähetystä koskevat käyttöohjeet.
+  Luonnos säilyy UID-kohtaisesti logoutissa/estossa, autosave 2 s ja käsin
+  tallennus. Työntekijän luonti lähettää automaattisen asetusviestipyynnön;
+  osittainen virhe säilyttää tilin ja tarjoaa linkin uudelleenlähetyksen.
+  Admin voi muokata nimiä. Uusi julkinen Worker-muuttuja FIREBASE_WEB_API_KEY.
+  Käyttöönotossa säilytä olemassa olevat vars-arvot: wrangler --keep-vars.
+  Oikean postilaatikon testi tehdään julkaisun jälkeen, ei paikallisesti.
+
   Henkilökohtainen Firebase email/password, Admin/Employee ja erillinen
   Cloudflare Workers Free -käyttäjähallinta. Spark, ei korttia tai Blazea.
   Raportti avataan suoraan NFC-URL:stä; julkisessa navigaatiossa ei linkkiä.

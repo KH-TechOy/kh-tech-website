@@ -1,5 +1,7 @@
 # Report 2.0 A — turvallisuus ja tietomalli
 
+**A.1-päivitys 10.11.2026:** [REPORT_2_0_A_1_RESULT.md](REPORT_2_0_A_1_RESULT.md) korvaa tämän historiallisen A-kuvauksen luonnoksen poisto-/offline-käytöksen, manuaalisen kutsuvaiheen ja nimienhallinnan osalta. A.1 säilyttää UID-luonnoksen logoutissa/estossa, lähettää kutsun automaattisesti ja tarvitsee Report-Workerille `FIREBASE_WEB_API_KEY`-asetuksen. Client-roolikirjoitukset, Admin-valtuutus ja viimeisen Adminin suoja säilyvät.
+
 10.11.2026. Toteutus on paikallinen; tuotantoprojekti, IAM, postin vastaanotto ja käyttöönotto odottavat [asetuksia ja hyväksyntää](REPORT_2_0_FIREBASE_SETUP.md). Maksullista tuotetta tai todennuksen korvaavaa demoa ei ole lisätty.
 
 ## Luottamusrajat

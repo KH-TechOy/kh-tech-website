@@ -1,5 +1,5 @@
 import type { User } from "firebase/auth";
-import { reportApi } from "./firebase";
+import { reportApi } from "./configuration";
 export type EmployeeProfile = {
   uid: string;
   email: string;
@@ -7,11 +7,32 @@ export type EmployeeProfile = {
   role: "admin" | "employee";
   active: boolean;
   validAfter: number;
+  passwordSetupRequired?: boolean;
+  setupEmailStatus?: string;
+  setupEmailError?: string;
 };
 export class ReportApiError extends Error {
   constructor(public code: string) {
     super(code);
   }
+}
+export function authorizationLost(error: unknown) {
+  const code =
+    error instanceof ReportApiError
+      ? error.code
+      : (error as { code?: string })?.code;
+  return (
+    !!code &&
+    [
+      "access_disabled",
+      "invalid_session",
+      "auth/user-disabled",
+      "auth/user-token-expired",
+      "auth/invalid-user-token",
+      "auth/id-token-revoked",
+      "auth/id-token-expired",
+    ].includes(code)
+  );
 }
 export async function reportRequest<T>(
   user: User,
@@ -55,7 +76,7 @@ export function reportError(error: unknown): string {
   )
     return "Sähköpostiosoite tai salasana ei kelpaa.";
   if (["auth/user-disabled", "access_disabled"].includes(code))
-    return "Käyttöoikeutesi on estetty tai sitä ei ole vielä myönnetty. Ota yhteyttä ylläpitäjään.";
+    return "Käyttöoikeutesi on estetty tai sitä ei ole vielä myönnetty. Ota yhteyttä ylläpitäjään. Mahdollista paikallista luonnosta ei poistettu.";
   if (["auth/too-many-requests", "rate_limited"].includes(code))
     return "Liikaa yrityksiä. Odota hetki ja yritä uudelleen.";
   if (
@@ -75,5 +96,32 @@ export function reportError(error: unknown): string {
   if (code === "outcome_unknown")
     return "Toiminnon tulos on epäselvä. Tarkista tilanne ennen uutta pyyntöä.";
   if (code === "invalid_request") return "Tarkista antamasi tiedot.";
+  const messages: Record<string, string> = {
+    invalid_name:
+      "Anna nimi (1–120 merkkiä). Nimi ei saa sisältää ohjausmerkkejä.",
+    name_auth_pending:
+      "Nimi tallennettiin profiiliin, mutta Auth-nimen päivitys epäonnistui. Yritä nimipäivitystä uudelleen.",
+    email_not_configured:
+      "Sähköpostipalvelun käyttöönottoasetus puuttuu. Tili säilyi; pyydä palvelun ylläpitoa korjaamaan asetus ennen uutta lähetysyritystä.",
+    email_api_key_invalid:
+      "Firebase Web API -avain ei kelpaa. Tili säilyi; palvelun asetus on korjattava.",
+    email_permission_denied:
+      "Firebase hylkäsi sähköpostikutsun käyttöoikeuden tai API-avaimen rajoituksen vuoksi. Tarkista palvelutilin sendEmail-oikeus ja avaimen palvelinasetukset.",
+    email_provider_disabled:
+      "Sähköposti/salasana-kirjautuminen ei ole käytössä Firebase-projektissa.",
+    email_quota:
+      "Firebase-palautusviestien lähetysraja tai väärinkäytön rajoitus tuli vastaan. Tili säilyi; odota ennen uutta yritystä.",
+    email_domain:
+      "Firebase hylkäsi palautuslinkin verkkotunnuksen. Tarkista hyväksytyt domainit ja sähköpostipohjan toiminto-URL.",
+    email_recaptcha_required:
+      "Firebase edellyttää lisäturvatarkistusta. Palvelinlähetystä ei hyväksytty; tarkista projektin reCAPTCHA-asetukset.",
+    email_account_missing:
+      "Työntekijän Auth-tiliä ei löytynyt tai sen tiedot eivät vastaa profiilia. Viestiä ei lähetetty.",
+    email_outcome_unknown:
+      "Sähköpostipalvelun vastausta ei voitu varmistaa. Tili säilyi. Uusi lähetys voi tuottaa toisen viestin.",
+    email_rejected:
+      "Firebase hylkäsi sähköpostipyynnön. Tili säilyi. Tarkista projektin sähköposti- ja lähetysasetukset.",
+  };
+  if (messages[code]) return messages[code];
   return "Palveluun ei saada yhteyttä. Tarkista verkkoyhteys ja yritä uudelleen.";
 }

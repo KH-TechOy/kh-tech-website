@@ -100,11 +100,11 @@ test("admin creation uses random discarded password, audited reset produces real
     codes.oobCodes.filter(
       (x: any) => x.email === input.email && x.requestType === "PASSWORD_RESET",
     ),
-  ).toHaveLength(1);
+  ).toHaveLength(2);
   expect(
     (await db.doc("auditEvents/" + reset.requestId).get()).get("status"),
   ).toBe("completed");
-  const code = codes.oobCodes.find((x: any) => x.email === input.email).oobCode;
+  const code = codes.oobCodes.filter((x: any) => x.email === input.email).at(-1).oobCode;
   const resetBody = { oobCode: code, newPassword: "Emulator-reset_42!" };
   const resetUrl =
     "http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:resetPassword?key=emulator";
@@ -180,7 +180,7 @@ test("concurrent attempts cannot remove both active admins (real Firestore trans
     call(token, "/employees/action", action("admin", "role", "employee")),
     call(token, "/employees/action", action("admin2", "disable")),
   ]);
-  expect(responses.filter((r) => r.status === 200)).toHaveLength(1);
+  expect(responses.filter((r) => r.status === 200),JSON.stringify(await Promise.all(responses.map(r=>r.clone().json())))).toHaveLength(1);
   const admins = await db
     .collection("users")
     .where("role", "==", "admin")

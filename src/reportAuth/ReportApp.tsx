@@ -13,10 +13,12 @@ import {
   reportRequest,
   reportError,
   ReportApiError,
+  authorizationLost,
   type EmployeeProfile,
 } from "./api";
-import { clearSessionDrafts, sessionDraftStorage } from "./drafts";
-import { readReport, saveReport } from "../reportModel";
+import { sessionDraftStorage } from "./drafts";
+import { createDraftSession, type DraftSession } from "./draftSession";
+import { readReport, reportIsEmpty } from "../reportModel";
 import "./report-auth.css";
 const Editor = React.lazy(() => import("../Report"));
 const AdminPanel = React.lazy(() => import("./employees"));
@@ -31,24 +33,50 @@ export default function ReportApp() {
     [password, setPassword] = React.useState(""),
     [reset, setReset] = React.useState(false);
   const [page, setPage] = React.useState<"home" | "editor" | "employees">(
-      "home",
-    ),
-    [editorKey, setEditorKey] = React.useState(0);
+    "home",
+  );
+  const drafts = React.useRef(new Map<string, DraftSession>()),
+    draft = React.useRef<DraftSession | null>(null),
+    verifiedUid = React.useRef<string | null>(null);
   const store = React.useRef<ReturnType<typeof sessionDraftStorage> | null>(
       null,
     ),
     generation = React.useRef(0);
   const clear = React.useCallback(() => {
-    store.current?.close();
+    draft.current?.flush();
+    draft.current = null;
     store.current = null;
-    clearSessionDrafts();
+    verifiedUid.current = null;
     setProfile(null);
     setPage("home");
+  }, []);
+  React.useEffect(() => {
+    const flush = () => {
+      let success = true;
+      for (const session of drafts.current.values())
+        if (!session.flush()) success = false;
+      return success;
+    };
+    const before = (event: BeforeUnloadEvent) => {
+      if (!flush()) {
+        event.preventDefault();
+        event.returnValue = "";
+      }
+    };
+    const hide = () => {
+      flush();
+    };
+    window.addEventListener("pagehide", hide);
+    window.addEventListener("beforeunload", before);
+    return () => {
+      window.removeEventListener("pagehide", hide);
+      window.removeEventListener("beforeunload", before);
+    };
   }, []);
   const validate = React.useCallback(
     async (current: User) => {
       const version = ++generation.current;
-      setChecking(true);
+      if (verifiedUid.current !== current.uid) setChecking(true);
       try {
         if (!navigator.onLine) throw new ReportApiError("network");
         const result = await reportRequest<{ profile: EmployeeProfile }>(
@@ -58,21 +86,18 @@ export default function ReportApp() {
         if (version !== generation.current) return;
         if (!result.profile?.active || result.profile.uid !== current.uid)
           throw new ReportApiError("access_disabled");
-        if (!store.current) store.current = sessionDraftStorage(current.uid);
+        if (!store.current || store.current.ownerUid !== current.uid)
+          store.current = sessionDraftStorage(current.uid);
+        if (!drafts.current.has(current.uid))
+          drafts.current.set(current.uid, createDraftSession(store.current));
+        draft.current = drafts.current.get(current.uid)!;
+        verifiedUid.current = current.uid;
         setProfile(result.profile);
         if (result.profile.role !== "admin")
           setPage((p) => (p === "employees" ? "home" : p));
       } catch (error) {
         if (version === generation.current) {
-          if (
-            error instanceof ReportApiError &&
-            ["access_disabled", "invalid_session"].includes(error.code)
-          )
-            clear();
-          else {
-            setProfile(null);
-            setPage("home");
-          }
+          if (authorizationLost(error)) clear();
           setMessage(reportError(error));
         }
       } finally {
@@ -90,7 +115,7 @@ export default function ReportApp() {
       if (!current || (store.current && store.current.ownerUid !== current.uid))
         clear();
       setUser(current);
-      setProfile(null);
+      if (!current || verifiedUid.current !== current.uid) setProfile(null);
       if (!current) {
         setChecking(false);
         return;
@@ -99,32 +124,43 @@ export default function ReportApp() {
       unsubscribeProfile = onSnapshot(
         doc(reportFirebase!.db, "users", current.uid),
         (snapshot) => {
+          if (reportFirebase!.auth.currentUser?.uid !== current.uid) return;
           const data = snapshot.data();
+          if (snapshot.metadata.fromCache) return;
           if (!data || data.active !== true) {
             generation.current++;
             clear();
             setChecking(false);
             setMessage(
-              "Käyttöoikeutesi on estetty tai sitä ei ole vielä myönnetty. Ota yhteyttä ylläpitäjään.",
+              "Käyttöoikeutesi on estetty tai sitä ei ole vielä myönnetty. Ota yhteyttä ylläpitäjään. Mahdollista paikallista luonnosta ei poistettu.",
             );
             return;
           }
           // This listener can only revoke UI access; it never grants authority without the Worker.
           setProfile((previous) =>
-            previous && data.role !== previous.role
+            previous && previous.uid === current.uid
               ? {
                   ...previous,
                   role: data.role === "admin" ? "admin" : "employee",
+                  displayName:
+                    typeof data.displayName === "string"
+                      ? data.displayName
+                      : previous.displayName,
                 }
               : previous,
           );
           if (data.role !== "admin")
             setPage((p) => (p === "employees" ? "home" : p));
         },
-        () => {
-          generation.current++;
-          clear();
-          setChecking(false);
+        (error) => {
+          if (
+            error.code === "permission-denied" ||
+            error.code === "unauthenticated"
+          ) {
+            generation.current++;
+            clear();
+            setChecking(false);
+          }
           setMessage(
             "Istunnon käyttöoikeutta ei voitu varmistaa. Kirjaudu uudelleen.",
           );
@@ -139,12 +175,9 @@ export default function ReportApp() {
       if (document.visibilityState === "visible") refresh();
     };
     const offline = () => {
-      generation.current++;
-      setProfile(null);
-      setPage("home");
-      setChecking(false);
+      draft.current?.flush();
       setMessage(
-        "Verkkoyhteys puuttuu. Yhdistä verkkoon ja varmista istunto uudelleen. Istuntoluonnos säilyy tässä välilehdessä.",
+        "Verkkoyhteys puuttuu. Luonnos säilyy tässä välilehdessä; paikallista muokkausta voi jatkaa aiemmin varmennetussa istunnossa.",
       );
     };
     const timer = setInterval(refresh, 300000);
@@ -161,6 +194,14 @@ export default function ReportApp() {
     };
   }, [clear, validate]);
   async function logout() {
+    if (draft.current && !draft.current.flush()) {
+      if (
+        !confirm(
+          "Luonnosta ei voitu tallentaa. Tiedot säilyvät vain tämän välilehden muistissa ja voivat kadota, jos suljet tai päivität välilehden. Kirjaudutaanko silti ulos?",
+        )
+      )
+        return;
+    }
     generation.current++;
     clear();
     setPassword("");
@@ -216,6 +257,8 @@ export default function ReportApp() {
     )
       return;
     setBusy(true);
+    const targetDraft = draft.current,
+      revision = targetDraft?.getSnapshot().revision;
     try {
       const fresh = await reportRequest<{ profile: EmployeeProfile }>(
         user,
@@ -223,9 +266,25 @@ export default function ReportApp() {
       );
       if (fresh.profile.role !== "admin")
         throw new ReportApiError("admin_required");
-      if (store.current) {
-        saveReport(readReport(), store.current);
-        setEditorKey((k) => k + 1);
+      if (
+        targetDraft &&
+        targetDraft === draft.current &&
+        revision !== undefined
+      ) {
+        if (targetDraft.getSnapshot().revision !== revision) {
+          setMessage(
+            "Luonnos muuttui. Tuonti peruttiin, jotta uusia tietoja ei korvata.",
+          );
+          return;
+        }
+        const legacy = readReport();
+        if (reportIsEmpty(legacy)) {
+          setMessage(
+            "Tuotavaa aiempaa luonnosta ei löytynyt. Nykyisiä tietoja ei muutettu.",
+          );
+          return;
+        }
+        targetDraft.replace(legacy, revision);
         setPage("editor");
       }
     } catch (error) {
@@ -248,6 +307,15 @@ export default function ReportApp() {
         )}
       </header>
       <main id="report-access-content">
+        {user && profile && (
+          <p className="access-retention">
+            Luonnos tallentuu vain tämän selaimen välilehteen omalle
+            käyttäjätilillesi. Uloskirjautuminen säilyttää paikallisen
+            luonnoksen; sen voi avata uudelleen vain samalla hyväksytyllä
+            käyttäjätilillä. Tietoja ei synkronoida laitteiden välillä. Poista
+            luonnos erikseen ennen yhteiskäyttölaitteelta poistumista.
+          </p>
+        )}
         {!reportConfigured ? (
           <section className="access-login">
             <h1>Henkilöstön kirjautuminen</h1>
@@ -347,11 +415,12 @@ export default function ReportApp() {
             <React.Suspense fallback={<p role="status">Ladataan…</p>}>
               {page === "editor" && store.current ? (
                 <Editor
-                  key={user.uid + editorKey}
+                  key={user.uid}
                   draftStorage={store.current}
+                  draftSession={draft.current!}
                 />
               ) : page === "employees" && profile.role === "admin" ? (
-                <AdminPanel user={user} />
+                <AdminPanel key={user.uid} user={user} />
               ) : (
                 <section className="access-dashboard">
                   <span className="eyebrow">OMA TYÖTILA</span>

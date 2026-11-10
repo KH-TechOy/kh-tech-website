@@ -6,6 +6,7 @@ import { ApiError, type Dependencies, type Document } from "./types";
 export interface Env {
   FIREBASE_PROJECT_ID: string;
   SERVICE_ACCOUNT_JSON: string;
+  FIREBASE_WEB_API_KEY?: string;
   ALLOWED_ORIGINS: string;
   REPORT_RATE: DurableObjectNamespace;
 }
@@ -123,7 +124,13 @@ export function reportHandler(deps: Dependencies, origins: string[]) {
       }
       if (path === "/employees" && request.method === "POST")
         return cors(
-          json(await service.createEmployee(claims, await body(request))),
+          json(
+            await service.createEmployee(
+              claims,
+              await body(request),
+              request.headers.get("CF-Connecting-IP") || "",
+            ),
+          ),
         );
       if (path === "/employees/action" && request.method === "POST")
         return cors(
@@ -165,11 +172,15 @@ export default {
     if (origins.some((o) => !/^https:\/\/[^/]+$/.test(o)))
       return json({ error: "configuration" }, 503);
     const signature =
-      env.FIREBASE_PROJECT_ID + env.SERVICE_ACCOUNT_JSON + env.ALLOWED_ORIGINS;
+      env.FIREBASE_PROJECT_ID +
+      env.SERVICE_ACCOUNT_JSON +
+      env.ALLOWED_ORIGINS +
+      (env.FIREBASE_WEB_API_KEY || "");
     if (!configured || configured.signature !== signature) {
       const services = googleServices({
         projectId: env.FIREBASE_PROJECT_ID,
         serviceAccount: env.SERVICE_ACCOUNT_JSON,
+        webApiKey: env.FIREBASE_WEB_API_KEY,
       });
       configured = {
         signature,

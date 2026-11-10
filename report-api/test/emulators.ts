@@ -37,7 +37,7 @@ export async function seed() {
       uid,
       email: uid + "@example.test",
       password: fixturePassword,
-      displayName: uid,
+      displayName: uid==='admin'?'admin@example.test':uid,
       disabled: !active,
     });
     await db
@@ -45,7 +45,7 @@ export async function seed() {
       .set({
         uid,
         email: uid + "@example.test",
-        displayName: uid,
+        displayName: uid==='admin'?'admin@example.test':uid,
         role,
         active,
         validAfter: 0,
@@ -105,7 +105,7 @@ export async function dependencies(): Promise<Dependencies> {
     return fetch(local, { ...init, headers });
   };
   return {
-    ...googleServices({ projectId, serviceAccount }, transport),
+    ...googleServices({ projectId, serviceAccount,webApiKey:'emulator' }, transport),
     rate: async () => true,
     verify: async (token) => {
       try {

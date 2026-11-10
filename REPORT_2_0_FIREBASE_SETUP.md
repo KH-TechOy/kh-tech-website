@@ -1,5 +1,7 @@
 # Report 2.0 A — maksuton käyttöönotto
 
+**A.1 olemassa olevaan tuotantoon:** käytä tämän perustamisohjeen sijasta [A.1-päivitysohjetta](REPORT_2_0_A_1_RESULT.md). Älä luo projektia tai ensimmäistä Adminia uudelleen. Report Worker tarvitsee lisäksi julkisen `FIREBASE_WEB_API_KEY`-muuttujan; säilytä nykyiset Dashboard-muuttujat julkaisemalla `--keep-vars`-valinnalla. Yksittäiset työntekijäkutsut hoituvat A.1:n Admin-käyttöliittymässä.
+
 Päiväys 10.11.2026. Nämä ovat omistajan **myöhemmin manuaalisesti suorittamat** tuotantovaiheet. Tässä työssä ei luotu oikeaa Firebase-projektia, avaimia tai käyttäjiä, lähetetty oikeaa sähköpostia, julkaistu sääntöjä, Workeria tai sivustoa eikä liitetty laskutusta. Lähdekoodin valmistuminen ei ole tuotantoympäristön hyväksyntä.
 
 ## 1. Maksuton projekti

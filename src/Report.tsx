@@ -9,6 +9,7 @@ import {
   Download,
   Eye,
   FileText,
+  Save,
   ImagePlus,
   Info,
   Plus,
@@ -18,9 +19,6 @@ import {
 import { Brand, company, services, url } from "./brand";
 import { createReportId } from "./utils";
 import {
-  emptyReport,
-  readReport,
-  saveReport,
   reportIsEmpty,
   reportErrors,
   requiredReportFields,
@@ -30,6 +28,10 @@ import {
   type ReportPhoto,
   type ReportState,
 } from "./reportModel";
+import {
+  createDraftSession,
+  type DraftSession,
+} from "./reportAuth/draftSession";
 
 type Errors = ReturnType<typeof reportErrors>;
 function Field({
@@ -282,51 +284,68 @@ function compressPhoto(file: File): Promise<string> {
     image.src = source;
   });
 }
-export default function Report({ draftStorage }: { draftStorage?: import('./reportModel').DraftStorage }) {
-  const [state, setState] = React.useState(() => readReport(draftStorage)),
-    [message, setMessage] = React.useState(""),
-    [storage, setStorage] = React.useState<"saved" | "saving" | "error">(
-      "saved",
-    ),
-    [checked, setChecked] = React.useState(false),
+export default function Report({
+  draftStorage,
+  draftSession,
+}: {
+  draftStorage?: import("./reportModel").DraftStorage;
+  draftSession?: DraftSession;
+}) {
+  const [session] = React.useState(
+    () => draftSession || createDraftSession(draftStorage),
+  );
+  const { state, status: storage } = React.useSyncExternalStore(
+    session.subscribe,
+    session.getSnapshot,
+  );
+  const saveDraft = () => {
+    if (session.getSnapshot().readFailed) {
+      if (
+        !confirm(
+          "Aiemman luonnoksen lukeminen epäonnistui. Tallentaminen korvaa tämän käyttäjätilin aiemman luonnoksen näillä uusilla tiedoilla. Jatketaanko?",
+        )
+      )
+        return;
+      session.allowReplacementAfterReadFailure();
+    }
+    void session.save();
+  };
+  const setState = session.update;
+  const [message, setMessage] = React.useState("");
+  const [checked, setChecked] = React.useState(false),
     [preview, setPreview] = React.useState(false),
     [busy, setBusy] = React.useState(false),
     [category, setCategory] = React.useState("before"),
     [pdfBusy, setPdfBusy] = React.useState(false);
-  const current = React.useRef(state),
-    errorSummary = React.useRef<HTMLDivElement>(null),
+  const errorSummary = React.useRef<HTMLDivElement>(null),
     previewTrigger = React.useRef<HTMLButtonElement>(null),
     mounted = React.useRef(true);
-  current.current = state;
   React.useEffect(() => {
     mounted.current = true;
     const flush = () => {
-      try {
-        saveReport(current.current, draftStorage);
-      } catch {
-        /* The visible storage warning handles failures. */
+      session.flush();
+    };
+    const visibility = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
+    const leaving = (event: BeforeUnloadEvent) => {
+      if (!session.flush()) {
+        event.preventDefault();
+        event.returnValue = "";
       }
     };
     window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", visibility);
+    window.addEventListener("beforeunload", leaving);
     void import("./pdf").catch(() => {});
     return () => {
       mounted.current = false;
       flush();
       window.removeEventListener("pagehide", flush);
+      document.removeEventListener("visibilitychange", visibility);
+      window.removeEventListener("beforeunload", leaving);
     };
-  }, []);
-  React.useEffect(() => {
-    setStorage("saving");
-    const timer = setTimeout(() => {
-      try {
-        saveReport(state, draftStorage);
-        setStorage("saved");
-      } catch {
-        setStorage("error");
-      }
-    }, 450);
-    return () => clearTimeout(timer);
-  }, [state]);
+  }, [session]);
   const errors = checked ? reportErrors(state.form) : {},
     progress = requiredReportFields.filter((name) =>
       state.form[name].trim(),
@@ -385,6 +404,7 @@ export default function Report({ draftStorage }: { draftStorage?: import('./repo
     }
   }
   async function addPhotos(event: React.ChangeEvent<HTMLInputElement>) {
+    const generation = session.getGeneration();
     const files = Array.from(event.target.files || []);
     event.target.value = "";
     if (!files.length) return;
@@ -405,29 +425,31 @@ export default function Report({ draftStorage }: { draftStorage?: import('./repo
           data: await compressPhoto(file),
           category,
         });
-      if (mounted.current) {
+      if (generation === session.getGeneration()) {
         setState((s) => ({
           ...s,
           photos: [...s.photos, ...photos].slice(0, 6),
         }));
-        setMessage(
-          files.length > room
-            ? "Raporttiin lisättiin kuusi kuvaa. Loput eivät mahtuneet mukaan."
-            : "Kuvat lisätty. Voit vaihtaa kunkin kuvan tyyppiä.",
-        );
+        if (mounted.current)
+          setMessage(
+            files.length > room
+              ? "Raporttiin lisättiin kuusi kuvaa. Loput eivät mahtuneet mukaan."
+              : "Kuvat lisätty. Voit vaihtaa kunkin kuvan tyyppiä.",
+          );
       }
     } catch (error) {
-      if (mounted.current) {
+      if (generation === session.getGeneration()) {
         if (photos.length)
           setState((s) => ({
             ...s,
             photos: [...s.photos, ...photos].slice(0, 6),
           }));
-        setMessage(
-          error instanceof Error
-            ? error.message
-            : "Kuvien käsittely epäonnistui.",
-        );
+        if (mounted.current)
+          setMessage(
+            error instanceof Error
+              ? error.message
+              : "Kuvien käsittely epäonnistui.",
+          );
       }
     } finally {
       if (mounted.current) setBusy(false);
@@ -437,15 +459,13 @@ export default function Report({ draftStorage }: { draftStorage?: import('./repo
     if (
       confirm("Poistetaanko työraporttiluonnos ja valokuvat tästä selaimesta?")
     ) {
-      setState(emptyReport());
+      session.discard();
       setChecked(false);
-      setMessage("Luonnos poistettu tältä laitteelta. Ladattu PDF ei poistu.");
-      try {
-        (draftStorage || localStorage).removeItem("kht-report-draft");
-        (draftStorage || localStorage).removeItem("kht-report-id");
-      } catch {
-        setStorage("error");
-      }
+      setMessage(
+        session.getSnapshot().status === "error"
+          ? "Tyhjennetty näkymä, mutta muutosta ei voitu tallentaa. Aiempi luonnos voi yhä olla selaimessa."
+          : "Luonnos tyhjennetty. Ladattu PDF ei poistu.",
+      );
     }
   }
   return (
@@ -482,7 +502,11 @@ export default function Report({ draftStorage }: { draftStorage?: import('./repo
             <Info size={19} />
             <span>
               Paikallinen PDF-työkalu
-              <small>{draftStorage ? 'Henkilökohtainen istunto. PDF ladataan laitteelle; pilvitallennus ja sähköpostitoimitus eivät ole käytössä.' : 'Henkilöstötodennus ja sähköpostitoimitus eivät ole käytössä. Ei tuotantokäyttöön asiakastiedoilla.'}</small>
+              <small>
+                {draftStorage
+                  ? "Henkilökohtainen istunto. PDF ladataan laitteelle; pilvitallennus ja sähköpostitoimitus eivät ole käytössä."
+                  : "Henkilöstötodennus ja sähköpostitoimitus eivät ole käytössä. Ei tuotantokäyttöön asiakastiedoilla."}
+              </small>
             </span>
           </div>
         </div>
@@ -527,16 +551,29 @@ export default function Report({ draftStorage }: { draftStorage?: import('./repo
               <span>
                 {storage === "error"
                   ? "Luonnosta ei voitu tallentaa"
-                  : storage === "saving"
-                    ? "Tallennetaan…"
-                    : reportIsEmpty(state)
-                      ? "Ei tallennettua luonnosta"
-                      : "Luonnos tallennettu selaimeen"}
+                  : storage === "dirty"
+                    ? "Tallentamattomia muutoksia"
+                    : storage === "saving"
+                      ? "Tallennetaan..."
+                      : reportIsEmpty(state)
+                        ? "Ei tallennettua luonnosta"
+                        : "Luonnos tallennettu selaimeen"}
               </span>
             </div>
+            <button
+              type="button"
+              className="button outline"
+              onClick={saveDraft}
+            >
+              <Save size={16} /> Tallenna luonnos
+            </button>
           </aside>
           <form
             className="report-form"
+            onBlurCapture={(event) => {
+              if (event.target.matches("input,textarea,select"))
+                session.flush();
+            }}
             onSubmit={(event) => {
               event.preventDefault();
               void download();
@@ -560,12 +597,22 @@ export default function Report({ draftStorage }: { draftStorage?: import('./repo
             <div className="privacy-alert">
               <Info />
               <p>
-                {draftStorage ? 'Luonnos ja kuvat säilyvät tämän välilehden istunnossa. Lataa PDF ennen uloskirjautumista tai välilehden sulkemista. ' : 'Luonnos ja kuvat tallentuvat tämän laitteen selaimeen. Käytä omaa laitettasi ja poista luonnos työn jälkeen. '}
+                {draftStorage
+                  ? "Luonnos ja kuvat tallentuvat vain tämän selaimen välilehteen omalle käyttäjätilillesi. Uloskirjautuminen säilyttää luonnoksen. Lataa PDF ennen välilehden sulkemista. "
+                  : "Luonnos ja kuvat tallentuvat tämän laitteen selaimeen. Käytä omaa laitettasi ja poista luonnos työn jälkeen. "}
                 <a href={url("tietosuoja/")}>Tietojen käsittely</a>
               </p>
             </div>
             {storage === "error" && (
               <div className="error-summary" role="alert">
+                {session.getSnapshot().readFailed && (
+                  <p>
+                    Aiemman luonnoksen lukeminen epäonnistui. Automaattinen
+                    tallennus on estetty, jotta aiempia tietoja ei korvata.
+                    Tarkista selaimen tallennusasetukset. Jos olet jo
+                    kirjoittanut uusia tietoja, ne säilyvät tässä välilehdessä.
+                  </p>
+                )}
                 <strong>Automaattinen tallennus ei onnistunut.</strong>
                 <p>
                   Selaimen tallennustila voi olla täynnä tai estetty. Tiedot

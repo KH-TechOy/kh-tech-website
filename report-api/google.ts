@@ -10,6 +10,7 @@ import {
 export interface GoogleConfig {
   projectId: string;
   serviceAccount: string;
+  webApiKey?: string;
 }
 function encode(value: Value): object {
   if (value === null) return { nullValue: null };
@@ -95,6 +96,7 @@ export function googleServices(
           "https://oauth2.googleapis.com/token",
           {
             method: "POST",
+            redirect: "manual",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: new URLSearchParams({
               grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
@@ -128,6 +130,7 @@ export function googleServices(
   ): Promise<any> {
     const response = await transport(url, {
       method,
+      redirect: "manual",
       headers: {
         Authorization: "Bearer " + (await accessToken()),
         "Content-Type": "application/json",
@@ -180,7 +183,7 @@ export function googleServices(
       };
     },
     async transaction(fn) {
-      for (let attempt = 0; attempt < 4; attempt++) {
+      for (let attempt = 0; attempt < 6; attempt++) {
         const { transaction } = await request(root + ":beginTransaction", {
           options: { readWrite: {} },
         });
@@ -206,9 +209,15 @@ export function googleServices(
           if (
             !(error instanceof ApiError) ||
             error.code !== "retry_transaction" ||
-            attempt === 3
+            attempt === 5
           )
             throw error;
+          await new Promise((resolve) =>
+            setTimeout(
+              resolve,
+              20 * 2 ** attempt + Math.floor(Math.random() * 30),
+            ),
+          );
         }
       }
       throw new ApiError("provider_unavailable", 503);
@@ -225,10 +234,23 @@ export function googleServices(
       email: user.email,
       disabled: user.disabled === true,
       validSince: Number(user.validSince || 0),
+      displayName: typeof user.displayName === "string" ? user.displayName : "",
     };
   }
   const identity: Identity = {
     lookup,
+    async lookupEmail(email) {
+      const result = await request(authRoot + ":lookup", { email: [email] });
+      const user = result?.users?.[0];
+      return user
+        ? {
+            uid: String(user.localId),
+            email: String(user.email),
+            disabled: user.disabled === true,
+            validSince: Number(user.validSince || 0),
+          }
+        : null;
+    },
     async create(uid, email, displayName) {
       // Resuming a reservation is safe only for the exact same server-selected UID/email.
       try {
@@ -262,11 +284,82 @@ export function googleServices(
       });
     },
     async reset(email, userIp) {
-      await request(authRoot + ":sendOobCode", {
-        requestType: "PASSWORD_RESET",
-        email,
-        userIp,
+      if (!config.webApiKey) throw new ApiError("email_not_configured", 503);
+      let response: Response;
+      try {
+        response = await transport(
+          "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=" +
+            encodeURIComponent(config.webApiKey),
+          {
+            method: "POST",
+            redirect: "manual",
+            headers: {
+              Authorization: "Bearer " + (await accessToken()),
+              "Content-Type": "application/json",
+              "X-Firebase-Locale": "fi",
+            },
+            body: JSON.stringify({
+              targetProjectId: config.projectId,
+              requestType: "PASSWORD_RESET",
+              email,
+              userIp,
+              returnOobLink: false,
+              canHandleCodeInApp: false,
+            }),
+            signal: AbortSignal.timeout(12000),
+          },
+        );
+      } catch (error) {
+        if (error instanceof ApiError) throw error;
+        throw new ApiError("email_outcome_unknown", 503);
+      }
+      const result = (await response.json().catch(() => null)) as any;
+      if (!response.ok) {
+        const message = String(result?.error?.message || "").split(" : ")[0];
+        const codes: Record<string, string> = {
+          API_KEY_INVALID: "email_api_key_invalid",
+          INVALID_API_KEY: "email_api_key_invalid",
+          OPERATION_NOT_ALLOWED: "email_provider_disabled",
+          TOO_MANY_ATTEMPTS_TRY_LATER: "email_quota",
+          QUOTA_EXCEEDED: "email_quota",
+          RESET_PASSWORD_EXCEED_LIMIT: "email_quota",
+          UNAUTHORIZED_DOMAIN: "email_domain",
+          INVALID_CONTINUE_URI: "email_domain",
+          INVALID_EMAIL: "email_address_invalid",
+          EMAIL_NOT_FOUND: "email_account_missing",
+          USER_DISABLED: "access_disabled",
+          MISSING_CLIENT_TYPE: "email_recaptcha_required",
+          CAPTCHA_CHECK_FAILED: "email_recaptcha_required",
+        };
+        const code =
+          response.status === 403
+            ? "email_permission_denied"
+            : codes[message] ||
+              (response.status >= 500
+                ? "email_outcome_unknown"
+                : "email_rejected");
+        throw new ApiError(
+          code,
+          response.status === 429 || code === "email_quota" ? 429 : 502,
+        );
+      }
+      if (
+        !result ||
+        (result.email !== undefined &&
+          (typeof result.email !== "string" ||
+            result.email.toLowerCase() !== email.toLowerCase())) ||
+        result.oobLink ||
+        result.oobCode
+      )
+        throw new ApiError("email_outcome_unknown", 502);
+    },
+    async rename(uid, displayName) {
+      const result = await request(authRoot + ":update", {
+        localId: uid,
+        displayName,
       });
+      if (result?.localId !== uid)
+        throw new ApiError("provider_unavailable", 503);
     },
   };
   return { db, identity };

@@ -2,11 +2,37 @@
 import { createServer } from "node:http";
 import { dependencies, seed } from "./emulators";
 import { reportHandler } from "../worker";
-const handler = reportHandler(await dependencies(), ["http://127.0.0.1:5188"]);
+import { ApiError } from "../types";
+const deps = await dependencies();
+let rejectEmail = false;
+const handler = reportHandler(
+  {
+    ...deps,
+    identity: {
+      ...deps.identity,
+      reset: async (email, ip) => {
+        if (rejectEmail) throw new ApiError("email_quota", 429);
+        return deps.identity.reset(email, ip);
+      },
+    },
+  },
+  ["http://127.0.0.1:5188"],
+);
 createServer(async (incoming, outgoing) => {
   try {
     if (incoming.url === "/__reset" && incoming.method === "POST") {
       await seed();
+      rejectEmail = false;
+      outgoing.end("ready");
+      return;
+    }
+    if (incoming.url === "/__email-fail" && incoming.method === "POST") {
+      rejectEmail = true;
+      outgoing.end("ready");
+      return;
+    }
+    if (incoming.url === "/__email-ok" && incoming.method === "POST") {
+      rejectEmail = false;
       outgoing.end("ready");
       return;
     }

@@ -67,7 +67,10 @@ export function emptyReport(): ReportState {
     photos: [],
   };
 }
-export type DraftStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+export type DraftStorage = Pick<
+  Storage,
+  "getItem" | "setItem" | "removeItem"
+> & { writeReport?(state: ReportState): void };
 export function readReport(store?: DraftStorage): ReportState {
   const state = emptyReport();
   try {
@@ -132,6 +135,10 @@ export function reportIsEmpty(state: ReportState) {
   );
 }
 export function saveReport(state: ReportState, store?: DraftStorage) {
+  if (store?.writeReport) {
+    store.writeReport(state);
+    return;
+  }
   const storage = store || localStorage;
   if (reportIsEmpty(state)) {
     storage.removeItem("kht-report-draft");

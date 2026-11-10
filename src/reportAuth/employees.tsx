@@ -1,6 +1,35 @@
 import React from "react";
 import type { User } from "firebase/auth";
-import { reportRequest, reportError, type EmployeeProfile } from "./api";
+import {
+  reportRequest,
+  reportError,
+  ReportApiError,
+  type EmployeeProfile,
+} from "./api";
+type Created = {
+  uid: string;
+  completed: boolean;
+  setupEmail: { status: string; error: string };
+};
+function readRequests(key: string): Map<string, string> {
+  try {
+    const parsed: unknown = JSON.parse(sessionStorage.getItem(key) || "[]");
+    return new Map(
+      Array.isArray(parsed)
+        ? parsed.filter(
+            (v): v is [string, string] =>
+              Array.isArray(v) &&
+              typeof v[0] === "string" &&
+              v[0].length < 512 &&
+              typeof v[1] === "string" &&
+              /^[a-f0-9-]{36}$/.test(v[1]),
+          )
+        : [],
+    );
+  } catch {
+    return new Map();
+  }
+}
 export default function Employees({ user }: { user: User }) {
   const [users, setUsers] = React.useState<EmployeeProfile[]>([]),
     [next, setNext] = React.useState<string | undefined>(),
@@ -8,8 +37,33 @@ export default function Employees({ user }: { user: User }) {
     [message, setMessage] = React.useState("");
   const [name, setName] = React.useState(""),
     [email, setEmail] = React.useState("");
-  const requests = React.useRef(new Map<string, string>());
-  async function load(more = false) {
+  const [editing, setEditing] = React.useState<string | null>(null),
+    [editedName, setEditedName] = React.useState("");
+  const [created, setCreated] = React.useState<EmployeeProfile | null>(null);
+  const requestKey = "kht-report-ops:" + user.uid;
+  const requests = React.useMemo(
+    () => ({ current: readRequests(requestKey) }),
+    [requestKey],
+  );
+  const persistRequests = () => {
+    try {
+      sessionStorage.setItem(requestKey, JSON.stringify([...requests.current]));
+    } catch {
+      /* in-memory idempotency remains available */
+    }
+  };
+  function requestId(key: string) {
+    if (!requests.current.has(key)) {
+      requests.current.set(key, crypto.randomUUID());
+      persistRequests();
+    }
+    return requests.current.get(key)!;
+  }
+  function forget(key: string) {
+    requests.current.delete(key);
+    persistRequests();
+  }
+  async function load(more = false, preserveMessage = false) {
     setBusy(true);
     try {
       const result = await reportRequest<{
@@ -24,8 +78,20 @@ export default function Employees({ user }: { user: User }) {
         more ? [...previous, ...result.users] : result.users,
       );
       setNext(result.nextPageToken);
+      setCreated((previous) =>
+        previous
+          ? result.users.find((profile) => profile.uid === previous.uid) ||
+            previous
+          : null,
+      );
     } catch (error) {
-      setMessage(reportError(error));
+      setMessage((previous) =>
+        preserveMessage && previous
+          ? previous +
+            " Käyttäjäluetteloa ei voitu päivittää. " +
+            reportError(error)
+          : reportError(error),
+      );
     } finally {
       setBusy(false);
     }
@@ -33,11 +99,6 @@ export default function Employees({ user }: { user: User }) {
   React.useEffect(() => {
     void load();
   }, []);
-  function requestId(key: string) {
-    if (!requests.current.has(key))
-      requests.current.set(key, crypto.randomUUID());
-    return requests.current.get(key)!;
-  }
   async function create(event: React.FormEvent) {
     event.preventDefault();
     if (busy) return;
@@ -45,18 +106,38 @@ export default function Employees({ user }: { user: User }) {
     setMessage("");
     const key = "create:" + email.trim().toLowerCase() + ":" + name.trim();
     try {
-      await reportRequest(user, "/employees", {
+      const result = await reportRequest<Created>(user, "/employees", {
         requestId: requestId(key),
         email: email.trim(),
         displayName: name.trim(),
       });
-      requests.current.delete(key);
+      if (!result.completed) throw new ReportApiError("unavailable");
+      setCreated({
+        uid: result.uid,
+        email: email.trim(),
+        displayName: name.trim(),
+        role: "employee",
+        active: true,
+        validAfter: 0,
+        passwordSetupRequired: true,
+        setupEmailStatus: result.setupEmail.status,
+        setupEmailError: result.setupEmail.error,
+      });
+      forget(key);
       setName("");
       setEmail("");
       setMessage(
-        "Työntekijä luotu. Lähetä seuraavaksi salasanan palautusohje.",
+        result.setupEmail.status === "accepted"
+          ? "Työntekijä luotu. Salasanan asetusviesti on hyväksytty lähetyspalveluun. Postilaatikon vastaanottoa ei ole varmennettu."
+          : "Työntekijätili luotiin, mutta asetusviestin lähetystä ei vahvistettu. " +
+              reportError(
+                new ReportApiError(
+                  result.setupEmail.error || "email_outcome_unknown",
+                ),
+              ) +
+              " Käytä työntekijän Lähetä asetuslinkki uudelleen -painiketta.",
       );
-      await load();
+      await load(false, true);
     } catch (error) {
       setMessage(reportError(error));
     } finally {
@@ -65,7 +146,7 @@ export default function Employees({ user }: { user: User }) {
   }
   async function action(
     target: EmployeeProfile,
-    kind: "role" | "disable" | "reset",
+    kind: "role" | "disable" | "reset" | "name",
   ) {
     if (busy) return;
     if (
@@ -88,25 +169,68 @@ export default function Employees({ user }: { user: User }) {
       )
     )
       return;
+    const key =
+      kind +
+      ":" +
+      target.uid +
+      ":" +
+      (kind === "role" ? role : kind === "name" ? editedName.trim() : "");
+    if (kind === "reset" && target.setupEmailStatus === "unknown") {
+      if (
+        !confirm(
+          "Aiemman lähetyksen tulos on epäselvä. Uusi lähetys voi tuottaa toisen viestin. Lähetetäänkö uusi linkki?",
+        )
+      )
+        return;
+      forget(key);
+      if (kind === "reset")
+        setCreated((previous) =>
+          previous?.uid === target.uid
+            ? { ...previous, setupEmailStatus: "accepted", setupEmailError: "" }
+            : previous,
+        );
+    }
     setBusy(true);
     setMessage("");
-    const key = kind + ":" + target.uid + ":" + (kind === "role" ? role : "");
     try {
       await reportRequest(user, "/employees/action", {
         requestId: requestId(key),
         action: kind,
         uid: target.uid,
-        ...(kind === "role" ? { role } : {}),
+        ...(kind === "role"
+          ? { role }
+          : kind === "name"
+            ? { displayName: editedName.trim() }
+            : {}),
       });
-      requests.current.delete(key);
+      forget(key);
+      if (kind === "name") setEditing(null);
       setMessage(
         kind === "reset"
-          ? "Palautuspyyntö on hyväksytty sähköpostipalveluun."
-          : "Käyttöoikeus päivitetty.",
+          ? "Salasanaviesti on hyväksytty lähetyspalveluun. Postilaatikon vastaanottoa ei ole varmennettu."
+          : kind === "name"
+            ? "Nimi päivitetty. Kirjautumissähköposti ei muuttunut."
+            : "Käyttöoikeus päivitetty.",
       );
-      await load();
+      await load(false, true);
     } catch (error) {
       setMessage(reportError(error));
+      if (kind === "reset")
+        setCreated((previous) =>
+          previous?.uid === target.uid
+            ? {
+                ...previous,
+                setupEmailStatus:
+                  error instanceof ReportApiError &&
+                  error.code !== "network" &&
+                  error.code !== "email_outcome_unknown" &&
+                  error.code !== "outcome_unknown"
+                    ? "failed"
+                    : "unknown",
+              }
+            : previous,
+        );
+      await load(false, true);
     } finally {
       setBusy(false);
     }
@@ -123,6 +247,7 @@ export default function Employees({ user }: { user: User }) {
           Nimi
           <input
             value={name}
+            disabled={busy}
             maxLength={120}
             onChange={(e) => setName(e.target.value)}
             required
@@ -133,11 +258,16 @@ export default function Employees({ user }: { user: User }) {
           <input
             type="email"
             value={email}
+            disabled={busy}
             maxLength={160}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </label>
+        <p>
+          Työntekijä valitsee oman salasanansa sähköpostiin lähetettävällä
+          linkillä. Salasanaa ei näytetä ylläpitäjälle.
+        </p>
         <button className="button primary" disabled={busy}>
           Luo työntekijä
         </button>
@@ -147,47 +277,125 @@ export default function Employees({ user }: { user: User }) {
           {message}
         </p>
       )}
+      {created && created.active && created.setupEmailStatus !== "accepted" && (
+        <div className="access-message">
+          <strong>Tili luotu: {created.email}</strong>
+          <p>Älä luo tiliä uudelleen. Voit uusia vain asetusviestin.</p>
+          <button
+            type="button"
+            className="button outline"
+            disabled={busy}
+            onClick={() => void action(created, "reset")}
+          >
+            Lähetä asetuslinkki uudelleen
+          </button>
+        </div>
+      )}
       <ul className="access-user-list">
         {users.map((target) => (
           <li key={target.uid}>
             <div>
               <strong>{target.displayName}</strong>
-              <span>{target.email}</span>
+              <span>Sähköposti: {target.email}</span>
               <span>
-                {target.active
-                  ? target.role === "admin"
-                    ? "Ylläpitäjä"
-                    : "Työntekijä"
-                  : "Käyttö estetty"}
+                Rooli: {target.role === "admin" ? "Ylläpitäjä" : "Työntekijä"}
               </span>
+              <span>
+                Tila:{" "}
+                {!target.active
+                  ? "Käyttö estetty"
+                  : target.passwordSetupRequired
+                    ? "Odottaa ensimmäistä kirjautumista"
+                    : "Aktiivinen"}
+              </span>
+              {target.passwordSetupRequired && (
+                <span>
+                  {target.setupEmailStatus === "accepted"
+                    ? "Asetusviesti hyväksytty lähetykseen."
+                    : target.setupEmailStatus === "failed"
+                      ? "Asetusviestiä ei hyväksytty lähetykseen."
+                      : target.setupEmailStatus === "unknown"
+                        ? "Asetusviestin tulos on epäselvä."
+                        : "Asetusviestiä ei ole vielä vahvistettu."}
+                </span>
+              )}
+              {editing === target.uid && (
+                <form
+                  className="access-name-form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    void action(target, "name");
+                  }}
+                >
+                  <label>
+                    Näyttönimi
+                    <input
+                      autoFocus
+                      value={editedName}
+                      disabled={busy}
+                      maxLength={120}
+                      required
+                      onChange={(e) => setEditedName(e.target.value)}
+                    />
+                  </label>
+                  <button className="button primary" disabled={busy}>
+                    Tallenna nimi
+                  </button>
+                  <button
+                    type="button"
+                    className="button outline"
+                    disabled={busy}
+                    onClick={() => setEditing(null)}
+                  >
+                    Peruuta
+                  </button>
+                </form>
+              )}
             </div>
-            {target.active && (
-              <div className="access-user-actions">
-                <button
-                  className="button outline"
-                  disabled={busy}
-                  onClick={() => void action(target, "reset")}
-                >
-                  Lähetä palautusohje
-                </button>
-                <button
-                  className="button outline"
-                  disabled={busy}
-                  onClick={() => void action(target, "role")}
-                >
-                  {target.role === "admin"
-                    ? "Poista ylläpitäjän oikeudet"
-                    : "Tee ylläpitäjäksi"}
-                </button>
-                <button
-                  className="button danger"
-                  disabled={busy}
-                  onClick={() => void action(target, "disable")}
-                >
-                  Estä käyttö
-                </button>
-              </div>
-            )}
+            <div className="access-user-actions">
+              <button
+                className="button outline"
+                disabled={busy}
+                onClick={() => {
+                  setEditing(target.uid);
+                  setEditedName(target.displayName);
+                }}
+              >
+                Muokkaa nimeä
+              </button>
+              {target.active && (
+                <>
+                  <button
+                    className="button outline"
+                    disabled={busy}
+                    onClick={() => void action(target, "reset")}
+                  >
+                    {target.passwordSetupRequired
+                      ? target.setupEmailStatus === "failed" ||
+                        target.setupEmailStatus === "unknown"
+                        ? "Lähetä asetuslinkki uudelleen"
+                        : "Lähetä salasanan asetuslinkki"
+                      : "Lähetä salasanan palautuslinkki"}
+                  </button>
+                  <button
+                    className="button outline"
+                    disabled={busy}
+                    onClick={() => void action(target, "role")}
+                  >
+                    {target.role === "admin"
+                      ? "Poista ylläpitäjän oikeudet"
+                      : "Tee ylläpitäjäksi"}
+                  </button>
+                  <button
+                    className="button danger"
+                    disabled={busy}
+                    onClick={() => void action(target, "disable")}
+                  >
+                    Estä käyttö
+                  </button>
+                </>
+              )}
+            </div>
           </li>
         ))}
       </ul>

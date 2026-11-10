@@ -8,6 +8,9 @@ export type Profile = {
   validAfter: number;
   createdAt: string;
   updatedAt: string;
+  passwordSetupRequired?: boolean;
+  setupEmailStatus?: string;
+  setupEmailError?: string;
 };
 export type Claims = { uid: string; authTime: number; email: string };
 export type Account = {
@@ -15,6 +18,7 @@ export type Account = {
   email: string;
   disabled: boolean;
   validSince: number;
+  displayName?: string;
 };
 export type Value =
   null | string | number | boolean | Value[] | { [key: string]: Value };
@@ -35,9 +39,11 @@ export interface Database {
 }
 export interface Identity {
   lookup(uid: string): Promise<Account>;
+  lookupEmail(email: string): Promise<Account | null>;
   create(uid: string, email: string, displayName: string): Promise<void>;
   disable(uid: string): Promise<void>;
   reset(email: string, callerIp: string): Promise<void>;
+  rename(uid: string, displayName: string): Promise<void>;
 }
 export interface Dependencies {
   db: Database;

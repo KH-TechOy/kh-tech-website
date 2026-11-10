@@ -19,6 +19,13 @@ export function publicProfile(data: Document): Profile {
     validAfter: Number(data.validAfter),
     createdAt: String(data.createdAt),
     updatedAt: String(data.updatedAt),
+    passwordSetupRequired: data.passwordSetupRequired === true,
+    setupEmailStatus:
+      typeof data.setupEmailStatus === "string"
+        ? data.setupEmailStatus
+        : "not_sent",
+    setupEmailError:
+      typeof data.setupEmailError === "string" ? data.setupEmailError : "",
   };
 }
 export function createService(deps: Dependencies) {
@@ -36,6 +43,17 @@ export function createService(deps: Dependencies) {
       String(profile.email).toLowerCase() !== claims.email.toLowerCase()
     )
       throw new ApiError("access_disabled", 403);
+    if (profile.passwordSetupRequired === true) {
+      await deps.db.transaction(async (tx) => {
+        const latest = await tx.get("users/" + claims.uid);
+        if (usable(latest, claims) && latest.passwordSetupRequired === true)
+          tx.put("users/" + claims.uid, {
+            ...latest,
+            passwordSetupRequired: false,
+          });
+      });
+      profile.passwordSetupRequired = false;
+    }
     return { claims, profile: publicProfile(profile) };
   }
   async function adminTransaction<T>(
@@ -54,16 +72,27 @@ export function createService(deps: Dependencies) {
   async function mutate(claims: Claims, input: Document, callerIp = "") {
     const { action, uid, requestId } = input;
     if (
-      !["role", "disable", "reset"].includes(String(action)) ||
+      !["role", "disable", "reset", "name"].includes(String(action)) ||
       typeof uid !== "string" ||
       !uidPattern.test(uid) ||
       typeof requestId !== "string" ||
       !requestPattern.test(requestId) ||
       Object.keys(input).some(
-        (k) => !["action", "uid", "requestId", "role"].includes(k),
+        (k) =>
+          !["action", "uid", "requestId", "role", "displayName"].includes(k),
       )
     )
       throw new ApiError("invalid_request", 400);
+    const allowed =
+      action === "name"
+        ? ["action", "uid", "requestId", "displayName"]
+        : action === "role"
+          ? ["action", "uid", "requestId", "role"]
+          : ["action", "uid", "requestId"];
+    if (Object.keys(input).some((key) => !allowed.includes(key)))
+      throw new ApiError("invalid_request", 400);
+    if (action === "name")
+      return rename(claims, uid, requestId, input.displayName);
     if (
       action === "role" &&
       !["admin", "employee"].includes(String(input.role))
@@ -135,13 +164,89 @@ export function createService(deps: Dependencies) {
       else if (action === "reset") {
         const claimed = await adminTransaction(claims, async (tx) => {
           const op = await tx.get(operation);
-          if (!op || op.status !== "pending") return false;
+          if (!op || !["pending", "failed"].includes(String(op.status)))
+            return false;
           tx.put(operation, { ...op, status: "attempting" });
           return true;
         });
         if (!claimed) throw new ApiError("outcome_unknown", 409);
-        await deps.identity.reset(String(result.target.email), callerIp);
+        await sendAndRecord(
+          operation,
+          uid,
+          String(result.target.email),
+          callerIp,
+        );
       }
+      if (action !== "reset")
+        await deps.db.transaction(async (tx) => {
+          const op = await tx.get(operation);
+          if (op)
+            tx.put(operation, {
+              ...op,
+              status: "completed",
+              completedAt: new Date().toISOString(),
+            });
+        });
+    }
+    return { completed: true };
+  }
+  function validName(value: unknown): value is string {
+    return (
+      typeof value === "string" &&
+      value.trim().length > 0 &&
+      value.length <= 120 &&
+      !/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/.test(value)
+    );
+  }
+  async function rename(
+    claims: Claims,
+    uid: string,
+    requestId: string,
+    value: unknown,
+  ) {
+    if (!validName(value)) throw new ApiError("invalid_name", 400);
+    const displayName = value.trim(),
+      operation = "auditEvents/" + requestId;
+    await adminTransaction(claims, async (tx) => {
+      const target = await tx.get("users/" + uid),
+        op = await tx.get(operation);
+      if (!target) throw new ApiError("not_found", 404);
+      if (
+        op &&
+        (op.actorUid !== claims.uid ||
+          op.targetUid !== uid ||
+          op.action !== "name" ||
+          op.displayName !== displayName)
+      )
+        throw new ApiError("request_conflict", 409);
+      tx.put("users/" + uid, {
+        ...target,
+        displayName,
+        updatedAt: new Date().toISOString(),
+      });
+      tx.put(operation, {
+        actorUid: claims.uid,
+        targetUid: uid,
+        action: "name",
+        displayName,
+        status: "pending",
+        createdAt: op?.createdAt || new Date().toISOString(),
+      });
+    });
+    try {
+      let consistent = false;
+      // No provider side effects inside a retried Firestore transaction.
+      for (let attempt = 0; attempt < 4; attempt++) {
+        const latest = await deps.db.get("users/" + uid);
+        if (!latest) throw new Error("missing profile");
+        await deps.identity.rename(uid, String(latest.displayName));
+        const after = await deps.db.get("users/" + uid);
+        if (after?.displayName === latest.displayName) {
+          consistent = true;
+          break;
+        }
+      }
+      if (!consistent) throw new Error("concurrent name change");
       await deps.db.transaction(async (tx) => {
         const op = await tx.get(operation);
         if (op)
@@ -151,10 +256,67 @@ export function createService(deps: Dependencies) {
             completedAt: new Date().toISOString(),
           });
       });
+      return { completed: true };
+    } catch {
+      throw new ApiError("name_auth_pending", 503);
     }
-    return { completed: true };
   }
-  async function createEmployee(claims: Claims, input: Document) {
+  async function sendAndRecord(
+    operation: string,
+    uid: string,
+    email: string,
+    callerIp: string,
+  ) {
+    let error: unknown;
+    try {
+      const account = await deps.identity.lookup(uid);
+      if (
+        account.disabled ||
+        account.email.toLowerCase() !== email.toLowerCase()
+      )
+        throw new ApiError("email_account_missing", 409);
+      await deps.identity.reset(email, callerIp);
+    } catch (caught) {
+      error = caught;
+    }
+    const code =
+      error instanceof ApiError ? error.code : "email_outcome_unknown";
+    const status = !error
+      ? "accepted"
+      : code === "email_outcome_unknown"
+        ? "unknown"
+        : "failed";
+    await deps.db.transaction(async (tx) => {
+      const [op, target] = await Promise.all([
+        tx.get(operation),
+        tx.get("users/" + uid),
+      ]);
+      if (op)
+        tx.put(operation, {
+          ...op,
+          status:
+            status === "accepted"
+              ? "completed"
+              : status === "failed"
+                ? "failed"
+                : "attempting",
+          error: status === "accepted" ? "" : code,
+          completedAt: new Date().toISOString(),
+        });
+      if (target)
+        tx.put("users/" + uid, {
+          ...target,
+          setupEmailStatus: status,
+          setupEmailError: status === "accepted" ? "" : code,
+        });
+    });
+    if (error) throw error;
+  }
+  async function createEmployee(
+    claims: Claims,
+    input: Document,
+    callerIp = "",
+  ) {
     if (
       Object.keys(input).some(
         (k) => !["requestId", "email", "displayName"].includes(k),
@@ -164,10 +326,7 @@ export function createService(deps: Dependencies) {
       typeof input.email !== "string" ||
       input.email.length > 160 ||
       !/^[^\s@<>\r\n]+@[^\s@<>\r\n]+\.[^\s@<>\r\n]+$/.test(input.email) ||
-      typeof input.displayName !== "string" ||
-      !input.displayName.trim() ||
-      input.displayName.length > 120 ||
-      /[\u0000-\u001f\u007f]/.test(input.displayName)
+      !validName(input.displayName)
     )
       throw new ApiError("invalid_request", 400);
     const uid = "emp-" + input.requestId,
@@ -175,26 +334,45 @@ export function createService(deps: Dependencies) {
       operation = "auditEvents/" + input.requestId;
     const email = input.email.trim().toLowerCase(),
       displayName = input.displayName.trim();
+    const registered = await deps.identity.lookupEmail(email);
+    if (registered && registered.uid !== uid)
+      throw new ApiError("email_exists", 409);
+    const digest = await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(email),
+    );
+    const reservation =
+      "accessControl/employee-" +
+      Array.from(new Uint8Array(digest), (b) =>
+        b.toString(16).padStart(2, "0"),
+      ).join("");
     const completed = await adminTransaction(claims, async (tx) => {
       const existing = await tx.get(operation);
       const target = await tx.get(path);
+      const reserved = await tx.get(reservation);
+      if (reserved && reserved.uid !== uid)
+        throw new ApiError("email_exists", 409);
       if (existing) {
         if (
           existing.actorUid !== claims.uid ||
           existing.action !== "create" ||
           target?.email !== email ||
-          target?.displayName !== displayName
+          (existing.displayName !== displayName &&
+            target?.displayName !== displayName)
         )
           throw new ApiError("request_conflict", 409);
         return existing.status === "completed";
       }
       const now = new Date().toISOString();
+      tx.put(reservation, { uid, createdAt: now });
       tx.put(path, {
         uid,
         email,
         displayName,
         role: "employee",
         active: false,
+        passwordSetupRequired: true,
+        setupEmailStatus: "not_sent",
         validAfter: 0,
         createdAt: now,
         updatedAt: now,
@@ -203,6 +381,7 @@ export function createService(deps: Dependencies) {
         actorUid: claims.uid,
         targetUid: uid,
         action: "create",
+        displayName,
         status: "pending",
         createdAt: now,
       });
@@ -226,8 +405,46 @@ export function createService(deps: Dependencies) {
         });
       });
     }
-    // Password is random, discarded and never returned. A separate audited reset sends the invitation.
-    return { uid, completed: true };
+    const emailOperation = "auditEvents/" + input.requestId + "-setup";
+    const shouldSend = await adminTransaction(claims, async (tx) => {
+      const op = await tx.get(emailOperation);
+      const reservedTarget = await tx.get(path);
+      if (op) return false;
+      if (!reservedTarget || reservedTarget.active !== true)
+        throw new ApiError("access_disabled");
+      tx.put(emailOperation, {
+        actorUid: claims.uid,
+        targetUid: uid,
+        action: "setup",
+        status: "attempting",
+        createdAt: new Date().toISOString(),
+      });
+      tx.put(path, {
+        ...reservedTarget,
+        setupEmailStatus: "unknown",
+        setupEmailError: "email_outcome_unknown",
+      });
+      return true;
+    });
+    if (shouldSend) {
+      try {
+        await sendAndRecord(emailOperation, uid, email, callerIp);
+      } catch {
+        /* The account is preserved and the exact partial outcome is returned. */
+      }
+    }
+    const target = await deps.db.get(path);
+    return {
+      uid,
+      completed: true,
+      setupEmail: {
+        status:
+          target?.setupEmailStatus === "not_sent"
+            ? "unknown"
+            : target?.setupEmailStatus || "unknown",
+        error: target?.setupEmailError || "",
+      },
+    };
   }
   return { authenticate, mutate, createEmployee };
 }

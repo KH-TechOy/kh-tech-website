@@ -1,5 +1,6 @@
 import { spawn, execFileSync } from "node:child_process";
 import { resolve } from "node:path";
+import { createInterface } from "node:readline";
 const securityOnly = process.argv[2] === "--security-only";
 if (process.argv.length > (securityOnly ? 3 : 2))
   throw new Error("Unknown test option");
@@ -41,8 +42,20 @@ const child = spawn(
       ? "node node_modules/vitest/vitest.mjs run --config vitest.report.config.ts"
       : "npm run test:report:inside",
   ],
-  { stdio: "inherit", env },
+  { stdio: ["inherit", "pipe", "pipe"], env },
 );
+for (const [stream, output] of [
+  [child.stdout, process.stdout],
+  [child.stderr, process.stderr],
+]) {
+  createInterface({ input: stream }).on("line", (line) =>
+    output.write(
+      (/oobCode=|To reset the password/i.test(line)
+        ? "[Auth emulator: password action created; link redacted]"
+        : line) + "\n",
+    ),
+  );
+}
 child.on("exit", async (code) => {
   await new Promise((done) => setTimeout(done, 1500));
   try {

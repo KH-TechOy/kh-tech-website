@@ -37,6 +37,7 @@ beforeAll(async () => {
       bindings: {
         FIREBASE_PROJECT_ID: projectId,
         ALLOWED_ORIGINS: origin,
+        FIREBASE_WEB_API_KEY: "emulator",
         SERVICE_ACCOUNT_JSON: JSON.stringify({
           type: "service_account",
           project_id: projectId,
@@ -114,7 +115,8 @@ test("production Worker runtime verifies real RSA signatures, live profiles and 
   expect((await call(await token("admin", "another-project"))).status).toBe(
     401,
   );
-  expect((await call(await token("employee"))).status).toBe(200);
+  const session = await call(await token("employee"));
+  expect(session.status, await session.clone().text()).toBe(200);
   expect((await call(await token("employee"), "/employees")).status).toBe(403);
   const admin = await token("admin");
   expect(
@@ -140,4 +142,29 @@ test("SQLite Durable Object actually enforces the admin rate cap in workerd", as
     expect((await call(value, "/employees")).status).toBe(200);
   expect((await call(value, "/employees")).status).toBe(429);
   expect((await call(value)).status).toBe(200); // rate limiting never fabricates an authenticated session
+});
+test("production workerd automatically sends setup email and synchronizes a display name", async () => {
+  const value = await token("admin");
+  const response = await call(value, "/employees", {
+    requestId: crypto.randomUUID(),
+    email: crypto.randomUUID() + "@example.test",
+    displayName: "Kutsuttu",
+  });
+  expect(response.status, await response.clone().text()).toBe(200);
+  const created = (await response.json()) as any;
+  expect(created).toMatchObject({
+    completed: true,
+    setupEmail: { status: "accepted" },
+  });
+  expect(
+    (
+      await call(value, "/employees/action", {
+        uid: created.uid,
+        action: "name",
+        displayName: "Uusi nimi",
+        requestId: crypto.randomUUID(),
+      })
+    ).status,
+  ).toBe(200);
+  expect((await auth.getUser(created.uid)).displayName).toBe("Uusi nimi");
 });
