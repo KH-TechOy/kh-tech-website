@@ -2,7 +2,8 @@ import { spawn, execFileSync } from "node:child_process";
 import { resolve } from "node:path";
 import { createInterface } from "node:readline";
 const securityOnly = process.argv[2] === "--security-only";
-if (process.argv.length > (securityOnly ? 3 : 2))
+const workOnly = process.argv[2] === '--work-only';
+if (process.argv.length > (securityOnly || workOnly ? 3 : 2))
   throw new Error("Unknown test option");
 // Firebase CLI debug mode otherwise prints the entire inherited environment.
 const env = {
@@ -40,7 +41,7 @@ const child = spawn(
     "auth,firestore",
     securityOnly
       ? "node node_modules/vitest/vitest.mjs run --config vitest.report.config.ts"
-      : "npm run test:report:inside",
+      : workOnly ? 'npm run test:report:inside -- e2e/reportWork.playwright.ts' : "npm run test:report:inside",
   ],
   { stdio: ["inherit", "pipe", "pipe"], env },
 );

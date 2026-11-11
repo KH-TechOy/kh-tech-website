@@ -97,6 +97,17 @@ export function reportError(error: unknown): string {
     return "Toiminnon tulos on epäselvä. Tarkista tilanne ennen uutta pyyntöä.";
   if (code === "invalid_request") return "Tarkista antamasi tiedot.";
   const messages: Record<string, string> = {
+    revision_conflict: 'Raportti muuttui toisessa istunnossa. Päivitä näkymä tai ratkaise versioristiriita; paikallisia tietoja ei poistettu.',
+    request_conflict: 'Saman pyynnön sisältö muuttui. Tarkista palvelimelle tallentunut versio ennen uutta toimintoa.',
+    report_locked: 'Raportin nykyinen tila estää muokkaamisen.',
+    report_forbidden: 'Sinulla ei ole enää käyttöoikeutta tähän raporttiin. Paikallista palautuskopiota ei poistettu.',
+    invalid_transition: 'Tätä tilamuutosta ei voi tehdä nykyisillä oikeuksilla tai raportin nykyisestä tilasta.',
+    report_incomplete: 'Täydennä pakolliset raporttitiedot ennen tarkastukseen lähettämistä.',
+    billing_protected: 'Vain ylläpitäjä voi muuttaa laskutuksen hintoja ja asetuksia.',
+    material_changed: 'Valittu materiaali muuttui tai poistettiin käytöstä. Valitse materiaali uudelleen luettelosta.',
+    invalid_assignee: 'Valitse vähintään yksi aktiivinen vastuuhenkilö.',
+    legacy_locked: 'Vanhan raportin tila estää sen automaattisen siirron. Ota yhteyttä ylläpitäjään.',
+    too_many_catalog_items: 'Lisää enintään 20 uutta erilaista luettelomateriaalia kerralla. Tallenna ennen seuraavaa erää.',
     invalid_name:
       "Anna nimi (1–120 merkkiä). Nimi ei saa sisältää ohjausmerkkejä.",
     name_auth_pending:

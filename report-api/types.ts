@@ -35,6 +35,7 @@ export interface Database {
       get(path: string): Promise<Document | null>;
       put(path: string, data: Document): void;
     }) => Promise<T>,
+    maxAttempts?: number,
   ): Promise<T>;
 }
 export interface Identity {
@@ -49,7 +50,7 @@ export interface Dependencies {
   db: Database;
   identity: Identity;
   verify(token: string): Promise<Claims>;
-  rate(uid: string): Promise<boolean>;
+  rate(uid: string, kind?: 'work'): Promise<boolean>;
 }
 export class ApiError extends Error {
   constructor(

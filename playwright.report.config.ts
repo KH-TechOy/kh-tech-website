@@ -11,7 +11,7 @@ const env = {
 };
 export default defineConfig({
   ...base,
-  testMatch: "**/report.playwright.ts",
+  testMatch: "**/report*.playwright.ts",
   timeout: 60000,
   outputDir: ".playwright-artifacts/report/browser",
   reporter: [["list"]],

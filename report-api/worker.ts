@@ -2,6 +2,7 @@
 import { googleServices } from "./google";
 import { firebaseVerifier } from "./jwt";
 import { createService, publicProfile } from "./service";
+import { workService } from './work';
 import { ApiError, type Dependencies, type Document } from "./types";
 export interface Env {
   FIREBASE_PROJECT_ID: string;
@@ -21,14 +22,14 @@ export function json(value: unknown, status = 200) {
     },
   });
 }
-async function body(request: Request): Promise<Document> {
+async function body(request: Request, max = 4096): Promise<Document> {
   if (
     request.headers.get("Content-Type")?.split(";")[0].trim() !==
       "application/json" ||
     request.headers.has("Content-Encoding")
   )
     throw new ApiError("invalid_request", 415);
-  if (Number(request.headers.get("Content-Length")) > 4096)
+  if (Number(request.headers.get("Content-Length")) > max)
     throw new ApiError("invalid_request", 413);
   const reader = request.body?.getReader();
   if (!reader) throw new ApiError("invalid_request", 400);
@@ -39,7 +40,7 @@ async function body(request: Request): Promise<Document> {
       const { done, value } = await reader.read();
       if (done) break;
       size += value.length;
-      if (size > 4096) throw new ApiError("invalid_request", 413);
+      if (size > max) throw new ApiError("invalid_request", 413);
       chunks.push(value);
     }
   } finally {
@@ -62,6 +63,7 @@ async function body(request: Request): Promise<Document> {
 }
 export function reportHandler(deps: Dependencies, origins: string[]) {
   const service = createService(deps);
+  const work = workService(deps.db);
   return async (request: Request): Promise<Response> => {
     const origin = request.headers.get("Origin") || "";
     if (!origins.includes(origin)) return json({ error: "origin" }, 403);
@@ -105,6 +107,10 @@ export function reportHandler(deps: Dependencies, origins: string[]) {
         path = url.pathname;
       if (path === "/session" && request.method === "GET")
         return cors(json({ profile }));
+      if (path === '/work' && request.method === 'POST') {
+        if (!(await deps.rate(claims.uid, 'work'))) throw new ApiError('rate_limited', 429);
+        return cors(json(await work(claims, await body(request, 96000))));
+      }
       if (profile.role !== "admin") throw new ApiError("admin_required");
       if (!(await deps.rate(claims.uid)))
         throw new ApiError("rate_limited", 429);
@@ -188,10 +194,10 @@ export default {
           {
             ...services,
             verify: firebaseVerifier(env.FIREBASE_PROJECT_ID),
-            rate: async (uid) => {
+            rate: async (uid, kind) => {
               const response = await env.REPORT_RATE.get(
-                env.REPORT_RATE.idFromName(uid),
-              ).fetch("https://rate/", { method: "POST" });
+                env.REPORT_RATE.idFromName((kind ? 'work:' : '') + uid),
+              ).fetch("https://rate/", { method: "POST", headers: kind ? { 'X-Report-Rate': 'work' } : {} });
               return response.status === 200;
             },
           },
@@ -204,12 +210,12 @@ export default {
 };
 export class ReportRate {
   constructor(private ctx: DurableObjectState) {}
-  async fetch() {
+  async fetch(request: Request) {
     const accepted = await this.ctx.storage.transaction(async (tx) => {
       let data = await tx.get<{ count: number; until: number }>("limit");
       if (!data || data.until < Date.now())
         data = { count: 0, until: Date.now() + 600000 };
-      if (data.count >= 30) return false;
+      if (data.count >= (request.headers.get('X-Report-Rate') === 'work' ? 360 : 30)) return false;
       data.count++;
       await tx.put("limit", data);
       await tx.setAlarm(data.until);

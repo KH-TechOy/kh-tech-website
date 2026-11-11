@@ -2,7 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 import { mkdirSync, readFileSync } from "node:fs";
 const route = (process.env.VITE_BASE_PATH || "/kh-tech-website/") + "report/";
 const password = "Emulator-only_42!";
-const output = "docs/report20a1-screenshots";
+const output = process.env.REPORT_SCREENSHOTS || '.playwright-artifacts/report20b/a1-screenshots';
 mkdirSync(output, { recursive: true });
 test.beforeEach(async ({ request }) => {
   expect((await request.post("http://127.0.0.1:8788/__reset")).ok()).toBe(true);

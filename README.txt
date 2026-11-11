@@ -1,5 +1,18 @@
 KH-TECH OY – VERKKOSIVU, TYÖRAPORTTI JA PELI
 
+REPORT 2.0 B — 11.11.2026 (nykyinen paikallinen toteutus)
+  Työtilaukset, vastuut, tarkastukseen lähetys ja kommentilla palautus;
+  raporttitekstin versiotarkistettu Firestore-autosave ja reaaliaikaisuus.
+  A.1:n elävä luonnostila säilyy UID-/raporttikohtaisena palautuskopiona.
+  Kuvat/PDF pysyvät laitteella. Ostohinnat ovat Adminin erillisissä tiedoissa.
+  Materiaaliluettelo, historialliset myyntihinnat ja laskutuksen valmistelu.
+  Ei hyväksyntää, lopullista arkistointia tai raporttien sähköpostitoimitusta.
+  B korvaa alla olevat A/A.1-version pilvitallennusta koskevat kuvaukset.
+  Tulokset: REPORT_2_0_B_RESULT.md. Käyttöönotto: REPORT_2_0_B_SETUP.md.
+  Valtuutus ja ristiriidat: REPORT_2_0_B_SECURITY.md.
+  Säännöt/indeksit ensin, Report Worker sitten, frontend viimeisenä.
+  Ei pushia, deployta tai maksullisten palvelujen käyttöönottoa.
+
 REPORT 2.0 A — 10.11.2026
   A.1-päivitys: REPORT_2_0_A_1_RESULT.md korvaa alla olevat vanhan A-version
   luonnoksen poistoa ja erillistä kutsulähetystä koskevat käyttöohjeet.

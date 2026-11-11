@@ -41,33 +41,39 @@ service cloud.firestore {
         && request.resource.data.ownerUid == request.auth.uid
         && (admin() || request.resource.data.assignedTo.size() == 0)
         && request.resource.data.status == 'draft';
-      allow update: if assigned(resource.data) && metadata(request.resource.data)
+      allow update: if resource.data.schemaVersion == 1 && assigned(resource.data) && metadata(request.resource.data)
         && request.resource.data.ownerUid == resource.data.ownerUid
         && request.resource.data.createdAt == resource.data.createdAt
         && (admin() || (request.resource.data.assignedTo == resource.data.assignedTo
           && request.resource.data.status in ['draft', 'submitted']
           && resource.data.status != 'completed'));
-      allow delete: if admin();
+      allow delete: if admin() && resource.data.schemaVersion == 1;
     }
     match /workOrders/{id} {
       allow get: if assigned(resource.data);
-      allow list: if assigned(resource.data) && request.query.limit <= 50;
+      allow list: if assigned(resource.data) && request.query.limit <= 200;
       allow create: if admin() && metadata(request.resource.data) && request.resource.data.createdAt == request.time;
-      allow update: if admin() && metadata(request.resource.data)
+      allow update: if resource.data.schemaVersion == 1 && admin() && metadata(request.resource.data)
         && request.resource.data.ownerUid == resource.data.ownerUid && request.resource.data.createdAt == resource.data.createdAt;
-      allow delete: if admin();
+      allow delete: if admin() && resource.data.schemaVersion == 1;
     }
     match /materialCatalog/{id} {
       allow get: if active();
       allow list: if active() && request.query.limit <= 100;
       allow create, update: if admin()
+        && (!exists(/databases/$(database)/documents/materialCatalog/$(id)) || !('revision' in resource.data))
         && request.resource.data.keys().hasOnly(['name', 'unit', 'code', 'active', 'updatedAt'])
         && request.resource.data.keys().hasAll(['name', 'unit', 'code', 'active', 'updatedAt'])
         && request.resource.data.name is string && request.resource.data.name.size() <= 120
         && request.resource.data.unit is string && request.resource.data.unit.size() <= 20
         && request.resource.data.code is string && request.resource.data.code.size() <= 40
         && request.resource.data.active is bool && request.resource.data.updatedAt == request.time;
-      allow delete: if admin();
+      allow delete: if admin() && !('revision' in resource.data);
+    }
+    match /materialCosts/{id} {
+      allow get: if admin();
+      allow list: if admin() && request.query.limit <= 100;
+      allow write: if false;
     }
     match /archiveMetadata/{id} {
       allow get: if assigned(resource.data);

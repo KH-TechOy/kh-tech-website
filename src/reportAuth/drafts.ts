@@ -2,10 +2,10 @@ import type { DraftStorage } from "../reportModel";
 import type { ReportState } from "../reportModel";
 const prefix = "kht-report2:";
 /** Tab-scoped plaintext draft, not an encryption or server authorization mechanism. */
-export function sessionDraftStorage(uid: string) {
+export function sessionDraftStorage(uid: string, reportId?: string) {
   let closed = false;
   let legacyCleaned = false;
-  const key = (name: string) => prefix + uid + ":" + name;
+  const key = (name: string) => prefix + uid + ":" + (reportId ? reportId + ':' : '') + name;
   const envelopeKey = key("snapshot");
   return {
     ownerUid: uid,
@@ -32,6 +32,7 @@ export function sessionDraftStorage(uid: string) {
         envelopeKey,
         JSON.stringify({
           ...state.form,
+          ...(state.billing ? { billing: state.billing } : {}),
           reportId: state.id,
           photos: state.photos.map((p) => p.data),
           photoCategories: state.photos.map((p) => p.category),

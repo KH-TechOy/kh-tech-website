@@ -90,3 +90,10 @@ Jokaisesta kohdasta tarvitaan yrityksen päätös ja todennettava lähde, esimer
 - [ ] Omistaja hyväksynyt selosteen ja julkaisemisen erikseen. Yksikään yllä oleva julkaisueste ei jää avoimeksi eikä käyttöliittymä esitä keskeneräistä toimintoa käyttövalmiina.
 
 Hyväksyntä kirjataan yrityksen hallitsemaan asianmukaiseen dokumentaatioon päivämäärän, hyväksyjän ja todisteiden kanssa. Tämä tarkistuslista sisältää avoimia tehtäviä, ei keksittyjä hyväksyntöjä.
+
+## Report 2.0 B ? pilviteksti ja säilytys (11.11.2026)
+
+- [ ] Vahvista työtilausten, raporttitekstin, laskutuksen valmistelutietojen, materiaalihintojen ja auditointien säilytysajat sekä vastuuhenkilön suorittama poisto. B-versio ei poista pilvitietoja automaattisesti eikä peruttu tehtävä ole poistettu asiakirja. Firestoren maksullista TTL-/varmistuspalvelua ei ole otettu käyttöön.
+- [ ] Vahvista olemassa olevan Firestore-tietokannan todellinen alue ja Google-/Cloudflare-sopimusten soveltuminen nyt myös asiakasraporttien tekstiin. Aluetta tai sopimushyötyjä ei oleteta koodin perusteella.
+- [ ] Hyväksy UID-/raporttikohtainen salaamaton sessionStorage-palautuskopio ja henkilökohtaisten laitteiden menettely. Aiemman version yleinen paikallistallennuksen kuvaus ei tarkoita, että B:n luonnokset olisivat yhteisiä kaikille kirjautuneille tileille; sovellus erottaa ne UID:llä, mutta ei salaa niitä.
+- [ ] Hyväksy tietosuojaselosteen tekniset B-täsmennykset ennen julkaisemista. Teksti siirtyy pilveen; kuvat/PDF jäävät laitteelle. Paikallisen kopion poisto ei poista pilviraporttia. A.1:n toimiva tunnistus/kutsutus ei yksin vahvista B:n uusien tietovirtojen tuotantohyöksyntää.

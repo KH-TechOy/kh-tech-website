@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Brand, company, services, url } from "./brand";
 import { createReportId } from "./utils";
+import { billingTotals, emptyBilling, money, type CatalogMaterial } from './reportWorkModel';
 import {
   reportIsEmpty,
   reportErrors,
@@ -110,6 +111,7 @@ function Preview({
     return () => dialog.current?.close();
   }, []);
   const { form, photos, id } = state;
+  const previewBilling = state.billing ? billingTotals(form, state.billing) : null;
   return (
     <dialog
       className="report-preview"
@@ -200,6 +202,15 @@ function Preview({
               </tbody>
             </table>
           </section>
+          {previewBilling && state.billing && <section><h3>Laskutuksen valmistelu (ei lasku)</h3>
+            <dl className="billing-totals">{([
+              ['Työ', previewBilling.work], ['Materiaalit', previewBilling.materialsTotal],
+              ['Matka', previewBilling.travel], ['Muut kulut', previewBilling.other],
+              ['Yhteensä alv 0 %', previewBilling.net], ['Arvonlisävero', previewBilling.vat],
+            ] as const).map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{money(value)}</dd></div>)}</dl>
+            {state.billing.otherDescription && <p>{state.billing.otherDescription}</p>}
+            {form.materials.filter(row => row.name).map((row, i) => <p key={i}>{row.name}: {row.quantity} {row.unit} × {money(row.unitPriceCents || 0)} = {money(Math.round(Number(row.quantity.replace(',', '.') || 0) * (row.unitPriceCents || 0)))}</p>)}
+          </section>}
           {[
             ["Lisähuomiot", form.notes],
             ["Jatkotoimet", form.followup],
@@ -287,9 +298,21 @@ function compressPhoto(file: File): Promise<string> {
 export default function Report({
   draftStorage,
   draftSession,
+  cloudMode = false,
+  cloudSave,
+  catalog = [],
+  admin = false,
+  readOnly = false,
+  onDiscardLocal,
 }: {
   draftStorage?: import("./reportModel").DraftStorage;
   draftSession?: DraftSession;
+  cloudMode?: boolean;
+  cloudSave?: () => void;
+  catalog?: CatalogMaterial[];
+  admin?: boolean;
+  readOnly?: boolean;
+  onDiscardLocal?: () => void;
 }) {
   const [session] = React.useState(
     () => draftSession || createDraftSession(draftStorage),
@@ -309,9 +332,11 @@ export default function Report({
       session.allowReplacementAfterReadFailure();
     }
     void session.save();
+    cloudSave?.();
   };
   const setState = session.update;
   const [message, setMessage] = React.useState("");
+  const [materialSearch, setMaterialSearch] = React.useState('');
   const [checked, setChecked] = React.useState(false),
     [preview, setPreview] = React.useState(false),
     [busy, setBusy] = React.useState(false),
@@ -389,7 +414,7 @@ export default function Report({
     setPdfBusy(true);
     try {
       const { createPdf } = await import("./pdf");
-      createPdf({ id: state.id, form: state.form, photos: state.photos });
+      createPdf({ id: state.id, form: state.form, photos: state.photos, billing: state.billing });
       setMessage(
         "PDF luotu tunnuksella " +
           state.id +
@@ -456,6 +481,7 @@ export default function Report({
     }
   }
   function clear() {
+    if (cloudMode) { onDiscardLocal?.(); return; }
     if (
       confirm("Poistetaanko työraporttiluonnos ja valokuvat tästä selaimesta?")
     ) {
@@ -501,9 +527,9 @@ export default function Report({
           <div className="report-mode">
             <Info size={19} />
             <span>
-              Paikallinen PDF-työkalu
+              {cloudMode ? 'Työraportti ja paikallinen PDF' : 'Paikallinen PDF-työkalu'}
               <small>
-                {draftStorage
+                {cloudMode ? 'Teksti tallentuu pilveen. Kuvat ja PDF pysyvät laitteella; sähköpostitoimitus ei ole käytössä.' : draftStorage
                   ? "Henkilökohtainen istunto. PDF ladataan laitteelle; pilvitallennus ja sähköpostitoimitus eivät ole käytössä."
                   : "Henkilöstötodennus ja sähköpostitoimitus eivät ole käytössä. Ei tuotantokäyttöön asiakastiedoilla."}
               </small>
@@ -580,11 +606,12 @@ export default function Report({
             }}
             noValidate
           >
+            <fieldset className="report-fields" disabled={readOnly}>
             <div className="report-id">
               <span>
                 RAPORTIN TUNNUS<strong>{state.id}</strong>
               </span>
-              <button
+              {!cloudMode && <button
                 type="button"
                 onClick={() => {
                   setState((s) => ({ ...s, id: createReportId() }));
@@ -592,12 +619,12 @@ export default function Report({
                 }}
               >
                 Uusi tunnus <ArrowRight size={14} />
-              </button>
+              </button>}
             </div>
             <div className="privacy-alert">
               <Info />
               <p>
-                {draftStorage
+                {cloudMode ? 'Teksti synkronoidaan Firestoreen. Paikallinen palautuskopio ja kuvat säilyvät tässä välilehdessä myös uloskirjautuessa. Selainmuistia ei salata. Kuvat voivat kadota välilehden sulkeutuessa; lataa PDF. ' : draftStorage
                   ? "Luonnos ja kuvat tallentuvat vain tämän selaimen välilehteen omalle käyttäjätilillesi. Uloskirjautuminen säilyttää luonnoksen. Lataa PDF ennen välilehden sulkemista. "
                   : "Luonnos ja kuvat tallentuvat tämän laitteen selaimeen. Käytä omaa laitettasi ja poista luonnos työn jälkeen. "}
                 <a href={url("tietosuoja/")}>Tietojen käsittely</a>
@@ -707,6 +734,7 @@ export default function Report({
                   <p>Tarvikkeet määrineen ja kuvat työn eri vaiheista.</p>
                 </div>
               </div>
+              {cloudMode && <div className="catalog-picker"><label>Hae materiaalia luettelosta<input value={materialSearch} onChange={e => setMaterialSearch(e.target.value)} placeholder="Nimi tai tuotekoodi" /></label>{materialSearch && <ul>{catalog.filter(item => item.active && (item.name + ' ' + item.code).toLocaleLowerCase('fi').includes(materialSearch.toLocaleLowerCase('fi'))).slice(0, 12).map(item => <li key={item.id}><button type="button" className="button outline" onClick={() => { updateMaterials([...state.form.materials.filter(row => row.name || row.quantity), { name: item.name, unit: item.unit, quantity: '1', rowId: crypto.randomUUID(), catalogId: item.id, unitPriceCents: item.sellingCents }]); setMaterialSearch(''); }}>{item.name} · {money(item.sellingCents)} / {item.unit}</button></li>)}</ul>}</div>}
               <div className="materials-heading" aria-hidden="true">
                 <span>Materiaali</span>
                 <span>Määrä</span>
@@ -726,7 +754,7 @@ export default function Report({
                       onChange={(e) =>
                         updateMaterials(
                           state.form.materials.map((r, index) =>
-                            index === i ? { ...r, [key]: e.target.value } : r,
+                            index === i ? { ...r, [key]: e.target.value, ...(key !== 'quantity' ? { catalogId: undefined, rowId: undefined, unitPriceCents: 0 } : {}) } : r,
                           ),
                         )
                       }
@@ -744,6 +772,7 @@ export default function Report({
                   >
                     <Trash2 size={17} />
                   </button>
+                  {cloudMode && <span className="material-price">{admin ? <label>Yksikköhinta alv 0 % (€)<input aria-label={'Yksikköhinta ' + (i + 1)} type="number" min="0" step="0.01" value={(row.unitPriceCents || 0) / 100} onChange={e => updateMaterials(state.form.materials.map((r, index) => index === i ? { ...r, unitPriceCents: Math.round(Number(e.target.value) * 100) } : r))} /></label> : money(row.unitPriceCents || 0) + ' / ' + row.unit}<strong>Rivi: {money(Math.round(Number(row.quantity.replace(',', '.') || 0) * (row.unitPriceCents || 0)))}</strong></span>}
                 </div>
               ))}
               {errors.materials && (
@@ -867,6 +896,10 @@ export default function Report({
                 </div>
               </div>
             </section>
+            {cloudMode && <section className="report-section billing-summary"><h2>Laskutuksen valmistelu</h2><p>Ei lasku. Hinnat ilman arvonlisäveroa. Tuntihinta, matkaveloitus, muut kulut ja ALV asetetaan ylläpidossa; oletuksena 0, ei oletettua verokantaa.</p>
+              {admin && <div className="work-filters">{(['hourRateCents', 'travelKm', 'travelRateCents', 'otherCents', 'vatBasisPoints'] as const).map((key, i) => <label key={key}>{['Tuntihinta (€)', 'Matka (km)', 'Kilometriveloitus (€)', 'Muut kulut (€)', 'ALV (%)'][i]}<input type="number" min="0" max={key === 'vatBasisPoints' ? 100 : undefined} step="0.01" value={(state.billing || emptyBilling())[key] / (key === 'travelKm' ? 1 : 100)} onChange={e => setState(s => ({ ...s, billing: { ...(s.billing || emptyBilling()), [key]: key === 'travelKm' ? Number(e.target.value) : Math.round(Number(e.target.value) * 100) } }))} /></label>)}<label>Muiden kulujen selite<input value={state.billing?.otherDescription || ''} maxLength={500} onChange={e => setState(s => ({ ...s, billing: { ...(s.billing || emptyBilling()), otherDescription: e.target.value } }))} /></label></div>}
+              <dl className="billing-totals">{Object.entries(billingTotals(state.form, state.billing || emptyBilling())).filter(([key]) => !['materials', 'gross'].includes(key)).map(([key, value]) => <div key={key}><dt>{{ materialsTotal: 'Materiaalit', work: 'Työ', travel: 'Matka', other: 'Muut kulut', net: 'Yhteensä alv 0 %', vat: 'Arvonlisävero' }[key]}</dt><dd>{money(value as number)}</dd></div>)}</dl>
+            </section>}
             <section className="report-section" id="viimeistely">
               <div className="report-section-heading">
                 <span>04</span>
@@ -911,8 +944,7 @@ export default function Report({
               </div>
               <p className="report-footer">
                 <Info size={17} />
-                PDF luodaan selaimessa. Raporttia tai kuvia ei lähetetä
-                palvelimelle. Sähköpostitoimitusta ei ole otettu käyttöön.
+                {cloudMode ? 'PDF luodaan selaimessa. Teksti tallentuu pilveen; kuvat eivät siirry palvelimelle. Sähköpostitoimitus ei ole käytössä.' : 'PDF luodaan selaimessa. Raporttia tai kuvia ei lähetetä palvelimelle. Sähköpostitoimitusta ei ole otettu käyttöön.'}
               </p>
             </section>
             {message && (
@@ -931,9 +963,10 @@ export default function Report({
                 onClick={clear}
                 disabled={busy || pdfBusy}
               >
-                <Trash2 size={17} /> Poista luonnos
+                <Trash2 size={17} /> {cloudMode ? 'Poista paikallinen luonnos' : 'Poista luonnos'}
               </button>
             </div>
+            </fieldset>
           </form>
         </div>
       </main>

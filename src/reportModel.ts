@@ -1,5 +1,5 @@
 import { createReportId } from "./utils";
-export type Material = { name: string; quantity: string; unit: string };
+export type Material = { name: string; quantity: string; unit: string; rowId?: string; catalogId?: string; unitPriceCents?: number };
 export type ReportForm = {
   customer: string;
   address: string;
@@ -23,6 +23,7 @@ export type ReportState = {
   id: string;
   form: ReportForm;
   photos: ReportPhoto[];
+  billing?: import('./reportWorkModel').Billing;
 };
 export type ReportFieldName = Exclude<keyof ReportForm, "materials">;
 export const requiredReportFields: ReportFieldName[] = [
@@ -93,7 +94,12 @@ export function readReport(store?: DraftStorage): ReportState {
           name: typeof m.name === "string" ? m.name : "",
           quantity: typeof m.quantity === "string" ? m.quantity : "",
           unit: typeof m.unit === "string" ? m.unit : "",
+          ...(typeof m.rowId === 'string' ? { rowId: m.rowId } : {}),
+          ...(typeof m.catalogId === 'string' ? { catalogId: m.catalogId } : {}),
+          ...(Number.isSafeInteger(m.unitPriceCents) && m.unitPriceCents >= 0 ? { unitPriceCents: m.unitPriceCents } : {}),
         }));
+    if (stored.billing && typeof stored.billing === 'object' && !Array.isArray(stored.billing))
+      state.billing = stored.billing as unknown as import('./reportWorkModel').Billing;
     const categories = Array.isArray(stored.photoCategories)
       ? stored.photoCategories
       : [];
@@ -149,6 +155,7 @@ export function saveReport(state: ReportState, store?: DraftStorage) {
     "kht-report-draft",
     JSON.stringify({
       ...state.form,
+      ...(state.billing ? { billing: state.billing } : {}),
       photos: state.photos.map((photo) => photo.data),
       photoCategories: state.photos.map((photo) => photo.category),
     }),

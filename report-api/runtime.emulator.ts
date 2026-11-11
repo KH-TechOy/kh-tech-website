@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import { Miniflare, convertV4MiniflareOptions } from "miniflare";
 import { generateKeyPair, exportJWK, exportPKCS8, SignJWT } from "jose";
 import { seed, projectId, db, auth } from "./test/emulators";
+import { emptyReport } from '../src/reportModel';
 let mf: Miniflare, pair: Awaited<ReturnType<typeof generateKeyPair>>;
 const origin = "https://khtechoy.github.io";
 beforeAll(async () => {
@@ -141,7 +142,22 @@ test("SQLite Durable Object actually enforces the admin rate cap in workerd", as
   for (let i = 0; i < 30; i++)
     expect((await call(value, "/employees")).status).toBe(200);
   expect((await call(value, "/employees")).status).toBe(429);
+  expect((await call(value, '/work', { action: 'load', id: 'KHT-20261111-AAAAAA' })).status).toBe(200);
   expect((await call(value)).status).toBe(200); // rate limiting never fabricates an authenticated session
+});
+
+test('production workerd accepts bounded text autosaves, protects revisions and rejects employee billing changes', async () => {
+  const value = await token('employee'), id = 'KHT-20261111-CCCCCC';
+  const state = emptyReport(); state.form.description = 'T'.repeat(5000); state.form.notes = 'N'.repeat(3000);
+  const payload = { action: 'save', id, revision: 0, requestId: crypto.randomUUID(), form: state.form };
+  const response = await call(value, '/work', payload);
+  expect(response.status, await response.clone().text()).toBe(200);
+  const report = (await response.json() as any).report;
+  expect(report.revision).toBe(1); expect(report.form.description.length).toBe(5000);
+  expect((await call(value, '/work', payload)).status).toBe(200);
+  const stale = await call(value, '/work', { ...payload, requestId: crypto.randomUUID() }); expect(stale.status).toBe(409);
+  const forbidden = await call(value, '/work', { ...payload, revision: 1, requestId: crypto.randomUUID(), billing: { ...report.billing, hourRateCents: 100 } }); expect(forbidden.status).toBe(403);
+  expect((await db.doc('reports/' + id).get()).data()?.revision).toBe(1);
 });
 test("production workerd automatically sends setup email and synchronizes a display name", async () => {
   const value = await token("admin");

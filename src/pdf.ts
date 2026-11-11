@@ -1,13 +1,16 @@
 import { jsPDF } from "jspdf";
 import { brandLogoData } from "./brand-logo-data";
+import { billingTotals, money, type Billing } from './reportWorkModel';
+import type { ReportForm } from './reportModel';
 type ReportPhoto = string | { data: string; category?: string };
 export type PdfInput = {
   id: string;
   form: Record<string, any>;
   photos: ReportPhoto[];
+  billing?: Billing;
 };
 
-export function buildPdf({ id, form, photos }: PdfInput) {
+export function buildPdf({ id, form, photos, billing }: PdfInput) {
   const doc = new jsPDF({ format: "a4", unit: "mm" }),
     left = 16,
     right = 194,
@@ -179,6 +182,11 @@ export function buildPdf({ id, form, photos }: PdfInput) {
       y += 4;
     }
     y += 5;
+  }
+  if (billing) {
+    const totals = billingTotals(form as ReportForm, billing);
+    section('Laskutuksen valmistelu (ei lasku)', `Työ: ${money(totals.work)}\nMateriaalit: ${money(totals.materialsTotal)}\nMatka: ${money(totals.travel)}\nMuut kulut: ${money(totals.other)}${billing.otherDescription ? ' / ' + billing.otherDescription : ''}\nYhteensä alv 0 %: ${money(totals.net)}\nALV ${billing.vatBasisPoints / 100} %: ${money(totals.vat)}`);
+    form.materials.filter((row: any) => row.name).forEach((row: any) => section(row.name, `${row.quantity} ${row.unit} × ${money(row.unitPriceCents || 0)} = ${money(Math.round(Number(String(row.quantity).replace(',', '.')) * (row.unitPriceCents || 0)))}`));
   }
   if (form.notes) section("Lisähuomiot", form.notes);
   if (form.followup) section("Jatkotoimet", form.followup);

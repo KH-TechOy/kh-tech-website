@@ -218,3 +218,17 @@ test("work orders/materials are admin writable only; audit is admin readable onl
     getDocs(query(collection(client("admin"), "auditEvents"), limit(50))),
   );
 });
+test('B bodies cannot be downgraded or written directly and purchase prices cannot be read by employees', async () => {
+  await adminDb.doc('reports/body').set({ schemaVersion: 2, ownerUid: 'employee', assignedTo: [], status: 'IN_PROGRESS', form: { customer: 'Asiakas' }, revision: 1 });
+  await adminDb.doc('materialCosts/item').set({ purchaseCents: 123 });
+  await adminDb.doc('materialCatalog/production').set({ id: 'production', revision: 1, active: true, name: 'Tuote', sellingCents: 500 });
+  for (const uid of ['admin', 'employee']) {
+    await assertSucceeds(getDoc(doc(client(uid), 'reports/body')));
+    await assertFails(setDoc(doc(client(uid), 'reports/body'), metadata(uid)));
+    await assertFails(updateDoc(doc(client(uid), 'reports/body'), { 'form.notes': 'ohitus' }));
+    await assertFails(updateDoc(doc(client(uid), 'reports/body'), { status: 'APPROVED' }));
+    await assertFails(setDoc(doc(client(uid), 'materialCatalog/production'), { name: 'Korvattu', unit: 'kpl', code: '', active: true, updatedAt: serverTimestamp() }));
+  }
+  await assertFails(getDoc(doc(client('employee'), 'materialCosts/item')));
+  await assertSucceeds(getDoc(doc(client('admin'), 'materialCosts/item')));
+});

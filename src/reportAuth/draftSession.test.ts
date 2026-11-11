@@ -25,6 +25,19 @@ const mockStorage = () => {
     },
   };
 };
+
+test('cloud hydration is revision guarded and does not invalidate pending local photo processing', () => {
+  vi.useFakeTimers();
+  const { storage } = mockStorage();
+  const session = createDraftSession(storage), generation = session.getGeneration();
+  const before = session.getSnapshot();
+  session.update(s => ({ ...s, form: { ...s.form, notes: 'Uudempi syöte' } }));
+  expect(session.acceptRemote(before.state, before.revision)).toBe(false);
+  const current = session.getSnapshot();
+  expect(session.acceptRemote({ ...current.state, form: { ...current.state.form, customer: 'Pilvestä' } }, current.revision)).toBe(true);
+  expect(session.getSnapshot().state.form.notes).toBe('Uudempi syöte');
+  expect(session.getGeneration()).toBe(generation);
+});
 test("debounces changes for two seconds; save completion never replaces live form state or its ID", () => {
   vi.useFakeTimers();
   const mock = mockStorage(),

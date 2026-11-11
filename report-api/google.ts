@@ -182,8 +182,8 @@ export function googleServices(
           : {}),
       };
     },
-    async transaction(fn) {
-      for (let attempt = 0; attempt < 6; attempt++) {
+    async transaction(fn, maxAttempts = 6) {
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
         const { transaction } = await request(root + ":beginTransaction", {
           options: { readWrite: {} },
         });
@@ -209,7 +209,7 @@ export function googleServices(
           if (
             !(error instanceof ApiError) ||
             error.code !== "retry_transaction" ||
-            attempt === 5
+            attempt === maxAttempts - 1
           )
             throw error;
           await new Promise((resolve) =>

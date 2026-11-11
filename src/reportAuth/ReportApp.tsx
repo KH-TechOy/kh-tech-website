@@ -20,7 +20,7 @@ import { sessionDraftStorage } from "./drafts";
 import { createDraftSession, type DraftSession } from "./draftSession";
 import { readReport, reportIsEmpty } from "../reportModel";
 import "./report-auth.css";
-const Editor = React.lazy(() => import("../Report"));
+const Workspace = React.lazy(() => import('./WorkWorkspace'));
 const AdminPanel = React.lazy(() => import("./employees"));
 
 export default function ReportApp() {
@@ -35,6 +35,7 @@ export default function ReportApp() {
   const [page, setPage] = React.useState<"home" | "editor" | "employees">(
     "home",
   );
+  const [legacyOpen, setLegacyOpen] = React.useState(0);
   const drafts = React.useRef(new Map<string, DraftSession>()),
     draft = React.useRef<DraftSession | null>(null),
     verifiedUid = React.useRef<string | null>(null);
@@ -194,7 +195,7 @@ export default function ReportApp() {
     };
   }, [clear, validate]);
   async function logout() {
-    if (draft.current && !draft.current.flush()) {
+    if ([...drafts.current.values()].map(session => session.flush()).some(success => !success)) {
       if (
         !confirm(
           "Luonnosta ei voitu tallentaa. Tiedot säilyvät vain tämän välilehden muistissa ja voivat kadota, jos suljet tai päivität välilehden. Kirjaudutaanko silti ulos?",
@@ -285,6 +286,7 @@ export default function ReportApp() {
           return;
         }
         targetDraft.replace(legacy, revision);
+        setLegacyOpen(n => n + 1);
         setPage("editor");
       }
     } catch (error) {
@@ -309,11 +311,10 @@ export default function ReportApp() {
       <main id="report-access-content">
         {user && profile && (
           <p className="access-retention">
-            Luonnos tallentuu vain tämän selaimen välilehteen omalle
-            käyttäjätilillesi. Uloskirjautuminen säilyttää paikallisen
-            luonnoksen; sen voi avata uudelleen vain samalla hyväksytyllä
-            käyttäjätilillä. Tietoja ei synkronoida laitteiden välillä. Poista
-            luonnos erikseen ennen yhteiskäyttölaitteelta poistumista.
+            Raporttien teksti synkronoidaan pilveen. Paikallinen palautuskopio
+            ja kuvat ovat tämän välilehden salaamattomassa selainmuistissa.
+            Uloskirjautuminen säilyttää ne omalla käyttäjätunnuksellasi.
+            Kuvat eivät siirry laitteiden välillä. Käytä henkilökohtaista laitetta.
           </p>
         )}
         {!reportConfigured ? (
@@ -413,22 +414,16 @@ export default function ReportApp() {
               </nav>
             </div>
             <React.Suspense fallback={<p role="status">Ladataan…</p>}>
-              {page === "editor" && store.current ? (
-                <Editor
-                  key={user.uid}
-                  draftStorage={store.current}
-                  draftSession={draft.current!}
-                />
-              ) : page === "employees" && profile.role === "admin" ? (
+              {page === "employees" && profile.role === "admin" ? (
                 <AdminPanel key={user.uid} user={user} />
               ) : (
-                <section className="access-dashboard">
+                <section className="access-dashboard" hidden={page !== 'home'}>
                   <span className="eyebrow">OMA TYÖTILA</span>
                   <h1>Hyvää työpäivää, {profile.displayName.split(" ")[0]}.</h1>
                   <p>
-                    Voit laatia työraportin ja ladata PDF:n. Työtilausten,
-                    pilviraporttien ja arkiston työnkulut otetaan käyttöön
-                    seuraavassa vaiheessa.
+                    Hallitse työtehtäviä, jatka raporttia ja lähetä valmis teksti
+                    tarkastettavaksi. PDF ladataan laitteelle; lopullinen arkistointi
+                    ja sähköpostitoimitus eivät ole käytössä.
                   </p>
                   <button
                     className="button primary"
@@ -442,7 +437,8 @@ export default function ReportApp() {
                       <p>
                         Vanha tämän selaimen luonnos on yhteinen eikä sen
                         omistajaa ole varmennettu. Tuo se vain, jos sinulla on
-                        oikeus sen tietoihin. Se ei siirry pilveen.
+                        oikeus sen tietoihin. Editorissa teksti tallentuu pilveen;
+                        kuvat säilyvät tässä välilehdessä.
                       </p>
                       <button
                         className="button outline"
@@ -455,6 +451,7 @@ export default function ReportApp() {
                   )}
                 </section>
               )}
+              {page !== 'employees' && draft.current && <Workspace key={user.uid + ':' + legacyOpen} user={user} profile={profile} page={page} onPage={setPage} legacy={draft.current} sessions={drafts.current} />}
             </React.Suspense>
           </>
         )}

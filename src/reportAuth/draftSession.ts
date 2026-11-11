@@ -71,6 +71,13 @@ export function createDraftSession(storage?: DraftStorage) {
       snapshot = { ...snapshot, readFailed: false };
     },
     getGeneration: () => generation,
+    // Only a controller that has checked the local revision may apply a remote snapshot.
+    acceptRemote(state: ReportState, expectedRevision: number) {
+      if (snapshot.revision !== expectedRevision || snapshot.readFailed) return false;
+      snapshot = { ...snapshot, state, revision: snapshot.revision + 1, status: 'dirty' };
+      persist();
+      return true;
+    },
     getSnapshot: () => snapshot,
     subscribe(fn: () => void) {
       listeners.add(fn);
