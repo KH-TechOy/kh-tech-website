@@ -226,9 +226,12 @@
 .work-cards p { margin:8px 0; }
 .work-cards small,.work-help { color:#52656e; }
 .work-status { display:inline-flex; border-radius:30px; background:#e8f1f5; padding:6px 12px; font-size:13px; font-weight:700; }
-.status-RETURNED { background:#fff0d3; color:#754500; }
-.status-PENDING_REVIEW { background:#dff3eb; color:#215c46; }
-.status-CANCELLED { background:#f6e9e9; color:#8a2e2e; }
+.status-NEW { background:#eef1f3; color:#36454f; }
+.status-IN_PROGRESS { background:#fff1ce; color:#7a4800; }
+.status-PENDING_REVIEW { background:#f1e8fc; color:#5b328c; }
+.status-RETURNED { background:#ffebe5; color:#982f21; }
+.status-APPROVED { background:#e5f5eb; color:#1c6544; }
+.status-CANCELLED { background:#f0f2f4; color:#53616c; }
 .work-actions { display:flex; flex-wrap:wrap; align-items:end; gap:12px; margin-top:16px; }
 .work-order-form summary { cursor:pointer; font-weight:700; min-height:36px; }
 .work-conflict { flex-basis:100%; background:#fff5e5; border:1px solid #c78a2a; padding:16px; border-radius:10px; }
@@ -251,3 +254,23 @@
 .work-order-form summary,.work-recoveries summary { min-height:44px; cursor:pointer; }
 .work-recoveries { border:1px solid #d7e0e3; background:#fff; border-radius:12px; padding:16px; margin-block:20px; }
 .work-recoveries li { margin-block:12px; overflow-wrap:anywhere; }
+.workflow-bottom { display:flex; flex-wrap:wrap; align-items:center; gap:16px; justify-content:space-between; border:1px solid #d7e0e3; background:#fff; border-radius:14px; padding:22px; margin-block:24px; box-shadow:0 6px 20px #17374508; }
+.workflow-bottom h2 { flex-basis:100%; font-size:21px; margin:0; }
+.cloud-toolbar .work-status,.workflow-bottom .work-status { margin-left:10px; }
+.cloud-toolbar>.work-actions,.workflow-bottom>.work-actions { flex-basis:100%; }
+.cloud-toolbar .work-actions>label,.workflow-bottom .work-actions>label { flex:1 1 100%; }
+.management-draft { flex-basis:100%; overflow-wrap:anywhere; }
+.management-draft p { font-size:13px; margin:10px 0; }
+.management-draft .access-link { padding:8px 0; min-height:44px; font-size:13px; }
+.catalog-search { display:flex; align-items:stretch; gap:0; margin-top:8px; }
+.catalog-search input { flex:1; border-radius:8px 0 0 8px; margin:0; }
+.catalog-toggle { flex:0 0 48px; min-height:48px; display:grid; place-items:center; border:1px solid #b5c2c8; border-left:0; border-radius:0 8px 8px 0; background:#eef3f5; color:#223139; cursor:pointer; }
+.catalog-options { border:1px solid #b5c2c8; border-radius:10px; padding:12px; margin-block:8px 18px; max-height:360px; overflow-y:auto; }
+.catalog-options ul { margin:0; }
+.catalog-options .button { width:100%; justify-content:flex-start; text-align:left; }
+.catalog-options [aria-selected="true"] .button { outline:3px solid #3c738d; outline-offset:-3px; background:#e8f1f5; }
+.catalog-options small { margin-left:auto; color:#435a65; }
+.catalog-options .work-help { font-size:12px; }
+.price-buffer-status { display:block; color:#52646b; font-size:12px; font-weight:400; line-height:1.5; }
+.report-access textarea:focus-visible,.report-access select:focus-visible { outline:3px solid #3c738d; outline-offset:3px; }
+@media(max-width:600px) { .workflow-bottom { padding:16px; } .workflow-bottom>.button,.workflow-bottom .work-actions,.workflow-bottom label { width:100%; } .schedule-fields { grid-template-columns:1fr; } }

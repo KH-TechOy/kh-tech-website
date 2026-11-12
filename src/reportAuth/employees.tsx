@@ -1,5 +1,6 @@
 import React from "react";
 import type { User } from "firebase/auth";
+import { useFormDraft, FormDraftNotice } from './useFormDraft';
 import {
   reportRequest,
   reportError,
@@ -35,10 +36,13 @@ export default function Employees({ user }: { user: User }) {
     [next, setNext] = React.useState<string | undefined>(),
     [busy, setBusy] = React.useState(false),
     [message, setMessage] = React.useState("");
-  const [name, setName] = React.useState(""),
-    [email, setEmail] = React.useState("");
-  const [editing, setEditing] = React.useState<string | null>(null),
-    [editedName, setEditedName] = React.useState("");
+  const creation = useFormDraft(user.uid, 'employee-create', () => ({ name: '', email: '' }));
+  const { name, email } = creation.value;
+  const setName = (name: string) => creation.setValue(v => ({ ...v, name }));
+  const setEmail = (email: string) => creation.setValue(v => ({ ...v, email }));
+  const nameDraft = useFormDraft(user.uid, 'employee-name', () => ({ uid: '', name: '' }));
+  const editing = nameDraft.value.uid || null, editedName = nameDraft.value.name;
+  const setEditedName = (name: string) => nameDraft.setValue(v => ({ ...v, name }));
   const [created, setCreated] = React.useState<EmployeeProfile | null>(null);
   const requestKey = "kht-report-ops:" + user.uid;
   const requests = React.useMemo(
@@ -102,6 +106,7 @@ export default function Employees({ user }: { user: User }) {
   async function create(event: React.FormEvent) {
     event.preventDefault();
     if (busy) return;
+    const formRevision = creation.draft.getSnapshot().revision;
     setBusy(true);
     setMessage("");
     const key = "create:" + email.trim().toLowerCase() + ":" + name.trim();
@@ -124,8 +129,7 @@ export default function Employees({ user }: { user: User }) {
         setupEmailError: result.setupEmail.error,
       });
       forget(key);
-      setName("");
-      setEmail("");
+      creation.draft.clear({ name: '', email: '' }, formRevision);
       setMessage(
         result.setupEmail.status === "accepted"
           ? "Työntekijä luotu. Salasanan asetusviesti on hyväksytty lähetyspalveluun. Postilaatikon vastaanottoa ei ole varmennettu."
@@ -149,6 +153,7 @@ export default function Employees({ user }: { user: User }) {
     kind: "role" | "disable" | "reset" | "name",
   ) {
     if (busy) return;
+    const nameRevision = nameDraft.draft.getSnapshot().revision;
     if (
       kind === "disable" &&
       !confirm(
@@ -204,7 +209,7 @@ export default function Employees({ user }: { user: User }) {
             : {}),
       });
       forget(key);
-      if (kind === "name") setEditing(null);
+      if (kind === "name") nameDraft.draft.clear({ uid: '', name: '' }, nameRevision);
       setMessage(
         kind === "reset"
           ? "Salasanaviesti on hyväksytty lähetyspalveluun. Postilaatikon vastaanottoa ei ole varmennettu."
@@ -241,7 +246,7 @@ export default function Employees({ user }: { user: User }) {
       <p>
         Aktiivisia ladatussa luettelossa: {users.filter((u) => u.active).length}
       </p>
-      <form onSubmit={create}>
+      <form onSubmit={create} onBlurCapture={() => creation.draft.flush()}>
         <h2>Lisää työntekijä</h2>
         <label>
           Nimi
@@ -271,6 +276,7 @@ export default function Employees({ user }: { user: User }) {
         <button className="button primary" disabled={busy}>
           Luo työntekijä
         </button>
+        <FormDraftNotice draft={creation.draft} />
       </form>
       {message && (
         <p role="status" className="access-message">
@@ -322,6 +328,7 @@ export default function Employees({ user }: { user: User }) {
               {editing === target.uid && (
                 <form
                   className="access-name-form"
+                  onBlurCapture={() => nameDraft.draft.flush()}
                   onSubmit={(e) => {
                     e.preventDefault();
                     void action(target, "name");
@@ -345,10 +352,11 @@ export default function Employees({ user }: { user: User }) {
                     type="button"
                     className="button outline"
                     disabled={busy}
-                    onClick={() => setEditing(null)}
+                    onClick={() => { if (confirm('Hylätäänkö näyttönimen keskeneräinen muutos?')) nameDraft.draft.clear({ uid: '', name: '' }); }}
                   >
                     Peruuta
                   </button>
+                  <FormDraftNotice draft={nameDraft.draft} />
                 </form>
               )}
             </div>
@@ -357,8 +365,9 @@ export default function Employees({ user }: { user: User }) {
                 className="button outline"
                 disabled={busy}
                 onClick={() => {
-                  setEditing(target.uid);
-                  setEditedName(target.displayName);
+                  if (editing === target.uid) return;
+                  if (nameDraft.hasDraft && !confirm('Hylätäänkö keskeneräinen nimimuutos ja avataanko toinen käyttäjä?')) return;
+                  nameDraft.setValue({ uid: target.uid, name: target.displayName });
                 }}
               >
                 Muokkaa nimeä

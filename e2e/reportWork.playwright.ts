@@ -102,8 +102,9 @@ test("Admin creates, filters, edits and reassigns orders; catalog purchase price
     .getByLabel("Työtilauksen kuvaus", { exact: true })
     .fill("Korjaa vesiliitos");
   await page
-    .getByLabel("Sovittu ajankohta", { exact: true })
-    .fill("2026-11-12T09:00");
+    .getByLabel("Sovittu päivämäärä (pp.kk.vvvv)", { exact: true })
+    .fill("12.11.2026");
+  await page.getByLabel('Sovittu kellonaika (HH:mm)', { exact: true }).fill('09:00');
   await page.getByRole("checkbox", { name: "employee", exact: true }).check();
   await page
     .getByRole("button", { name: "Luo työtilaus", exact: true })
@@ -152,7 +153,7 @@ test("Admin creates, filters, edits and reassigns orders; catalog purchase price
     .click();
   await expect(
     page.getByLabel("Ostohinta alv 0 % (€), valinnainen", { exact: true }),
-  ).toHaveValue("4.2");
+  ).toHaveValue("4,2");
   await page.getByRole("checkbox", { name: "Käytössä", exact: true }).uncheck();
   await page
     .getByRole("button", { name: "Tallenna materiaali", exact: true })
@@ -230,6 +231,7 @@ test("assigned prefill, catalog selection, autosave, submit and Admin return com
     await page.setViewportSize({ width: 390, height: 844 });
   }
   await page
+    .locator('[data-workflow=top]')
     .getByRole("button", { name: "Lähetä tarkastettavaksi", exact: true })
     .click();
   await expect(page.locator(".cloud-toolbar")).toContainText("Tarkastettavana");
@@ -257,12 +259,14 @@ test("assigned prefill, catalog selection, autosave, submit and Admin return com
   );
   await expect(adminPage.locator(".billing-totals")).toContainText("202,02");
   await adminPage
+    .locator('[data-workflow=top]')
     .getByLabel("Kommentti palautukseen tai perumiseen", { exact: true })
     .fill("Täydennä mittaustulos");
   await adminPage
+    .locator('[data-workflow=top]')
     .getByRole("button", { name: "Palauta korjattavaksi", exact: true })
     .click();
-  await expect(page.locator(".work-comment")).toContainText(
+  await expect(page.locator(".cloud-toolbar .work-comment")).toContainText(
     "Täydennä mittaustulos",
   );
   await expect(page.locator("textarea[name=tasks]")).toBeEnabled();

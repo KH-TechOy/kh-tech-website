@@ -1,5 +1,9 @@
 # KH-Tech Oy – toteutusohje
 
+## REPORT 2.0 B.1 — käyttöliittymän viimeistely
+
+Työnkulun ylä- ja alapaneeli jakavat saman tilan, kommenttiluonnoksen ja synkronisen pyyntölukon. Hallintolomakkeiden UID-/lomakekohtainen elävä tila on Reactin ulkopuolella; sessionStorage tallentuu 2 s viiveellä ja poistuu vain vahvistetun onnistumisen tai nimenomaisen hylkäyksen jälkeen. Taustakuuntelija ei alusta lomaketta uudelleen. Hintakentän keskeneräinen teksti on paikallinen; vain vahvistettu senttiarvo muuttaa raportin pilviluonnosta. Ajankohdat näytetään suomalaisesti ja nykyiset Helsinki-seinäaikamerkkijonot säilytetään ilman UTC-muunnosta; tyhjä ajankohta on sallittu. Ei hyväksymis-/tarjouspyyntötilan uusia siirtymiä. Ohje ja julkaisu: REPORT_2_0_B_1_RESULT.md. Main, paikallinen commit, ei pushia/deployta tai tuotantotietojen muutosta.
+
 ## REPORT 2.0 B — nykyinen vaihe, 11.11.2026
 
 Säilytä A.1:n elävä luonnostila ja perusta pilvisynkronointi sen päälle. Työtilaukset, vastuut, tilamuutokset, materiaalit ja laskutuksen valmistelu käyttävät versiotarkistettuja Worker-transaktioita. Firestore-kuuntelija ei saa korvata uudempaa paikallista tekstiä. Verkkovirheen epäselvä tallennus uusitaan alkuperäisellä tunnuksella ja sisällöllä. Ristiriita ratkaistaan nimenomaisesti, ei automaattisella viimeisimmän kirjoittajan ylikirjoituksella. Luonnokset erotellaan UID:n ja raportin mukaan myös silloin, kun pilvitallennus ei ole vielä onnistunut. Ostohinnat vain erillisiin Admin-dokumentteihin; ei kuvia Firestoreen. A.1-tunnistus, kutsutus, nimet ja viimeisen Adminin suoja säilyvät. APPROVED, lopullinen arkisto ja raporttisähköposti jäävät seuraavaan vaiheeseen. Päivitä tietosuojan tekniset kuvaukset vastaamaan todellista pilvitekstiä; älä keksi säilytysaikoja. Nykyohjeet: REPORT_2_0_B_RESULT.md, REPORT_2_0_B_SETUP.md ja REPORT_2_0_B_SECURITY.md. Main, paikallinen commit; ei pushia, deployta, yksityisten avainten tulostusta, korttia, Blazea tai maksullisia palveluja.

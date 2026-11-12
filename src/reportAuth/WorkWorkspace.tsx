@@ -1,5 +1,5 @@
 import React from "react";
-import { doc, getDoc, onSnapshot, where } from "firebase/firestore";
+import { doc, onSnapshot, where } from "firebase/firestore";
 import type { User } from "firebase/auth";
 import { reportFirebase } from "./firebase";
 import { reportRequest, reportError, type EmployeeProfile } from "./api";
@@ -8,7 +8,6 @@ import { createDraftSession, type DraftSession } from "./draftSession";
 import { createCloudDraft, type CloudDraft } from "./cloudDraft";
 import {
   statusLabel,
-  money,
   type WorkReport,
   type CatalogMaterial,
   type WorkStatus,
@@ -16,6 +15,11 @@ import {
 import { createReportId } from "../utils";
 import { reportIsEmpty } from "../reportModel";
 import { useLivePages } from "./livePages";
+import { OrderForm, CatalogAdmin } from "./WorkForms";
+import { FormDraftNotice, useFormDraft } from "./useFormDraft";
+import { unfinishedFormIds } from "./formDraft";
+import { finnishDate, isoDate, scheduleLabel } from "../reportLocale";
+import { dateEntry } from "../reportDateInputs";
 const Editor = React.lazy(() => import("../Report"));
 type Card = Pick<
   WorkReport,
@@ -215,6 +219,11 @@ export default function WorkWorkspace({
   };
   const active = getSession(selected);
   const visibleCards = cards;
+  const unfinishedOrders = admin
+    ? unfinishedFormIds(user.uid).filter((id) =>
+        /^order:KHT-\d{8}-[A-F0-9]{6}$/.test(id),
+      )
+    : [];
   return (
     <div className="work-space">
       {page === "home" ? (
@@ -254,12 +263,46 @@ export default function WorkWorkspace({
           )}
           {admin && (
             <OrderForm
+              key={editingOrder?.id || "new"}
               user={user}
               people={people}
               existing={editingOrder}
               loading={loadingOrder}
               onSaved={() => setEditingOrder(null)}
             />
+          )}
+          {!!unfinishedOrders.length && (
+            <details className="work-recoveries">
+              <summary>
+                Keskeneräiset työtilausmuokkaukset ({unfinishedOrders.length})
+              </summary>
+              <ul>
+                {unfinishedOrders.map((identity) => (
+                  <li key={identity}>
+                    {identity.slice(6)}{" "}
+                    <button
+                      className="button outline"
+                      disabled={loadingOrder}
+                      onClick={() => {
+                        setLoadingOrder(true);
+                        void reportRequest<{ report: WorkReport }>(
+                          user,
+                          "/work",
+                          { action: "load", id: identity.slice(6) },
+                        )
+                          .then((result) => {
+                            if (result.report) setEditingOrder(result.report);
+                          })
+                          .catch((e) => setMessage(reportError(e)))
+                          .finally(() => setLoadingOrder(false));
+                      }}
+                    >
+                      Jatka työtilauksen muokkausta
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </details>
           )}
           <div className="work-filters">
             {admin && (
@@ -300,10 +343,17 @@ export default function WorkWorkspace({
             <label>
               Työn päivämäärä
               <input
-                type="date"
-                value={filter.date}
+                type="text"
+                inputMode="numeric"
+                placeholder="pp.kk.vvvv"
+                value={finnishDate(filter.date)}
                 onChange={(e) =>
-                  changeFilter({ ...filter, date: e.target.value })
+                  changeFilter({
+                    ...filter,
+                    date:
+                      isoDate(dateEntry(e.target.value)) ||
+                      dateEntry(e.target.value),
+                  })
                 }
               />
             </label>
@@ -316,9 +366,7 @@ export default function WorkWorkspace({
                 </span>
                 <h3>{row.title}</h3>
                 <p>{row.address}</p>
-                <p>
-                  {row.schedule?.replace("T", " ") || "Ei sovittua ajankohtaa"}
-                </p>
+                <p>{scheduleLabel(row.schedule)}</p>
                 <small>{row.id}</small>
                 <div className="work-actions">
                   <button
@@ -490,9 +538,15 @@ function CloudEditor({
     controller.subscribe,
     controller.getSnapshot,
   );
-  const [comment, setComment] = React.useState(""),
-    [message, setMessage] = React.useState(""),
+  const commentDraft = useFormDraft(
+    user.uid,
+    "comment:" + session.getSnapshot().state.id,
+    () => ({ comment: "" }),
+  );
+  const comment = commentDraft.value.comment;
+  const [message, setMessage] = React.useState(""),
     [busy, setBusy] = React.useState(false);
+  const transitioning = React.useRef(false);
   React.useEffect(() => {
     void controller.start();
     const online = () => void controller.retry();
@@ -530,9 +584,21 @@ function CloudEditor({
     );
   }, [remoteId, controller]);
   async function transition(status: WorkStatus) {
-    if (busy) return;
+    if (transitioning.current) return;
+    if (status === "PENDING_REVIEW") {
+      const invalid = document.querySelector<HTMLInputElement>(
+        ".report-page input:invalid",
+      );
+      if (invalid) {
+        invalid.reportValidity();
+        invalid.focus();
+        return;
+      }
+    }
+    transitioning.current = true;
     setBusy(true);
     setMessage("");
+    const commentRevision = commentDraft.draft.getSnapshot().revision;
     try {
       if (!(await controller.save())) {
         setMessage(
@@ -560,10 +626,11 @@ function CloudEditor({
         },
       );
       await controller.receive(result.report);
-      setComment("");
+      commentDraft.draft.clear({ comment: "" }, commentRevision);
     } catch (e) {
       setMessage(reportError(e));
     } finally {
+      transitioning.current = false;
       setBusy(false);
     }
   }
@@ -586,101 +653,125 @@ function CloudEditor({
         "RETURNED",
         ...(admin ? ["PENDING_REVIEW"] : []),
       ].includes(cloud.remote.status));
-  return (
-    <>
-      <section className="cloud-toolbar">
+  const workflow = (bottom = false) => (
+    <section
+      className={bottom ? "workflow-bottom" : "cloud-toolbar"}
+      data-workflow={bottom ? "bottom" : "top"}
+      aria-label={
+        bottom ? "Raportin työnkulku lopussa" : "Raportin työnkulku alussa"
+      }
+    >
+      {bottom && <h2>Raportin työnkulku</h2>}
+      {!bottom && (
         <button className="button outline" onClick={onBack}>
           Takaisin tehtäviin
         </button>
-        <p role="status">
-          {cloud.status === "saved" && !cloud.remote
-            ? "Ei vielä pilveen tallennettua raporttia"
-            : statusCopy[cloud.status]}
-          {cloud.remote && " · " + statusLabel[cloud.remote.status]}
+      )}
+      <p role="status">
+        {cloud.status === "saved" && !cloud.remote
+          ? "Ei vielä pilveen tallennettua raporttia"
+          : statusCopy[cloud.status]}
+        {cloud.remote && (
+          <span className={"work-status status-" + cloud.remote.status}>
+            {statusLabel[cloud.remote.status]}
+          </span>
+        )}
+      </p>
+      {message && <p role="alert">{message}</p>}
+      {cloud.error && (
+        <p role="alert">
+          {cloud.error.includes(" ")
+            ? cloud.error
+            : reportError({ code: cloud.error })}
         </p>
-        {message && <p role="alert">{message}</p>}
-        {cloud.error && (
-          <p role="alert">
-            {cloud.error.includes(" ")
-              ? cloud.error
-              : reportError({ code: cloud.error })}
-          </p>
-        )}
-        {cloud.remote?.comment && (
-          <p className="work-comment">
-            <strong>Ylläpitäjän kommentti:</strong> {cloud.remote.comment}
-          </p>
-        )}
-        {["error", "offline"].includes(cloud.status) && (
+      )}
+      {cloud.remote?.comment && (
+        <p className="work-comment">
+          <strong>Ylläpitäjän kommentti:</strong> {cloud.remote.comment}
+        </p>
+      )}
+      {["error", "offline"].includes(cloud.status) && (
+        <button
+          className="button outline"
+          onClick={() => void controller.retry()}
+        >
+          Yritä pilvitallennusta uudelleen
+        </button>
+      )}
+      {!bottom && cloud.status === "conflict" && (
+        <Conflict controller={controller} session={session} />
+      )}
+      {!locked &&
+        (!cloud.remote ||
+          ["NEW", "IN_PROGRESS", "RETURNED"].includes(cloud.remote.status)) && (
           <button
-            className="button outline"
-            onClick={() => void controller.retry()}
-          >
-            Yritä pilvitallennusta uudelleen
-          </button>
-        )}
-        {cloud.status === "conflict" && (
-          <Conflict controller={controller} session={session} />
-        )}
-        {!locked && (
-          <button
-            disabled={busy}
+            disabled={busy || cloud.status === "loading"}
             className="button primary"
             onClick={() => void transition("PENDING_REVIEW")}
           >
             Lähetä tarkastettavaksi
           </button>
         )}
-        {admin &&
-          cloud.remote &&
-          !["APPROVED", "CANCELLED"].includes(cloud.remote.status) && (
-            <div className="work-actions">
-              <label>
-                Kommentti palautukseen tai perumiseen
-                <textarea
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  maxLength={2000}
-                />
-              </label>
-              {cloud.remote.status === "PENDING_REVIEW" && (
-                <button
-                  className="button outline"
-                  disabled={busy || !comment.trim()}
-                  onClick={() => void transition("RETURNED")}
-                >
-                  Palauta korjattavaksi
-                </button>
-              )}
+      {admin &&
+        cloud.remote &&
+        !["APPROVED", "CANCELLED"].includes(cloud.remote.status) && (
+          <div className="work-actions">
+            <label>
+              Kommentti palautukseen tai perumiseen
+              <textarea
+                aria-label="Kommentti palautukseen tai perumiseen"
+                value={comment}
+                onChange={(e) =>
+                  commentDraft.setValue({ comment: e.target.value })
+                }
+                onBlur={() => commentDraft.draft.flush()}
+                disabled={busy}
+                maxLength={2000}
+              />
+            </label>
+            <FormDraftNotice draft={commentDraft.draft} />
+            {cloud.remote.status === "PENDING_REVIEW" && (
               <button
                 className="button outline"
                 disabled={busy || !comment.trim()}
-                onClick={() => {
-                  if (
-                    confirm(
-                      "Perutaanko työtilaus? Raportti ja auditointitiedot säilyvät.",
-                    )
-                  )
-                    void transition("CANCELLED");
-                }}
+                onClick={() => void transition("RETURNED")}
               >
-                Peru työtilaus
+                Palauta korjattavaksi
               </button>
-            </div>
-          )}
-        {locked && (
-          <button
-            className="button outline"
-            onClick={() =>
-              void import("../pdf").then(({ createPdf }) =>
-                createPdf(session.getSnapshot().state),
-              )
-            }
-          >
-            Lataa tallennettu PDF
-          </button>
+            )}
+            <button
+              className="button outline"
+              disabled={busy || !comment.trim()}
+              onClick={() => {
+                if (
+                  confirm(
+                    "Perutaanko työtilaus? Raportti ja auditointitiedot säilyvät.",
+                  )
+                )
+                  void transition("CANCELLED");
+              }}
+            >
+              Peru työtilaus
+            </button>
+          </div>
         )}
-      </section>
+      {!bottom && locked && (
+        <button
+          className="button outline"
+          onClick={() =>
+            void import("../pdf").then(({ createPdf }) =>
+              createPdf(session.getSnapshot().state),
+            )
+          }
+        >
+          Lataa tallennettu PDF
+        </button>
+      )}
+    </section>
+  );
+  return (
+    <>
+      {workflow()}
       {!["report_forbidden", "access_disabled", "invalid_session"].includes(
         cloud.error,
       ) && (
@@ -689,13 +780,17 @@ function CloudEditor({
           cloudMode
           catalog={catalog}
           admin={admin}
-          readOnly={locked || cloud.status === "loading"}
+          readOnly={locked || cloud.status === "loading" || busy}
+          ownerUid={user.uid}
           cloudSave={() => void controller.save()}
           onDiscardLocal={() => {
             onForget(controller.stop);
           }}
         />
       )}
+      {!["report_forbidden", "access_disabled", "invalid_session"].includes(
+        cloud.error,
+      ) && workflow(true)}
     </>
   );
 }
@@ -759,313 +854,5 @@ function Conflict({
       </button>
       {error && <p>{error}</p>}
     </div>
-  );
-}
-
-function OrderForm({
-  user,
-  people,
-  existing,
-  loading,
-  onSaved,
-}: {
-  user: User;
-  people: EmployeeProfile[];
-  existing: WorkReport | null;
-  loading: boolean;
-  onSaved(): void;
-}) {
-  const initial = () => ({
-    customer: existing?.form.customer || "",
-    address: existing?.form.address || "",
-    description: existing?.form.description || "",
-    schedule: existing?.schedule || "",
-    quotationReference: existing?.quotationReference || "",
-    assignedTo: existing?.assignedTo || [user.uid],
-  });
-  const [value, setValue] = React.useState(initial),
-    [busy, setBusy] = React.useState(false),
-    [message, setMessage] = React.useState("");
-  const operation = React.useRef({
-    id: createReportId(),
-    requestId: crypto.randomUUID(),
-  });
-  React.useEffect(() => {
-    setValue(initial());
-    operation.current = {
-      id: existing?.id || createReportId(),
-      requestId: crypto.randomUUID(),
-    };
-    setMessage("");
-  }, [existing]);
-  return (
-    <details className="work-order-form" open={existing ? true : undefined}>
-      <summary>
-        {existing ? "Muokkaa työtilausta ja vastuuhenkilöitä" : "Luo työtilaus"}
-      </summary>
-      <form
-        onSubmit={async (event) => {
-          event.preventDefault();
-          if (busy) return;
-          setBusy(true);
-          setMessage("");
-          try {
-            await reportRequest(user, "/work", {
-              action: existing ? "order" : "createOrder",
-              ...operation.current,
-              ...(existing ? { revision: existing.revision } : {}),
-              ...value,
-            });
-            setMessage(existing ? "Työtilaus päivitetty." : "Työtilaus luotu.");
-            setValue({
-              customer: "",
-              address: "",
-              description: "",
-              schedule: "",
-              quotationReference: "",
-              assignedTo: [user.uid],
-            });
-            operation.current = {
-              id: createReportId(),
-              requestId: crypto.randomUUID(),
-            };
-            onSaved();
-          } catch (e) {
-            setMessage(reportError(e));
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        {loading && <p role="status">Avataan työtilausta…</p>}
-        <fieldset disabled={busy || loading}>
-          <legend>{existing ? existing.id : "Uusi työtilaus"}</legend>
-          {(
-            [
-              "customer",
-              "address",
-              "description",
-              "schedule",
-              "quotationReference",
-            ] as const
-          ).map((key, i) => (
-            <label key={key}>
-              {
-                [
-                  "Asiakkaan nimi",
-                  "Kohteen osoite",
-                  "Työtilauksen kuvaus",
-                  "Sovittu ajankohta",
-                  "Tarjouspyynnön viite (valinnainen)",
-                ][i]
-              }
-              {key === "description" ? (
-                <textarea
-                  required
-                  value={value[key]}
-                  maxLength={6000}
-                  onChange={(e) =>
-                    setValue({ ...value, [key]: e.target.value })
-                  }
-                />
-              ) : (
-                <input
-                  required={i < 2}
-                  type={key === "schedule" ? "datetime-local" : "text"}
-                  value={value[key]}
-                  maxLength={key === "quotationReference" ? 40 : 500}
-                  onChange={(e) =>
-                    setValue({ ...value, [key]: e.target.value })
-                  }
-                />
-              )}
-            </label>
-          ))}
-          <fieldset>
-            <legend>Vastuuhenkilöt</legend>
-            {people
-              .filter((p) => p.active)
-              .map((p) => (
-                <label className="work-checkbox" key={p.uid}>
-                  <input
-                    type="checkbox"
-                    checked={value.assignedTo.includes(p.uid)}
-                    onChange={(e) =>
-                      setValue({
-                        ...value,
-                        assignedTo: e.target.checked
-                          ? [...value.assignedTo, p.uid]
-                          : value.assignedTo.filter((uid) => uid !== p.uid),
-                      })
-                    }
-                  />
-                  {p.displayName}
-                  {p.uid === user.uid ? " (minä)" : ""}
-                </label>
-              ))}
-          </fieldset>
-          <button
-            className="button primary"
-            disabled={!value.assignedTo.length}
-          >
-            {existing ? "Tallenna työtilaus" : "Luo työtilaus"}
-          </button>
-          {existing && (
-            <button type="button" className="button outline" onClick={onSaved}>
-              Sulje muokkaus
-            </button>
-          )}
-        </fieldset>
-      </form>
-      {message && <p role="status">{message}</p>}
-    </details>
-  );
-}
-
-function CatalogAdmin({
-  user,
-  items,
-}: {
-  user: User;
-  items: CatalogMaterial[];
-}) {
-  const blank = () => ({
-    id: crypto.randomUUID() as string,
-    revision: 0,
-    name: "",
-    code: "",
-    unit: "kpl",
-    sellingCents: 0,
-    purchaseCents: null as number | null,
-    active: true,
-  });
-  const [value, setValue] = React.useState(blank),
-    [message, setMessage] = React.useState(""),
-    [busy, setBusy] = React.useState(false);
-  return (
-    <section className="catalog-admin">
-      <h3>Materiaalien ylläpito</h3>
-      <p>
-        Hinnat ilman arvonlisäveroa. Ostohinta on erillisessä, vain
-        ylläpitäjälle sallitussa dokumentissa.
-      </p>
-      <ul className="work-cards">
-        {items.map((item) => (
-          <li key={item.id}>
-            <strong>{item.name}</strong>
-            <p>
-              {item.code} · {money(item.sellingCents)} / {item.unit} ·{" "}
-              {item.active ? "Käytössä" : "Poistettu käytöstä"}
-            </p>
-            <button
-              className="button outline"
-              onClick={async () => {
-                setBusy(true);
-                try {
-                  const costs = await getDoc(
-                    doc(reportFirebase!.db, "materialCosts", item.id),
-                  );
-                  setValue({
-                    id: item.id,
-                    revision: item.revision,
-                    name: item.name,
-                    code: item.code,
-                    unit: item.unit,
-                    sellingCents: item.sellingCents,
-                    active: item.active,
-                    purchaseCents: costs.data()?.purchaseCents ?? null,
-                  });
-                } catch (e) {
-                  setMessage(reportError(e));
-                } finally {
-                  setBusy(false);
-                }
-              }}
-            >
-              Muokkaa materiaalia
-            </button>
-          </li>
-        ))}
-      </ul>
-      <form
-        onSubmit={async (event) => {
-          event.preventDefault();
-          if (busy) return;
-          setBusy(true);
-          try {
-            await reportRequest(user, "/work", {
-              action: "material",
-              ...value,
-              requestId: crypto.randomUUID(),
-            });
-            setValue(blank());
-            setMessage("Materiaali tallennettu.");
-          } catch (e) {
-            setMessage(reportError(e));
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        <fieldset disabled={busy}>
-          <legend>
-            {value.revision ? "Muokkaa materiaalia" : "Lisää materiaali"}
-          </legend>
-          {(["name", "code", "unit"] as const).map((key, i) => (
-            <label key={key}>
-              {["Nimi", "Tuotekoodi", "Yksikkö"][i]}
-              <input
-                required={key !== "code"}
-                value={value[key]}
-                maxLength={key === "name" ? 120 : key === "code" ? 40 : 20}
-                onChange={(e) => setValue({ ...value, [key]: e.target.value })}
-              />
-            </label>
-          ))}
-          {(["sellingCents", "purchaseCents"] as const).map((key, i) => (
-            <label key={key}>
-              {
-                [
-                  "Myyntihinta alv 0 % (€)",
-                  "Ostohinta alv 0 % (€), valinnainen",
-                ][i]
-              }
-              <input
-                type="number"
-                min="0"
-                step="0.01"
-                value={value[key] === null ? "" : value[key]! / 100}
-                onChange={(e) =>
-                  setValue({
-                    ...value,
-                    [key]:
-                      e.target.value === "" && key === "purchaseCents"
-                        ? null
-                        : Math.round(Number(e.target.value) * 100),
-                  })
-                }
-              />
-            </label>
-          ))}
-          <label className="work-checkbox">
-            <input
-              type="checkbox"
-              checked={value.active}
-              onChange={(e) => setValue({ ...value, active: e.target.checked })}
-            />
-            Käytössä
-          </label>
-          <button className="button primary">Tallenna materiaali</button>
-          <button
-            type="button"
-            className="button outline"
-            onClick={() => setValue(blank())}
-          >
-            Uusi materiaali
-          </button>
-        </fieldset>
-      </form>
-      {message && <p role="status">{message}</p>}
-    </section>
   );
 }

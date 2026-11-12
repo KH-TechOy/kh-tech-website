@@ -1,4 +1,5 @@
 import { createReportId } from "./utils";
+import { helsinkiToday } from './reportLocale';
 export type Material = { name: string; quantity: string; unit: string; rowId?: string; catalogId?: string; unitPriceCents?: number };
 export type ReportForm = {
   customer: string;
@@ -39,12 +40,7 @@ export const fieldLabels: Partial<Record<ReportFieldName, string>> = {
   description: "Työn kuvaus",
 };
 export function emptyReport(): ReportState {
-  const now = new Date(),
-    date = [
-      now.getFullYear(),
-      String(now.getMonth() + 1).padStart(2, "0"),
-      String(now.getDate()).padStart(2, "0"),
-    ].join("-");
+  const date = helsinkiToday();
   return {
     id: createReportId(),
     form: {

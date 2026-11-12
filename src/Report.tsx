@@ -19,6 +19,9 @@ import {
 import { Brand, company, services, url } from "./brand";
 import { createReportId } from "./utils";
 import { billingTotals, emptyBilling, money, type CatalogMaterial } from './reportWorkModel';
+import { finnishDate, isoDate, timeValid } from './reportLocale';
+import { dateEntry, timeEntry } from './reportDateInputs';
+import { BufferedPrice, MaterialPicker } from './reportAuth/ReportInputs';
 import {
   reportIsEmpty,
   reportErrors,
@@ -57,12 +60,12 @@ function Field({
   const props = {
     id: "report-" + name,
     name,
-    value,
+    value: type === 'date' ? finnishDate(value) : value,
     required,
     "aria-invalid": !!errors[name],
     "aria-describedby": errors[name] ? "error-" + name : undefined,
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      onChange(name, e.target.value),
+      onChange(name, type === 'date' ? isoDate(dateEntry(e.target.value)) || dateEntry(e.target.value) : type === 'time' ? timeEntry(e.target.value) : e.target.value),
   };
   return (
     <label className={full ? "full" : ""} htmlFor={props.id}>
@@ -73,8 +76,13 @@ function Field({
       ) : (
         <input
           {...props}
-          type={type}
-          inputMode={name === "hours" ? "decimal" : undefined}
+          type={type === 'date' || type === 'time' ? 'text' : type}
+          inputMode={name === "hours" ? "decimal" : type === 'date' || type === 'time' ? 'numeric' : undefined}
+          placeholder={type === 'date' ? 'pp.kk.vvvv' : type === 'time' ? 'HH:mm' : undefined}
+          maxLength={type === 'date' ? 10 : type === 'time' ? 5 : undefined}
+          pattern={type === 'time' ? '([01][0-9]|2[0-3]):[0-5][0-9]' : undefined}
+          onBlur={e => e.currentTarget.setCustomValidity(type === 'date' && e.target.value && !isoDate(e.target.value) ? 'Anna päivämäärä muodossa pp.kk.vvvv.' : type === 'time' && e.target.value && !timeValid(e.target.value) ? 'Anna kellonaika muodossa HH:mm.' : '')}
+          onInput={e => e.currentTarget.setCustomValidity('')}
           autoComplete={
             name === "customer"
               ? "organization"
@@ -141,7 +149,7 @@ function Preview({
             <div>
               <strong>TYÖRAPORTTI</strong>
               <span>{id}</span>
-              <time>{form.date}</time>
+              <time>{finnishDate(form.date)}</time>
             </div>
           </header>
           <h2>{form.customer}</h2>
@@ -304,6 +312,7 @@ export default function Report({
   admin = false,
   readOnly = false,
   onDiscardLocal,
+  ownerUid = '',
 }: {
   draftStorage?: import("./reportModel").DraftStorage;
   draftSession?: DraftSession;
@@ -313,6 +322,7 @@ export default function Report({
   admin?: boolean;
   readOnly?: boolean;
   onDiscardLocal?: () => void;
+  ownerUid?: string;
 }) {
   const [session] = React.useState(
     () => draftSession || createDraftSession(draftStorage),
@@ -336,7 +346,6 @@ export default function Report({
   };
   const setState = session.update;
   const [message, setMessage] = React.useState("");
-  const [materialSearch, setMaterialSearch] = React.useState('');
   const [checked, setChecked] = React.useState(false),
     [preview, setPreview] = React.useState(false),
     [busy, setBusy] = React.useState(false),
@@ -734,7 +743,7 @@ export default function Report({
                   <p>Tarvikkeet määrineen ja kuvat työn eri vaiheista.</p>
                 </div>
               </div>
-              {cloudMode && <div className="catalog-picker"><label>Hae materiaalia luettelosta<input value={materialSearch} onChange={e => setMaterialSearch(e.target.value)} placeholder="Nimi tai tuotekoodi" /></label>{materialSearch && <ul>{catalog.filter(item => item.active && (item.name + ' ' + item.code).toLocaleLowerCase('fi').includes(materialSearch.toLocaleLowerCase('fi'))).slice(0, 12).map(item => <li key={item.id}><button type="button" className="button outline" onClick={() => { updateMaterials([...state.form.materials.filter(row => row.name || row.quantity), { name: item.name, unit: item.unit, quantity: '1', rowId: crypto.randomUUID(), catalogId: item.id, unitPriceCents: item.sellingCents }]); setMaterialSearch(''); }}>{item.name} · {money(item.sellingCents)} / {item.unit}</button></li>)}</ul>}</div>}
+              {cloudMode && <MaterialPicker items={catalog} onSelect={item => updateMaterials([...state.form.materials.filter(row => row.name || row.quantity), { name: item.name, unit: item.unit, quantity: '1', rowId: crypto.randomUUID(), catalogId: item.id, unitPriceCents: item.sellingCents }])} />}
               <div className="materials-heading" aria-hidden="true">
                 <span>Materiaali</span>
                 <span>Määrä</span>
@@ -772,7 +781,7 @@ export default function Report({
                   >
                     <Trash2 size={17} />
                   </button>
-                  {cloudMode && <span className="material-price">{admin ? <label>Yksikköhinta alv 0 % (€)<input aria-label={'Yksikköhinta ' + (i + 1)} type="number" min="0" step="0.01" value={(row.unitPriceCents || 0) / 100} onChange={e => updateMaterials(state.form.materials.map((r, index) => index === i ? { ...r, unitPriceCents: Math.round(Number(e.target.value) * 100) } : r))} /></label> : money(row.unitPriceCents || 0) + ' / ' + row.unit}<strong>Rivi: {money(Math.round(Number(row.quantity.replace(',', '.') || 0) * (row.unitPriceCents || 0)))}</strong></span>}
+                  {cloudMode && <span className="material-price">{admin ? <label>Yksikköhinta alv 0 % (€)<BufferedPrice uid={ownerUid} identity={state.id + ':material:' + `${i}:${row.name}:${row.unit}`} label={'Yksikköhinta ' + (i + 1)} value={row.unitPriceCents || 0} onCommit={unitPriceCents => setState(s => ({ ...s, form: { ...s.form, materials: s.form.materials.map((r, index) => index === i ? { ...r, unitPriceCents } : r) } }))} /></label> : money(row.unitPriceCents || 0) + ' / ' + row.unit}<strong>Rivi: {money(Math.round(Number(row.quantity.replace(',', '.') || 0) * (row.unitPriceCents || 0)))}</strong></span>}
                 </div>
               ))}
               {errors.materials && (
@@ -897,7 +906,7 @@ export default function Report({
               </div>
             </section>
             {cloudMode && <section className="report-section billing-summary"><h2>Laskutuksen valmistelu</h2><p>Ei lasku. Hinnat ilman arvonlisäveroa. Tuntihinta, matkaveloitus, muut kulut ja ALV asetetaan ylläpidossa; oletuksena 0, ei oletettua verokantaa.</p>
-              {admin && <div className="work-filters">{(['hourRateCents', 'travelKm', 'travelRateCents', 'otherCents', 'vatBasisPoints'] as const).map((key, i) => <label key={key}>{['Tuntihinta (€)', 'Matka (km)', 'Kilometriveloitus (€)', 'Muut kulut (€)', 'ALV (%)'][i]}<input type="number" min="0" max={key === 'vatBasisPoints' ? 100 : undefined} step="0.01" value={(state.billing || emptyBilling())[key] / (key === 'travelKm' ? 1 : 100)} onChange={e => setState(s => ({ ...s, billing: { ...(s.billing || emptyBilling()), [key]: key === 'travelKm' ? Number(e.target.value) : Math.round(Number(e.target.value) * 100) } }))} /></label>)}<label>Muiden kulujen selite<input value={state.billing?.otherDescription || ''} maxLength={500} onChange={e => setState(s => ({ ...s, billing: { ...(s.billing || emptyBilling()), otherDescription: e.target.value } }))} /></label></div>}
+              {admin && <div className="work-filters">{(['hourRateCents', 'travelKm', 'travelRateCents', 'otherCents', 'vatBasisPoints'] as const).map((key, i) => <label key={key}>{['Tuntihinta (€)', 'Matka (km)', 'Kilometriveloitus (€)', 'Muut kulut (€)', 'ALV (%)'][i]}<BufferedPrice label={['Tuntihinta (€)', 'Matka (km)', 'Kilometriveloitus (€)', 'Muut kulut (€)', 'ALV (%)'][i]} uid={ownerUid} identity={state.id + ':billing:' + key} value={(state.billing || emptyBilling())[key]} scale={key === 'travelKm' ? 1 : 100} maximum={key === 'vatBasisPoints' ? 10000 : key === 'travelKm' ? 100000 : 100000000} onCommit={value => setState(s => ({ ...s, billing: { ...(s.billing || emptyBilling()), [key]: value } }))} /></label>)}<label>Muiden kulujen selite<input value={state.billing?.otherDescription || ''} maxLength={500} onChange={e => setState(s => ({ ...s, billing: { ...(s.billing || emptyBilling()), otherDescription: e.target.value } }))} /></label></div>}
               <dl className="billing-totals">{Object.entries(billingTotals(state.form, state.billing || emptyBilling())).filter(([key]) => !['materials', 'gross'].includes(key)).map(([key, value]) => <div key={key}><dt>{{ materialsTotal: 'Materiaalit', work: 'Työ', travel: 'Matka', other: 'Muut kulut', net: 'Yhteensä alv 0 %', vat: 'Arvonlisävero' }[key]}</dt><dd>{money(value as number)}</dd></div>)}</dl>
             </section>}
             <section className="report-section" id="viimeistely">

@@ -468,7 +468,7 @@ test("admin edits their own email-like name and an employee name immediately; in
   await employee.getByRole("button", { name: "Muokkaa nimeä" }).click();
   await employee.getByLabel("Näyttönimi").fill("   ");
   await employee.getByRole("button", { name: "Tallenna nimi" }).click();
-  await expect(page.getByRole("status")).toContainText("Anna nimi");
+  await expect(page.locator('.access-employees > .access-message')).toContainText("Anna nimi");
   await employee.getByLabel("Näyttönimi").fill("Jari Asentaja");
   await employee.getByRole("button", { name: "Tallenna nimi" }).click();
   await expect(employee.locator("strong")).toHaveText("Jari Asentaja");

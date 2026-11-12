@@ -19,6 +19,7 @@ import {
 import { sessionDraftStorage } from "./drafts";
 import { createDraftSession, type DraftSession } from "./draftSession";
 import { readReport, reportIsEmpty } from "../reportModel";
+import { flushFormDrafts } from './formDraft';
 import "./report-auth.css";
 const Workspace = React.lazy(() => import('./WorkWorkspace'));
 const AdminPanel = React.lazy(() => import("./employees"));
@@ -195,7 +196,8 @@ export default function ReportApp() {
     };
   }, [clear, validate]);
   async function logout() {
-    if ([...drafts.current.values()].map(session => session.flush()).some(success => !success)) {
+    const formsSaved = !user || flushFormDrafts(user.uid);
+    if ([...drafts.current.values()].map(session => session.flush()).some(success => !success) || !formsSaved) {
       if (
         !confirm(
           "Luonnosta ei voitu tallentaa. Tiedot säilyvät vain tämän välilehden muistissa ja voivat kadota, jos suljet tai päivität välilehden. Kirjaudutaanko silti ulos?",
