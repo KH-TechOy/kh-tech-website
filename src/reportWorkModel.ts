@@ -23,6 +23,9 @@ export type Billing = {
   otherDescription: string;
   vatBasisPoints: number;
 };
+export type Operations = Pick<Billing, 'travelKm' | 'otherCents' | 'otherDescription'>;
+export const emptyOperations = (): Operations => ({ travelKm: 0, otherCents: 0, otherDescription: '' });
+export type Approval = { at: string; byName: string; revision: number; displayAt: string };
 export const emptyBilling = (): Billing => ({
   hourRateCents: 0,
   travelKm: 0,
@@ -42,14 +45,18 @@ export type CatalogMaterial = {
 };
 export type WorkReport = {
   id: string;
-  schemaVersion: 2;
+  schemaVersion: 2 | 3;
   ownerUid: string;
   assignedTo: string[];
   title: string;
   status: WorkStatus;
   revision: number;
   form: ReportForm;
-  billing: Billing;
+  billing?: Billing;
+  operations?: Operations;
+  signature?: import('./reportSignature').ReportSignature | null;
+  approval?: Approval;
+  source?: { reportId: string; revision: number };
   schedule: string;
   quotationReference: string;
   workOrderId: string;
@@ -62,15 +69,22 @@ export type WorkReport = {
 export function decimal(value: string) {
   return Number(value.replace(",", ".")) || 0;
 }
+// Exact decimal multiplication: avoid binary half-cent rounding in billing snapshots.
+export function scaledAmount(value: string, rate: number) {
+  const [whole, fraction = ''] = String(value).replace(',', '.').split('.');
+  if (!/^\d*$/.test(whole) || !/^\d{0,4}$/.test(fraction)) return 0;
+  const divisor = 10n ** BigInt(fraction.length), units = BigInt(whole || '0') * divisor + BigInt(fraction || '0');
+  return Number((units * BigInt(rate) + divisor / 2n) / divisor);
+}
 export function billingTotals(form: ReportForm, billing: Billing) {
   const materials = form.materials.map((row) =>
-    Math.round(decimal(row.quantity) * (row.unitPriceCents || 0)),
+    scaledAmount(row.quantity, row.unitPriceCents || 0),
   );
-  const work = Math.round(decimal(form.hours) * billing.hourRateCents);
-  const travel = Math.round(billing.travelKm * billing.travelRateCents);
+  const work = scaledAmount(form.hours, billing.hourRateCents);
+  const travel = scaledAmount(String(billing.travelKm), billing.travelRateCents);
   const materialsTotal = materials.reduce((sum, value) => sum + value, 0);
   const net = work + travel + materialsTotal + billing.otherCents;
-  const vat = Math.round((net * billing.vatBasisPoints) / 10000);
+  const vat = Number((BigInt(net) * BigInt(billing.vatBasisPoints) + 5000n) / 10000n);
   return {
     materials,
     materialsTotal,
@@ -82,5 +96,7 @@ export function billingTotals(form: ReportForm, billing: Billing) {
     gross: net + vat,
   };
 }
-export const money = (cents: number) =>
-  (cents / 100).toLocaleString("fi-FI", { style: "currency", currency: "EUR" });
+export const money = (cents: number) => {
+  const value = Math.abs(Math.round(cents));
+  return (cents < 0 ? '-' : '') + String(Math.floor(value / 100)).replace(/\B(?=(\d{3})+(?!\d))/g,'\u00a0') + ',' + String(value % 100).padStart(2,'0') + '\u00a0€';
+};

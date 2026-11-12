@@ -84,32 +84,8 @@ test("employees read own/assigned only and cannot run an unfiltered list", async
   await assertSucceeds(getDoc(doc(store, "reports/assigned")));
   await assertFails(getDoc(doc(store, "reports/unrelated")));
   await assertFails(getDocs(query(collection(store, "reports"), limit(50))));
-  expect(
-    (
-      await assertSucceeds(
-        getDocs(
-          query(
-            collection(store, "reports"),
-            where("ownerUid", "==", "employee"),
-            limit(50),
-          ),
-        ),
-      )
-    ).size,
-  ).toBe(1);
-  expect(
-    (
-      await assertSucceeds(
-        getDocs(
-          query(
-            collection(store, "reports"),
-            where("assignedTo", "array-contains", "employee"),
-            limit(50),
-          ),
-        ),
-      )
-    ).size,
-  ).toBe(1);
+  await assertFails(getDocs(query(collection(store, "reports"), where("ownerUid", "==", "employee"), limit(50))));
+  await assertFails(getDocs(query(collection(store, "reports"), where("assignedTo", "array-contains", "employee"), limit(50))));
   await assertFails(
     getDocs(
       query(collection(store, "reports"), where("ownerUid", "==", "employee")),
@@ -223,7 +199,7 @@ test('B bodies cannot be downgraded or written directly and purchase prices cann
   await adminDb.doc('materialCosts/item').set({ purchaseCents: 123 });
   await adminDb.doc('materialCatalog/production').set({ id: 'production', revision: 1, active: true, name: 'Tuote', sellingCents: 500 });
   for (const uid of ['admin', 'employee']) {
-    await assertSucceeds(getDoc(doc(client(uid), 'reports/body')));
+    await (uid === 'admin' ? assertSucceeds : assertFails)(getDoc(doc(client(uid), 'reports/body')));
     await assertFails(setDoc(doc(client(uid), 'reports/body'), metadata(uid)));
     await assertFails(updateDoc(doc(client(uid), 'reports/body'), { 'form.notes': 'ohitus' }));
     await assertFails(updateDoc(doc(client(uid), 'reports/body'), { status: 'APPROVED' }));

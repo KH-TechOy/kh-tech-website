@@ -34,8 +34,11 @@ service cloud.firestore {
       allow write: if false;
     }
     match /reports/{id} {
-      allow get: if assigned(resource.data);
-      allow list: if assigned(resource.data) && request.query.limit <= 50;
+      // Old schema-2 bodies contain billing. Worker atomically splits them before use.
+      allow get: if assigned(resource.data) && (admin() ||
+        (resource.data.schemaVersion == 3 && resource.data.keys().hasOnly(['id','schemaVersion','ownerUid','assignedTo','title','status','revision','form','operations','signature','approval','source','schedule','quotationReference','workOrderId','comment','createdAt','updatedAt','updatedBy','lastMutation'])) ||
+        (resource.data.schemaVersion == 1 && resource.data.keys().hasOnly(['schemaVersion','ownerUid','assignedTo','title','status','createdAt','updatedAt','quotationReference','workOrderId'])));
+      allow list: if admin() && request.query.limit <= 50;
       allow create: if active() && metadata(request.resource.data)
         && request.resource.data.createdAt == request.time
         && request.resource.data.ownerUid == request.auth.uid
@@ -76,11 +79,11 @@ service cloud.firestore {
       allow write: if false;
     }
     match /archiveMetadata/{id} {
-      allow get: if assigned(resource.data);
-      allow list: if assigned(resource.data) && request.query.limit <= 50;
-      // Archiving is a future trusted workflow, not a client-controlled access shortcut.
+      allow get: if admin();
+      allow list: if admin() && request.query.limit <= 50;
       allow write: if false;
     }
+    match /reportFinances/{id} { allow get: if admin(); allow list: if admin() && request.query.limit <= 50; allow write: if false; }
     match /auditEvents/{id} {
       allow read: if admin() && (request.method == 'get' || request.query.limit <= 100);
       allow write: if false;

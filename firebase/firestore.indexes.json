@@ -234,6 +234,11 @@
     }
   ],
   "fieldOverrides": [
+    {"collectionGroup":"reports","fieldPath":"signature","indexes":[]},
+    {"collectionGroup":"reports","fieldPath":"operations","indexes":[]},
+    {"collectionGroup":"reportFinances","fieldPath":"billing","indexes":[]},
+    {"collectionGroup":"reportFinances","fieldPath":"fingerprint","indexes":[]},
+    {"collectionGroup":"archiveMetadata","fieldPath":"photo","indexes":[]},
     {
       "collectionGroup": "reports",
       "fieldPath": "form",

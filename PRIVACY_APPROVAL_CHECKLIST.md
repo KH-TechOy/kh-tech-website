@@ -1,5 +1,16 @@
 # Tietosuojan ja tuotantojulkaisun hyväksyntälista
 
+## REPORT 2.0 C — arkisto ja allekirjoitus, 12.11.2026
+
+- [ ] Hyväksy vapaaehtoisen allekirjoituksen tarkoitus, käsittelyperuste, informointi, pääsynvalvonta ja säilytysaika. Vektoripiirros/aikaleima ei varmenna henkilöllisyyttä eikä ole hyväksytty sähköinen allekirjoitus. Vanha kuittausteksti säilyy historiallisissa raporteissa.
+- [ ] Vahvista erillisen Report GAS -projektin palvelutili, Googlen ehdot/DPA ja kansainväliset siirrot myös PDF-, allekirjoitus- ja kuvasähköpostille. Yritys hyväksyy tarkoitetun `khtech.site@gmail.com`-arkiston käyttöoikeudet, tilan ja palautusvastuun. Paikallinen toimiva lähetyskoodi ei ole sopimus- tai tuotantohyväksyntä.
+- [ ] Määritä raporttien, allekirjoitusten, liitteiden, sähköpostien, ladattujen tiedostojen ja varmuuskopioiden todelliset säilytysajat. Päätä vähimmäisaika ja politiikkaversio ennen Workerin poistotoiminnon avaamista. Koodin testipolitiikan nolla päivää ei ole yrityksen tuotantopolitiikka.
+- [ ] Määritä rajattujen arkistotarkisteiden, vastaanottokuittausten ja auditointien säilytys-/poistovastuu. Niillä ei ole automaattista TTL-poistoa. Poistettu aktiiviraportti ei tarkoita kaikkien palveluntarjoajan varmistusten tai selaimen/laitteen kopioiden välitöntä poistamista.
+- [ ] Varmenna oikea MailApp-hyväksyntä, viesti postilaatikossa, molempien alkuperäisten liitteiden tarkisteet ja palautettavuus erikseen. Testaa rajat ja Free CPU ilman asiakastietoja. Epäselvä lähetys estää automaattisen uusinnan ja poiston.
+- [ ] Hyväksy turvallinen schema-2→3-siirto ennen työntekijäkäyttöä. Päivitä vanhat välilehdet niiden luonnoksia poistamatta. Aiemmin laitteelle saatuja tietoja ei voi jälkikäteen tehdä tuntemattomiksi; työntekijän vanha billing/puskurit siivotaan kohdennetusti, operatiivinen luonnos säilyy.
+
+Nykyinen C-toteutus korvaa alla olevien vanhojen tilannekuvien väitteet, ettei pilvitekstiä tai arkistotoimintoa olisi toteutettu. Omistajan avoimet oikeudelliset ja käytännön hyväksynnät säilyvät avoimina. Julkisen tietosuojan tekninen kuvaus on päivitetty, yritystietoja tai käsittelyperusteita ei keksitty.
+
 ## REPORT 2.0 A — henkilöstöpalvelun julkaisuportit, 10.11.2026
 
 Paikallinen Firebase-/Worker-toteutus ja emulaattorit eivät merkitse seuraavia kohtia hyväksytyiksi. Alempien historiallisten osioiden avoin todennus tarkoittaa nyt erityisesti lopullisen ympäristön varmennusta. [Toteutus](REPORT_2_0_A_RESULT.md), [asetukset](REPORT_2_0_FIREBASE_SETUP.md), [turvarajat](REPORT_2_0_SECURITY.md).

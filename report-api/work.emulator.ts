@@ -87,7 +87,7 @@ test("employees create personal reports but cannot create orders, change assignm
       revision: 1,
       status: "APPROVED",
     }),
-  ).rejects.toMatchObject({ code: "invalid_transition" });
+  ).rejects.toMatchObject({ code: "admin_required" });
   await expect(
     call("employee", { ...create(), action: "order", revision: 1 }),
   ).rejects.toMatchObject({ code: "admin_required" });

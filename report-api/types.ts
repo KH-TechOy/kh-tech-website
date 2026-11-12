@@ -34,6 +34,7 @@ export interface Database {
     fn: (tx: {
       get(path: string): Promise<Document | null>;
       put(path: string, data: Document): void;
+      delete?(path: string): void;
     }) => Promise<T>,
     maxAttempts?: number,
   ): Promise<T>;
@@ -51,6 +52,7 @@ export interface Dependencies {
   identity: Identity;
   verify(token: string): Promise<Claims>;
   rate(uid: string, kind?: 'work'): Promise<boolean>;
+  archive?: import('./archive').ArchiveConfig;
 }
 export class ApiError extends Error {
   constructor(

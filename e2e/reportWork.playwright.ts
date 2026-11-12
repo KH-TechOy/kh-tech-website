@@ -211,16 +211,9 @@ test("assigned prefill, catalog selection, autosave, submit and Admin return com
   await expect(
     page.getByLabel("Ostohinta alv 0 % (€), valinnainen", { exact: true }),
   ).toHaveCount(0);
-  await page
-    .getByRole("button", { name: "Esikatsele raportti", exact: true })
-    .click();
-  await expect(page.getByRole("dialog")).toContainText(
-    "Laskutuksen valmistelu (ei lasku)",
-  );
-  await expect(
-    page.getByRole("dialog").locator(".billing-totals"),
-  ).toContainText("37,02");
-  await page.keyboard.press("Escape");
+  await expect(page.getByRole("button", { name: "Esikatsele raportti", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Luo ja lataa PDF", exact: true })).toHaveCount(0);
+  await expect(page.locator('.billing-totals')).toHaveCount(0);
   await capture(page, "employee-editor");
   if (test.info().project.name === "mobile") {
     await page.setViewportSize({ width: 844, height: 390 });

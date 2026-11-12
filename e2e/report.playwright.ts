@@ -78,7 +78,7 @@ test("NFC login, invalid credentials, password reset, restoration and logout", a
 test("authenticated editor keeps photos/preview/PDF and isolates retained personal drafts on logout", async ({
   page,
 }) => {
-  await login(page);
+  await login(page, "admin");
   await editor(page);
   await page.locator("input[name=customer]").fill("QA / Ääkköset Oy");
   await page.locator("input[name=address]").fill("Testikatu 1");

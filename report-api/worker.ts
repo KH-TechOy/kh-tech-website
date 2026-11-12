@@ -3,6 +3,7 @@ import { googleServices } from "./google";
 import { firebaseVerifier } from "./jwt";
 import { createService, publicProfile } from "./service";
 import { workService } from './work';
+import { archiveService } from './archive';
 import { ApiError, type Dependencies, type Document } from "./types";
 export interface Env {
   FIREBASE_PROJECT_ID: string;
@@ -10,6 +11,11 @@ export interface Env {
   FIREBASE_WEB_API_KEY?: string;
   ALLOWED_ORIGINS: string;
   REPORT_RATE: DurableObjectNamespace;
+  ARCHIVE_RELAY_URL?:string;
+  ARCHIVE_RELAY_SECRET?:string;
+  ARCHIVE_DELETE_ENABLED?:string;
+  ARCHIVE_RETENTION_DAYS?:string;
+  ARCHIVE_POLICY_VERSION?:string;
 }
 export function json(value: unknown, status = 200) {
   return new Response(JSON.stringify(value), {
@@ -64,6 +70,7 @@ async function body(request: Request, max = 4096): Promise<Document> {
 export function reportHandler(deps: Dependencies, origins: string[]) {
   const service = createService(deps);
   const work = workService(deps.db);
+  const archive = archiveService(deps.db,deps.archive);
   return async (request: Request): Promise<Response> => {
     const origin = request.headers.get("Origin") || "";
     if (!origins.includes(origin)) return json({ error: "origin" }, 403);
@@ -110,6 +117,12 @@ export function reportHandler(deps: Dependencies, origins: string[]) {
       if (path === '/work' && request.method === 'POST') {
         if (!(await deps.rate(claims.uid, 'work'))) throw new ApiError('rate_limited', 429);
         return cors(json(await work(claims, await body(request, 96000))));
+      }
+      if(path==='/archive'&&request.method==='POST'){
+        if(!(await deps.rate(claims.uid,'work')))throw new ApiError('rate_limited',429);
+        const input=await body(request,200000);
+        if(profile.role!=='admin'&&!['photoPermit','photoStatus','capabilities'].includes(String(input.action)))throw new ApiError('admin_required',403);
+        return cors(json(await archive(claims,input)));
       }
       if (profile.role !== "admin") throw new ApiError("admin_required");
       if (!(await deps.rate(claims.uid)))
@@ -181,7 +194,7 @@ export default {
       env.FIREBASE_PROJECT_ID +
       env.SERVICE_ACCOUNT_JSON +
       env.ALLOWED_ORIGINS +
-      (env.FIREBASE_WEB_API_KEY || "");
+      (env.FIREBASE_WEB_API_KEY || "") + [env.ARCHIVE_RELAY_URL,env.ARCHIVE_RELAY_SECRET,env.ARCHIVE_DELETE_ENABLED,env.ARCHIVE_RETENTION_DAYS,env.ARCHIVE_POLICY_VERSION].join('|');
     if (!configured || configured.signature !== signature) {
       const services = googleServices({
         projectId: env.FIREBASE_PROJECT_ID,
@@ -194,6 +207,7 @@ export default {
           {
             ...services,
             verify: firebaseVerifier(env.FIREBASE_PROJECT_ID),
+            archive:{relayUrl:env.ARCHIVE_RELAY_URL,secret:env.ARCHIVE_RELAY_SECRET,deletionEnabled:env.ARCHIVE_DELETE_ENABLED==='true',retentionDays: /^\d{1,5}$/.test(env.ARCHIVE_RETENTION_DAYS || '') ? Number(env.ARCHIVE_RETENTION_DAYS) : undefined,policyVersion:env.ARCHIVE_POLICY_VERSION},
             rate: async (uid, kind) => {
               const response = await env.REPORT_RATE.get(
                 env.REPORT_RATE.idFromName((kind ? 'work:' : '') + uid),

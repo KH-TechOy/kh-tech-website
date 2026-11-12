@@ -1,7 +1,5 @@
 import React from "react";
-import { doc, getDoc } from "firebase/firestore";
 import type { User } from "firebase/auth";
-import { reportFirebase } from "./firebase";
 import { reportRequest, reportError, type EmployeeProfile } from "./api";
 import { useFormDraft, FormDraftNotice } from "./useFormDraft";
 import { PriceInput } from "./ReportInputs";
@@ -304,20 +302,19 @@ export function CatalogAdmin({
                 setBusy(true);
                 const selectionRevision = draft.getSnapshot().revision;
                 try {
-                  const costs = await getDoc(
-                    doc(reportFirebase!.db, "materialCosts", item.id),
-                  );
+                  const response=await reportRequest<{material:CatalogMaterial&{purchaseCents:number|null}}>(user,'/work',{action:'loadMaterial',id:item.id});
+                  const canonicalItem=response.material;
                   if (draft.getSnapshot().revision !== selectionRevision) return;
                   setValue({
                     id: item.id,
-                    revision: item.revision,
+                    revision: canonicalItem.revision,
                     requestId: crypto.randomUUID(),
-                    name: item.name,
-                    code: item.code,
-                    unit: item.unit,
-                    selling: priceText(item.sellingCents),
-                    purchase: priceText(costs.data()?.purchaseCents ?? null),
-                    active: item.active,
+                    name: canonicalItem.name,
+                    code: canonicalItem.code,
+                    unit: canonicalItem.unit,
+                    selling: priceText(canonicalItem.sellingCents),
+                    purchase: priceText(canonicalItem.purchaseCents),
+                    active: canonicalItem.active,
                   });
                 } catch (error) {
                   setMessage(reportError(error));

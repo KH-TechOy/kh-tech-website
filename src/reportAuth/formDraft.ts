@@ -170,6 +170,23 @@ export function flushFormDrafts(uid: string) {
     if (key.startsWith(prefix) && !draft.flush()) ok = false;
   return ok;
 }
+/** Security migration on Employee admission/role loss; retain operational form contents. */
+export function redactFinancialFormDrafts(uid: string) {
+  const prefix=formDraftPrefix+encodeURIComponent(uid)+':';
+  const keys=new Set([...sessions.keys()]);
+  try {for(let i=0;i<sessionStorage.length;i++){const key=sessionStorage.key(i);if(key)keys.add(key)}}catch{/* Live sessions are still redacted. */}
+  for(const key of keys){
+    if(!key.startsWith(prefix))continue;
+    const identity=decodeURIComponent(key.slice(prefix.length)),live=sessions.get(key);
+    if(/^price:.*:billing:(hourRateCents|travelRateCents|vatBasisPoints)$/.test(identity)){
+      if(live)live.clear({text:'',base:0});
+      try{sessionStorage.removeItem(key)}catch{/* Storage failures cannot restore access to protected server data. */}
+    }else if(identity==='catalog'){
+      if(live){live.update((v:any)=>({...v,purchase:''}));live.flush()}
+      try{const raw=sessionStorage.getItem(key);if(raw){const saved=JSON.parse(raw);if(saved.value?.purchase){saved.value.purchase='';sessionStorage.setItem(key,JSON.stringify(saved))}}}catch{/* Do not discard the remaining catalog draft. */}
+    }
+  }
+}
 export function unfinishedFormIds(uid: string) {
   const prefix = formDraftPrefix + encodeURIComponent(uid) + ":";
   const keys = new Set([...sessions.keys()]);

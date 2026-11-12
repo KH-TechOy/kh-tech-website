@@ -201,6 +201,7 @@ export function googleServices(
                   fields: firestoreFields(data),
                 },
               }),
+            delete: (path) => writes.push({delete:root.replace('https://firestore.googleapis.com/v1/','')+'/'+path}),
           });
           await request(root + ":commit", { transaction, writes });
           return result;

@@ -33,6 +33,8 @@ export function sessionDraftStorage(uid: string, reportId?: string) {
         JSON.stringify({
           ...state.form,
           ...(state.billing ? { billing: state.billing } : {}),
+          ...(state.operations ? { operations:state.operations } : {}),
+          ...(state.signature !== undefined ? { signature:state.signature } : {}),
           reportId: state.id,
           photos: state.photos.map((p) => p.data),
           photoCategories: state.photos.map((p) => p.category),

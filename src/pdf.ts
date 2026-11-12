@@ -2,16 +2,23 @@ import { jsPDF } from "jspdf";
 import { brandLogoData } from "./brand-logo-data";
 import { billingTotals, money, type Billing } from './reportWorkModel';
 import type { ReportForm } from './reportModel';
+import type { ReportSignature } from './reportSignature';
+import type { Approval } from './reportWorkModel';
 type ReportPhoto = string | { data: string; category?: string };
 export type PdfInput = {
   id: string;
   form: Record<string, any>;
   photos: ReportPhoto[];
   billing?: Billing;
+  signature?: ReportSignature | null;
+  approval?: Approval;
+  quotationReference?: string;
+  comment?: string;
+  compact?: boolean;
 };
 
-export function buildPdf({ id, form, photos, billing }: PdfInput) {
-  const doc = new jsPDF({ format: "a4", unit: "mm" }),
+export function buildPdf({ id, form, photos, billing, signature, approval, quotationReference, comment, compact=false }: PdfInput) {
+  const doc = new jsPDF({ format: "a4", unit: "mm", compress:compact }),
     left = 16,
     right = 194,
     bottom = 268,
@@ -125,6 +132,7 @@ export function buildPdf({ id, form, photos, billing }: PdfInput) {
   );
   section("Työn kuvaus", form.description);
   section("Tehdyt työvaiheet", form.tasks);
+  if (quotationReference) section('Tarjouspyynnön viite',quotationReference);
   const materials = (
     Array.isArray(form.materials) ? form.materials : []
   ).filter((m) => m && typeof m === "object" && (m.name || m.quantity));
@@ -185,12 +193,31 @@ export function buildPdf({ id, form, photos, billing }: PdfInput) {
   }
   if (billing) {
     const totals = billingTotals(form as ReportForm, billing);
-    section('Laskutuksen valmistelu (ei lasku)', `Työ: ${money(totals.work)}\nMateriaalit: ${money(totals.materialsTotal)}\nMatka: ${money(totals.travel)}\nMuut kulut: ${money(totals.other)}${billing.otherDescription ? ' / ' + billing.otherDescription : ''}\nYhteensä alv 0 %: ${money(totals.net)}\nALV ${billing.vatBasisPoints / 100} %: ${money(totals.vat)}`);
+    section('Laskutuksen valmistelu (ei lasku)', `Työ: ${money(totals.work)}\nMateriaalit: ${money(totals.materialsTotal)}\nMatka: ${money(totals.travel)}\nMuut kulut: ${money(totals.other)}${billing.otherDescription ? ' / ' + billing.otherDescription : ''}\nYhteensä alv 0 %: ${money(totals.net)}\nALV ${String(billing.vatBasisPoints / 100).replace('.', ',')} %: ${money(totals.vat)}\nYhteensä sis. ALV: ${money(totals.gross)}`);
     form.materials.filter((row: any) => row.name).forEach((row: any) => section(row.name, `${row.quantity} ${row.unit} × ${money(row.unitPriceCents || 0)} = ${money(Math.round(Number(String(row.quantity).replace(',', '.')) * (row.unitPriceCents || 0)))}`));
   }
   if (form.notes) section("Lisähuomiot", form.notes);
   if (form.followup) section("Jatkotoimet", form.followup);
   if (form.acknowledgement) section("Asiakkaan kuittaus", form.acknowledgement);
+  if (signature?.confirmedAt) {
+    ensure(68);label('Asiakkaan allekirjoitus');
+    const top=y, width=100,height=40;
+    doc.setDrawColor('#b7c5cd');doc.rect(left,top,width,height);
+    doc.setDrawColor('#1e2529');doc.setLineWidth(.4);
+    for(const item of signature.strokes) {
+      const stroke=item.points;
+      let px=left+stroke[0]/10000*width,py=top+stroke[1]/10000*height;
+      const path:{op:string;c:number[]}[]=[{op:'m',c:[px,py]}];
+      if(stroke.length===2)path.push({op:'l',c:[px+.1,py+.1]});
+      for(let i=2;i<stroke.length;i+=2){const cx=left+stroke[i]/10000*width,cy=top+stroke[i+1]/10000*height,nx=i+2<stroke.length?left+(stroke[i]+stroke[i+2])/2/10000*width:cx,ny=i+3<stroke.length?top+(stroke[i+1]+stroke[i+3])/2/10000*height:cy;path.push({op:'c',c:[px+(cx-px)*2/3,py+(cy-py)*2/3,nx+(cx-nx)*2/3,ny+(cy-ny)*2/3,nx,ny]});px=nx;py=ny;}
+      doc.path(path).stroke();
+    }
+    const signatureTime=signature.confirmedAt.slice(0,10).split('-').reverse().join('.')+' '+signature.confirmedAt.slice(11,16)+' UTC';
+    y+=height+7;doc.setFontSize(8);doc.text('Vahvistettu: '+signatureTime,left,y);y+=5;
+    doc.text('Allekirjoitus ei ole henkilöllisyyden varmennus.',left,y);y+=10;
+  }
+  if(comment)section('Ylläpitäjän kommentti',comment);
+  if(approval)section('Hyväksyntä',`${approval.byName}\n${approval.displayAt}\nHyväksytty raporttiversio: ${approval.revision}`);
   photos.forEach((photo, index) => {
     const data = typeof photo === "string" ? photo : photo.data,
       category = typeof photo === "string" ? "during" : photo.category;

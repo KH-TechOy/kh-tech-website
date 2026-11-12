@@ -2,6 +2,8 @@ import type { ReportState } from "../reportModel";
 import { reportIsEmpty } from "../reportModel";
 import type { WorkReport } from "../reportWorkModel";
 import type { DraftSession } from "./draftSession";
+import { emptyOperations } from '../reportWorkModel';
+import { stripFinancial } from './employeePrivacy';
 
 export type CloudStatus =
   | "loading"
@@ -24,6 +26,8 @@ export const cloudText = (state: ReportState) =>
   JSON.stringify(
     {
       form: state.form,
+      operations: state.operations || (state.billing ? {travelKm:state.billing.travelKm,otherCents:state.billing.otherCents,otherDescription:state.billing.otherDescription}:emptyOperations()),
+      signature: state.signature || null,
       ...(state.billing ? { billing: state.billing } : {}),
     },
     (_, value: unknown) => {
@@ -41,6 +45,7 @@ export function createCloudDraft(
   checkpoint: Pick<Storage, "getItem" | "setItem">,
   admin = false,
 ) {
+  if (!admin && session.getSnapshot().state.billing) session.update(stripFinancial(session.getSnapshot().state));
   let view = {
     status: "loading" as CloudStatus,
     remote: null as WorkReport | null,
@@ -95,6 +100,8 @@ export function createCloudDraft(
         id: remote.id,
         form: remote.form,
         billing: remote.billing,
+        operations:remote.operations,
+        signature:remote.signature,
       },
       local().revision,
     );
@@ -129,6 +136,8 @@ export function createCloudDraft(
             ...local().state,
             form: remote.form,
             billing: remote.billing,
+            operations:remote.operations,
+            signature:remote.signature,
           })
         )
       ) {
@@ -158,7 +167,7 @@ export function createCloudDraft(
         if (!Number.isInteger(data.revision) || typeof data.text !== "string")
           throw new Error("checkpoint");
         base = data.revision;
-        acknowledged = data.text;
+        acknowledged = cloudText(!admin ? stripFinancial(JSON.parse(data.text)) : JSON.parse(data.text));
       } else
         acknowledged = reportIsEmpty(local().state)
           ? cloudText(local().state)
@@ -180,7 +189,7 @@ export function createCloudDraft(
       if (stopped) return;
       const code = (error as { code?: string }).code;
       if (
-        ["report_forbidden", "access_disabled", "invalid_session"].includes(
+        ["report_forbidden", "report_archived", "access_disabled", "invalid_session"].includes(
           code || "",
         )
       ) {
@@ -257,6 +266,8 @@ export function createCloudDraft(
         ...pending.state,
         form: remote.form,
         billing: remote.billing,
+        operations:remote.operations,
+        signature:remote.signature,
       });
       if (local().revision === pending.localRevision) {
         if (!apply(remote)) {
@@ -273,6 +284,8 @@ export function createCloudDraft(
             JSON.stringify(pending.state.billing)
               ? remote.billing
               : current.billing,
+          operations: JSON.stringify(current.operations) === JSON.stringify(pending.state.operations) ? remote.operations : current.operations,
+          signature: JSON.stringify(current.signature) === JSON.stringify(pending.state.signature) ? remote.signature : current.signature,
           form: {
             ...current.form,
             materials: current.form.materials.map((row, index) => {
@@ -318,7 +331,7 @@ export function createCloudDraft(
       } else if (
         [
           "report_locked",
-          "report_forbidden",
+          "report_forbidden", "report_archived",
           "access_disabled",
           "invalid_session",
         ].includes(code || "")

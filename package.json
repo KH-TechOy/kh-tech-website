@@ -21,6 +21,7 @@
     "contact:bundle": "wrangler deploy --dry-run --config contact/wrangler.jsonc --outdir ../.playwright-artifacts/contact30-worker",
     "test:contact-ui": "playwright test --config playwright.contact.config.ts",
     "check:report": "tsc -p report-api/tsconfig.json",
+    "report:relay:bundle": "node scripts/build-report-relay.mjs",
     "report:bundle": "wrangler deploy --dry-run --config report-api/wrangler.jsonc --outdir ../.playwright-artifacts/report/worker",
     "test:report": "node scripts/run-report-tests.mjs",
     "test:report:inside": "vitest run --config vitest.report.config.ts && playwright test --config playwright.report.config.ts"

@@ -11,6 +11,8 @@ import {
   type WorkReport,
   type CatalogMaterial,
   type WorkStatus,
+  billingTotals,
+  money,
 } from "../reportWorkModel";
 import { createReportId } from "../utils";
 import { reportIsEmpty } from "../reportModel";
@@ -20,6 +22,9 @@ import { FormDraftNotice, useFormDraft } from "./useFormDraft";
 import { unfinishedFormIds } from "./formDraft";
 import { finnishDate, isoDate, scheduleLabel } from "../reportLocale";
 import { dateEntry } from "../reportDateInputs";
+import {approvalProblems,archiveLabel} from '../reportArchive';
+import {ArchiveControls,ArchiveImport,useArchiveControls} from './ArchiveControls';
+import PhotoDelivery from './PhotoDelivery';
 const Editor = React.lazy(() => import("../Report"));
 type Card = Pick<
   WorkReport,
@@ -108,6 +113,9 @@ export default function WorkWorkspace({
     100,
     catalogPages,
   );
+  const archiveSources=React.useMemo(()=>admin?[[]]:[],[admin]);
+  const [archivePages,setArchivePages]=React.useState(1);
+  const archiveList=useLivePages<{id:string;revision:number;status:import('../reportArchive').ArchiveStatus;removedAt?:string}>('archiveMetadata',archiveSources,'id','asc',25,archivePages);
   const cards = workList.rows
     .filter((row) => row.status in statusLabel)
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
@@ -271,6 +279,8 @@ export default function WorkWorkspace({
               onSaved={() => setEditingOrder(null)}
             />
           )}
+          {admin&&<ArchiveImport user={user}/>}
+          {admin&&<details className="archive-list"><summary>Hyväksyttyjen raporttien arkistot ({archiveList.rows.length})</summary><ul>{archiveList.rows.map(a=><li key={a.id}><strong>{a.id}</strong> · versio {a.revision} · {archiveLabel[a.status] || 'Arkistointi kesken'}{a.removedAt?<p>Poistettu aktiivisesta tietokannasta. Tuo tallennettu .khtreport tarkasteltavaksi.</p>:<button type="button" className="button outline" onClick={()=>open(a.id)}>Avaa arkistoitu raportti</button>}</li>)}</ul>{archiveList.more&&<button className="button outline" onClick={()=>setArchivePages(n=>n+1)}>Lataa lisää arkistoja</button>}{archiveList.error&&<p role="alert">{archiveList.error}</p>}</details>}
           {!!unfinishedOrders.length && (
             <details className="work-recoveries">
               <summary>
@@ -524,6 +534,8 @@ function CloudEditor({
             revision,
             requestId,
             form: state.form,
+            operations:state.operations,
+            signature:state.signature ?? null,
             ...(admin && state.billing ? { billing: state.billing } : {}),
           }).then((r) => r.report),
       },
@@ -547,6 +559,7 @@ function CloudEditor({
   const [message, setMessage] = React.useState(""),
     [busy, setBusy] = React.useState(false);
   const transitioning = React.useRef(false);
+  const archive=useArchiveControls(user,cloud.remote,admin,onBack);
   React.useEffect(() => {
     void controller.start();
     const online = () => void controller.retry();
@@ -572,7 +585,8 @@ function CloudEditor({
       doc(reportFirebase!.db, "reports", remoteId),
       (snapshot) => {
         if (!snapshot.metadata.fromCache && snapshot.exists())
-          void controller.receive(snapshot.data() as WorkReport);
+          if(admin) void reportRequest<{report:WorkReport}>(user,'/work',{action:'load',id:remoteId}).then(r=>controller.receive(r.report)).catch(e=>setMessage(reportError(e)));
+          else void controller.receive(snapshot.data() as WorkReport);
       },
       (error) => {
         if (["permission-denied", "unauthenticated"].includes(error.code))
@@ -582,10 +596,10 @@ function CloudEditor({
         );
       },
     );
-  }, [remoteId, controller]);
+  }, [remoteId, controller,admin,user]);
   async function transition(status: WorkStatus) {
     if (transitioning.current) return;
-    if (status === "PENDING_REVIEW") {
+    if (status === "PENDING_REVIEW" || status === 'APPROVED') {
       const invalid = document.querySelector<HTMLInputElement>(
         ".report-page input:invalid",
       );
@@ -613,6 +627,11 @@ function CloudEditor({
         );
         return;
       }
+      if(status==='APPROVED'){
+        const problems=approvalProblems(remote);
+        if(problems.length){setMessage(problems.join(' '));return;}
+        if(!remote.billing||!confirm('Hyväksytäänkö raportti '+remote.id+' (versio '+remote.revision+')? Yhteensä sis. ALV '+money(billingTotals(remote.form,remote.billing).gross)+'. Hyväksyttyä versiota ei voi muokata.'))return;
+      }
       const result = await reportRequest<{ report: WorkReport }>(
         user,
         "/work",
@@ -622,6 +641,7 @@ function CloudEditor({
           revision: remote.revision,
           requestId: crypto.randomUUID(),
           status,
+          ...(status==='APPROVED'?{confirmedApproval:true}:{}),
           comment,
         },
       );
@@ -678,6 +698,7 @@ function CloudEditor({
         )}
       </p>
       {message && <p role="alert">{message}</p>}
+      {cloud.error==='report_archived'&&<button type="button" className="button outline" onClick={()=>onForget(controller.stop)}>Poista paikallinen palautuskopio</button>}
       {cloud.error && (
         <p role="alert">
           {cloud.error.includes(" ")
@@ -755,24 +776,14 @@ function CloudEditor({
             </button>
           </div>
         )}
-      {!bottom && locked && (
-        <button
-          className="button outline"
-          onClick={() =>
-            void import("../pdf").then(({ createPdf }) =>
-              createPdf(session.getSnapshot().state),
-            )
-          }
-        >
-          Lataa tallennettu PDF
-        </button>
-      )}
+      {admin&&cloud.remote?.status==='PENDING_REVIEW'&&<div className="approval-review"><p>Tarkista materiaalit, työtunnit, matkakulut, hinnat ja ALV ennen hyväksyntää.</p>{approvalProblems({...cloud.remote,form:session.getSnapshot().state.form,signature:session.getSnapshot().state.signature}).map((problem,i)=><p key={i} role="alert">{problem}</p>)}<button type="button" className="button primary" disabled={busy} onClick={()=>void transition('APPROVED')}>Hyväksy raportti</button></div>}
+      {admin&&cloud.remote?.status==='APPROVED'&&<ArchiveControls model={archive} report={cloud.remote}/>}
     </section>
   );
   return (
     <>
       {workflow()}
-      {!["report_forbidden", "access_disabled", "invalid_session"].includes(
+      {!["report_forbidden", "report_archived", "access_disabled", "invalid_session"].includes(
         cloud.error,
       ) && (
         <Editor
@@ -782,13 +793,14 @@ function CloudEditor({
           admin={admin}
           readOnly={locked || cloud.status === "loading" || busy}
           ownerUid={user.uid}
+          photoActions={(photos,append)=><PhotoDelivery user={user} id={session.getSnapshot().state.id} photos={photos} append={append} ready={!!cloud.remote&&['PENDING_REVIEW','APPROVED'].includes(cloud.remote.status)}/>}
           cloudSave={() => void controller.save()}
           onDiscardLocal={() => {
             onForget(controller.stop);
           }}
         />
       )}
-      {!["report_forbidden", "access_disabled", "invalid_session"].includes(
+      {!["report_forbidden", "report_archived", "access_disabled", "invalid_session"].includes(
         cloud.error,
       ) && workflow(true)}
     </>

@@ -18,10 +18,12 @@ import {
 } from "lucide-react";
 import { Brand, company, services, url } from "./brand";
 import { createReportId } from "./utils";
-import { billingTotals, emptyBilling, money, type CatalogMaterial } from './reportWorkModel';
+import { money, type CatalogMaterial } from './reportWorkModel';
 import { finnishDate, isoDate, timeValid } from './reportLocale';
 import { dateEntry, timeEntry } from './reportDateInputs';
 import { BufferedPrice, MaterialPicker } from './reportAuth/ReportInputs';
+import BillingPanels, {BillingSummary} from './reportAuth/BillingPanels';
+import SignaturePad,{SignatureView} from './reportAuth/SignaturePad';
 import {
   reportIsEmpty,
   reportErrors,
@@ -119,7 +121,6 @@ function Preview({
     return () => dialog.current?.close();
   }, []);
   const { form, photos, id } = state;
-  const previewBilling = state.billing ? billingTotals(form, state.billing) : null;
   return (
     <dialog
       className="report-preview"
@@ -210,15 +211,12 @@ function Preview({
               </tbody>
             </table>
           </section>
-          {previewBilling && state.billing && <section><h3>Laskutuksen valmistelu (ei lasku)</h3>
-            <dl className="billing-totals">{([
-              ['Työ', previewBilling.work], ['Materiaalit', previewBilling.materialsTotal],
-              ['Matka', previewBilling.travel], ['Muut kulut', previewBilling.other],
-              ['Yhteensä alv 0 %', previewBilling.net], ['Arvonlisävero', previewBilling.vat],
-            ] as const).map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{money(value)}</dd></div>)}</dl>
+          {state.billing && <section><h3>Laskutuksen valmistelu (ei lasku)</h3>
+            <BillingSummary form={form} billing={{...state.billing,...state.operations}}/>
             {state.billing.otherDescription && <p>{state.billing.otherDescription}</p>}
             {form.materials.filter(row => row.name).map((row, i) => <p key={i}>{row.name}: {row.quantity} {row.unit} × {money(row.unitPriceCents || 0)} = {money(Math.round(Number(row.quantity.replace(',', '.') || 0) * (row.unitPriceCents || 0)))}</p>)}
           </section>}
+          {state.signature?.confirmedAt&&<section><h3>Asiakkaan allekirjoitus</h3><SignatureView value={state.signature}/></section>}
           {[
             ["Lisähuomiot", form.notes],
             ["Jatkotoimet", form.followup],
@@ -313,6 +311,7 @@ export default function Report({
   readOnly = false,
   onDiscardLocal,
   ownerUid = '',
+  photoActions,
 }: {
   draftStorage?: import("./reportModel").DraftStorage;
   draftSession?: DraftSession;
@@ -323,6 +322,7 @@ export default function Report({
   readOnly?: boolean;
   onDiscardLocal?: () => void;
   ownerUid?: string;
+  photoActions?: (photos:ReportPhoto[],append:(photos:ReportPhoto[])=>void)=>React.ReactNode;
 }) {
   const [session] = React.useState(
     () => draftSession || createDraftSession(draftStorage),
@@ -345,6 +345,7 @@ export default function Report({
     cloudSave?.();
   };
   const setState = session.update;
+  const localGeneration=session.getGeneration();
   const [message, setMessage] = React.useState("");
   const [checked, setChecked] = React.useState(false),
     [preview, setPreview] = React.useState(false),
@@ -371,7 +372,7 @@ export default function Report({
     window.addEventListener("pagehide", flush);
     document.addEventListener("visibilitychange", visibility);
     window.addEventListener("beforeunload", leaving);
-    void import("./pdf").catch(() => {});
+    if(admin)void import("./pdf").catch(() => {});
     return () => {
       mounted.current = false;
       flush();
@@ -379,7 +380,7 @@ export default function Report({
       document.removeEventListener("visibilitychange", visibility);
       window.removeEventListener("beforeunload", leaving);
     };
-  }, [session]);
+  }, [session,admin]);
   const errors = checked ? reportErrors(state.form) : {},
     progress = requiredReportFields.filter((name) =>
       state.form[name].trim(),
@@ -419,11 +420,12 @@ export default function Report({
     return true;
   }
   async function download() {
+    if(!admin || cloudMode && readOnly)return;
     if (!validate()) return;
     setPdfBusy(true);
     try {
       const { createPdf } = await import("./pdf");
-      createPdf({ id: state.id, form: state.form, photos: state.photos, billing: state.billing });
+      createPdf({ id: state.id, form: state.form, photos: state.photos, billing:state.billing?{...state.billing,...state.operations}:undefined,signature:state.signature });
       setMessage(
         "PDF luotu tunnuksella " +
           state.id +
@@ -905,32 +907,24 @@ export default function Report({
                 </div>
               </div>
             </section>
-            {cloudMode && <section className="report-section billing-summary"><h2>Laskutuksen valmistelu</h2><p>Ei lasku. Hinnat ilman arvonlisäveroa. Tuntihinta, matkaveloitus, muut kulut ja ALV asetetaan ylläpidossa; oletuksena 0, ei oletettua verokantaa.</p>
-              {admin && <div className="work-filters">{(['hourRateCents', 'travelKm', 'travelRateCents', 'otherCents', 'vatBasisPoints'] as const).map((key, i) => <label key={key}>{['Tuntihinta (€)', 'Matka (km)', 'Kilometriveloitus (€)', 'Muut kulut (€)', 'ALV (%)'][i]}<BufferedPrice label={['Tuntihinta (€)', 'Matka (km)', 'Kilometriveloitus (€)', 'Muut kulut (€)', 'ALV (%)'][i]} uid={ownerUid} identity={state.id + ':billing:' + key} value={(state.billing || emptyBilling())[key]} scale={key === 'travelKm' ? 1 : 100} maximum={key === 'vatBasisPoints' ? 10000 : key === 'travelKm' ? 100000 : 100000000} onCommit={value => setState(s => ({ ...s, billing: { ...(s.billing || emptyBilling()), [key]: value } }))} /></label>)}<label>Muiden kulujen selite<input value={state.billing?.otherDescription || ''} maxLength={500} onChange={e => setState(s => ({ ...s, billing: { ...(s.billing || emptyBilling()), otherDescription: e.target.value } }))} /></label></div>}
-              <dl className="billing-totals">{Object.entries(billingTotals(state.form, state.billing || emptyBilling())).filter(([key]) => !['materials', 'gross'].includes(key)).map(([key, value]) => <div key={key}><dt>{{ materialsTotal: 'Materiaalit', work: 'Työ', travel: 'Matka', other: 'Muut kulut', net: 'Yhteensä alv 0 %', vat: 'Arvonlisävero' }[key]}</dt><dd>{money(value as number)}</dd></div>)}</dl>
-            </section>}
+            {cloudMode && <BillingPanels state={state} session={session} admin={admin} uid={ownerUid}/> }
             <section className="report-section" id="viimeistely">
               <div className="report-section-heading">
                 <span>04</span>
                 <div>
-                  <h2>Tarkista ja lataa</h2>
+                  <h2>{admin?'Tarkista ja lataa':'Viimeistele raportti'}</h2>
                   <p>
-                    Lisää huomiot ja jatkotoimet. Tarkista raportti ennen
-                    PDF-latausta.
+                    Lisää huomiot, jatkotoimet ja vapaaehtoinen allekirjoitus.
                   </p>
                 </div>
               </div>
               <div className="form-grid">
                 {field("notes", "Lisähuomiot", "textarea", true)}
                 {field("followup", "Jatkotoimet", "textarea", true)}
-                {field(
-                  "acknowledgement",
-                  "Asiakkaan kuittaus (vapaaehtoinen)",
-                  "text",
-                  true,
-                )}
+                <SignaturePad value={state.signature} reportId={state.id} customer={state.form.customer} date={state.form.date} readOnly={readOnly} onChange={signature=>setState(s=>({...s,signature}))}/>
+                {state.form.acknowledgement && <p className="work-help">Aiempi tekstikuittaus: {state.form.acknowledgement}</p>}
               </div>
-              <div className="report-actions">
+              {admin && (!cloudMode || !readOnly) && <div className="report-actions">
                 <button
                   ref={previewTrigger}
                   type="button"
@@ -950,10 +944,10 @@ export default function Report({
                   <Download size={18} />
                   {pdfBusy ? "Luodaan PDF…" : "Luo ja lataa PDF"}
                 </button>
-              </div>
+              </div>}
               <p className="report-footer">
                 <Info size={17} />
-                {cloudMode ? 'PDF luodaan selaimessa. Teksti tallentuu pilveen; kuvat eivät siirry palvelimelle. Sähköpostitoimitus ei ole käytössä.' : 'PDF luodaan selaimessa. Raporttia tai kuvia ei lähetetä palvelimelle. Sähköpostitoimitusta ei ole otettu käyttöön.'}
+                {admin ? 'Luonnoksen PDF on tarkastusta varten. Lopullinen hyväksytty PDF ja arkistointi ovat työnkulkupaneelissa. Työkuvat toimitetaan erikseen.' : 'Täydennä raportti ja lähetä se tarkastettavaksi. Ylläpitäjä käsittelee hyväksynnän ja lopulliset raporttitiedostot. Kuvat säilyvät tässä välilehdessä.'}
               </p>
             </section>
             {message && (
@@ -964,7 +958,7 @@ export default function Report({
             <div className="report-delete">
               <span>
                 <Check size={16} />
-                Lataa PDF ennen luonnoksen poistamista.
+                Varmista tietojen tallennus ennen paikallisen luonnoksen poistamista.
               </span>
               <button
                 type="button"
@@ -977,9 +971,10 @@ export default function Report({
             </div>
             </fieldset>
           </form>
+          {photoActions?.(state.photos,photos=>{if(localGeneration===session.getGeneration())setState(s=>({...s,photos:[...s.photos,...photos].slice(0,6)}))})}
         </div>
       </main>
-      {preview && (
+      {admin && preview && (
         <Preview
           state={state}
           onClose={() => {

@@ -20,6 +20,7 @@ import { sessionDraftStorage } from "./drafts";
 import { createDraftSession, type DraftSession } from "./draftSession";
 import { readReport, reportIsEmpty } from "../reportModel";
 import { flushFormDrafts } from './formDraft';
+import { sanitizeEmployeeDrafts } from './employeePrivacy';
 import "./report-auth.css";
 const Workspace = React.lazy(() => import('./WorkWorkspace'));
 const AdminPanel = React.lazy(() => import("./employees"));
@@ -93,6 +94,7 @@ export default function ReportApp() {
         if (!drafts.current.has(current.uid))
           drafts.current.set(current.uid, createDraftSession(store.current));
         draft.current = drafts.current.get(current.uid)!;
+        if(result.profile.role !== 'admin') sanitizeEmployeeDrafts(current.uid,drafts.current);
         verifiedUid.current = current.uid;
         setProfile(result.profile);
         if (result.profile.role !== "admin")
@@ -139,6 +141,7 @@ export default function ReportApp() {
             return;
           }
           // This listener can only revoke UI access; it never grants authority without the Worker.
+          if(data.role !== 'admin') sanitizeEmployeeDrafts(current.uid,drafts.current);
           setProfile((previous) =>
             previous && previous.uid === current.uid
               ? {
@@ -313,7 +316,7 @@ export default function ReportApp() {
       <main id="report-access-content">
         {user && profile && (
           <p className="access-retention">
-            Raporttien teksti synkronoidaan pilveen. Paikallinen palautuskopio
+            Raporttitiedot ja allekirjoitus synkronoidaan pilveen. Paikallinen palautuskopio
             ja kuvat ovat tämän välilehden salaamattomassa selainmuistissa.
             Uloskirjautuminen säilyttää ne omalla käyttäjätunnuksellasi.
             Kuvat eivät siirry laitteiden välillä. Käytä henkilökohtaista laitetta.
@@ -424,8 +427,8 @@ export default function ReportApp() {
                   <h1>Hyvää työpäivää, {profile.displayName.split(" ")[0]}.</h1>
                   <p>
                     Hallitse työtehtäviä, jatka raporttia ja lähetä valmis teksti
-                    tarkastettavaksi. PDF ladataan laitteelle; lopullinen arkistointi
-                    ja sähköpostitoimitus eivät ole käytössä.
+                    tarkastettavaksi. Ylläpitäjä hyväksyy raportin ja käsittelee
+                    lopulliset tiedostot sekä erikseen varmennettavan arkistoinnin.
                   </p>
                   <button
                     className="button primary"

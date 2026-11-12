@@ -1,5 +1,6 @@
 import { createReportId } from "./utils";
 import { helsinkiToday } from './reportLocale';
+import { signatureValid } from './reportSignature';
 export type Material = { name: string; quantity: string; unit: string; rowId?: string; catalogId?: string; unitPriceCents?: number };
 export type ReportForm = {
   customer: string;
@@ -25,6 +26,8 @@ export type ReportState = {
   form: ReportForm;
   photos: ReportPhoto[];
   billing?: import('./reportWorkModel').Billing;
+  operations?: import('./reportWorkModel').Operations;
+  signature?: import('./reportSignature').ReportSignature | null;
 };
 export type ReportFieldName = Exclude<keyof ReportForm, "materials">;
 export const requiredReportFields: ReportFieldName[] = [
@@ -96,6 +99,8 @@ export function readReport(store?: DraftStorage): ReportState {
         }));
     if (stored.billing && typeof stored.billing === 'object' && !Array.isArray(stored.billing))
       state.billing = stored.billing as unknown as import('./reportWorkModel').Billing;
+    if (stored.operations && typeof stored.operations === 'object') state.operations = stored.operations as unknown as import('./reportWorkModel').Operations;
+    if (stored.signature === null || signatureValid(stored.signature)) state.signature = stored.signature;
     const categories = Array.isArray(stored.photoCategories)
       ? stored.photoCategories
       : [];
@@ -127,7 +132,8 @@ export function readReport(store?: DraftStorage): ReportState {
 }
 export function reportIsEmpty(state: ReportState) {
   return (
-    !state.photos.length &&
+    !state.photos.length && !state.signature?.strokes.length &&
+    !state.operations?.travelKm && !state.operations?.otherCents && !state.operations?.otherDescription &&
     Object.entries(state.form).every(([key, value]) =>
       key === "date" || key === "materials"
         ? key === "date" ||
@@ -152,6 +158,8 @@ export function saveReport(state: ReportState, store?: DraftStorage) {
     JSON.stringify({
       ...state.form,
       ...(state.billing ? { billing: state.billing } : {}),
+      ...(state.operations ? { operations:state.operations } : {}),
+      ...(state.signature !== undefined ? { signature:state.signature } : {}),
       photos: state.photos.map((photo) => photo.data),
       photoCategories: state.photos.map((photo) => photo.category),
     }),

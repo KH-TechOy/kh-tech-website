@@ -17,6 +17,10 @@ import {
   type WorkReport,
   type WorkStatus,
 } from "../src/reportWorkModel";
+import { approvalProblems, makePortable, validOperations, canonical } from '../src/reportArchive';
+import { signatureValid } from '../src/reportSignature';
+import { finnishTimestamp } from '../src/reportLocale';
+import { readWork, publicReport, viewerReport, opsFromBilling, type FullReport } from './workStorage';
 
 const idPattern = /^KHT-\d{8}-[A-F0-9]{6}$/;
 const uuidPattern = /^[a-f0-9-]{36}$/;
@@ -201,10 +205,11 @@ export function workService(db: Database) {
   return async (claims: Claims, input: Document) => {
     const action = text(input.action, 20, true),
       id = text(input.id, 128, true);
-    if (!(action === "material" ? catalogPattern : idPattern).test(id)) fail();
+    if (!(["material","loadMaterial"].includes(action) ? catalogPattern : idPattern).test(id)) fail();
     const allowed: Record<string, string[]> = {
       load: ["action", "id"],
-      save: ["action", "id", "revision", "requestId", "form", "billing"],
+      loadMaterial:['action','id'],
+      save: ["action", "id", "revision", "requestId", "form", "billing", "operations", "signature"],
       createOrder: [
         "action",
         "id",
@@ -235,6 +240,7 @@ export function workService(db: Database) {
         "revision",
         "status",
         "comment",
+        "confirmedApproval",
       ],
       material: [
         "action",
@@ -252,13 +258,13 @@ export function workService(db: Database) {
     if (!allowed[action]) fail();
     keys(input, allowed[action]);
     if (
-      action !== "load" &&
+      !['load','loadMaterial'].includes(action) &&
       (typeof input.requestId !== "string" ||
         !uuidPattern.test(input.requestId))
     )
       fail();
     const fingerprint =
-      action === "load"
+      ['load','loadMaterial'].includes(action)
         ? ""
         : Array.from(
             new Uint8Array(
@@ -302,7 +308,7 @@ export function workService(db: Database) {
         6,
         Math.floor(
           30 /
-            (5 +
+            (6 +
               catalogReads +
               assigneeReads +
               (action === "material" ? 1 : 0)),
@@ -315,8 +321,13 @@ export function workService(db: Database) {
         if (!usable(actor, claims)) fail("access_disabled", 403);
         const admin = actor.role === "admin",
           now = new Date().toISOString();
-        if (["createOrder", "order", "material"].includes(action) && !admin)
+        if (["createOrder", "order", "material","loadMaterial"].includes(action) && !admin)
           fail("admin_required", 403);
+        if(action==='loadMaterial'){
+          const [item,costs]=await Promise.all([tx.get('materialCatalog/'+id),tx.get('materialCosts/'+id)]);
+          if(!item)fail('not_found',404);
+          return {material:{...item,purchaseCents:costs?.purchaseCents??null}};
+        }
         if (action === "material") {
           const path = "materialCatalog/" + id;
           const [existing, privateCosts] = await Promise.all([
@@ -374,21 +385,22 @@ export function workService(db: Database) {
           );
           return { completed: true };
         }
-        const path = "reports/" + id,
-          raw = await tx.get(path);
-        let previous = raw as unknown as WorkReport | null;
-        if (previous) authorized(previous, claims.uid, admin);
+        const path = "reports/" + id;
+        const loaded = await readWork(tx,id), raw = loaded.raw;
+        if(!raw && (await tx.get('archiveMetadata/'+id))?.removedAt)fail('report_archived',410);
+        let previous = loaded.report;
+        if (raw) authorized(raw as unknown as WorkReport, claims.uid, admin);
         if (action === "load")
           return {
-            report: previous?.schemaVersion === 2 ? previous : null,
-            legacy: !!previous && previous.schemaVersion !== 2,
+            report: previous ? viewerReport(previous,admin) : null,
+            legacy: !!raw && !previous,
           };
         if (raw?.lastMutation === input.requestId) {
-          if (raw.fingerprint !== fingerprint) fail("request_conflict", 409);
-          return { report: previous };
+          if (loaded.finance?.fingerprint !== fingerprint) fail("request_conflict", 409);
+          return { report: previous ? viewerReport(previous,admin) : null };
         }
-        if (previous && previous.schemaVersion !== 2) {
-          if (action !== "save" || !["draft"].includes(String(previous.status)))
+        if (raw && !previous) {
+          if (action !== "save" || !["draft"].includes(String(raw.status)))
             fail("legacy_locked", 409);
           previous = null; // Migrate editable A metadata only; retain identity/assignments below.
         }
@@ -400,11 +412,11 @@ export function workService(db: Database) {
         if (!previous && !["save", "createOrder"].includes(action))
           fail("not_found", 404);
         if (action === "createOrder" && raw) fail("revision_conflict", 409);
-        const next: WorkReport = previous
+        const next: FullReport = previous
           ? structuredClone(previous)
           : {
               id,
-              schemaVersion: 2,
+              schemaVersion: 3,
               ownerUid: raw ? String(raw.ownerUid) : claims.uid,
               assignedTo: raw ? (raw.assignedTo as string[]) : [],
               title: "",
@@ -412,6 +424,8 @@ export function workService(db: Database) {
               revision: 0,
               form: emptyReport().form,
               billing: emptyBilling(),
+              operations: opsFromBilling(emptyBilling()),
+              signature: null,
               schedule: "",
               quotationReference: "",
               workOrderId: "",
@@ -477,10 +491,24 @@ export function workService(db: Database) {
             admin,
           );
           if (input.billing !== undefined) {
+            if (!admin) fail('billing_protected',403);
             const b = billing(input.billing);
             if (!admin && JSON.stringify(b) !== JSON.stringify(next.billing))
               fail("billing_protected", 403);
             if (admin) next.billing = b;
+          }
+          if (input.operations !== undefined) {
+            if (!validOperations(input.operations)) fail();
+            next.operations = input.operations;
+          } else if (admin && input.billing !== undefined) next.operations = opsFromBilling(next.billing);
+          next.billing = {...next.billing,...next.operations};
+          if (input.signature !== undefined) {
+            if (input.signature !== null && (!signatureValid(input.signature) || input.signature.context.reportId !== id)) fail('invalid_signature',400);
+            const signature = input.signature as WorkReport['signature'];
+            if (signature?.confirmedAt) {
+              const same = previous?.signature?.confirmedAt && canonical({...signature,recordedAt:undefined}) === canonical({...previous.signature,recordedAt:undefined});
+              next.signature = {...signature, recordedAt:same ? previous!.signature!.recordedAt || now : now};
+            } else next.signature = signature?.strokes.length ? signature : null;
           }
           next.form = parsed;
           if (next.status === "NEW") {
@@ -489,17 +517,20 @@ export function workService(db: Database) {
           }
         } else if (action === "transition") {
           const target = text(input.status, 20) as WorkStatus;
+          if(target==='APPROVED'&&!admin)fail('admin_required',403);
+          if(target==='APPROVED'&&input.confirmedApproval!==true)fail('approval_confirmation_required',400);
           if (
             ![
               "IN_PROGRESS",
               "PENDING_REVIEW",
               "RETURNED",
               "CANCELLED",
+              "APPROVED",
             ].includes(target)
           )
             fail("invalid_transition", 409);
           const allowedTransition =
-            target === "IN_PROGRESS"
+            target === 'APPROVED' ? admin && next.status === 'PENDING_REVIEW' : target === "IN_PROGRESS"
               ? next.status === "NEW"
               : target === "PENDING_REVIEW"
                 ? ["NEW", "IN_PROGRESS", "RETURNED"].includes(next.status)
@@ -514,19 +545,21 @@ export function workService(db: Database) {
                       ].includes(next.status));
           if (!allowedTransition) fail("invalid_transition", 409);
           if (
-            target === "PENDING_REVIEW" &&
+            ["PENDING_REVIEW", "APPROVED"].includes(target) &&
             Object.keys(reportErrors(next.form)).length
           )
             fail("report_incomplete", 400);
+          if (target === 'APPROVED' && approvalProblems(next).length) fail('signature_confirmation_required',400);
           const comment = text(
             input.comment || "",
             2000,
             target === "RETURNED" || target === "CANCELLED",
           );
-          if (["RETURNED", "CANCELLED"].includes(target))
+          if (["RETURNED", "CANCELLED", "APPROVED"].includes(target))
             next.comment = comment;
           else if (comment) fail();
           next.status = target;
+          if (target === 'APPROVED') next.approval = {at:now,byName:String(actor.displayName),revision:next.revision+1,displayAt:finnishTimestamp(now)};
           audit = {
             action: "transition",
             before: previous!.status,
@@ -539,7 +572,8 @@ export function workService(db: Database) {
         next.updatedAt = now;
         next.updatedBy = claims.uid;
         next.lastMutation = String(input.requestId);
-        tx.put(path, { ...asDocument(next), fingerprint });
+        tx.put(path, asDocument(publicReport(next)));
+        tx.put('reportFinances/'+id, { ...(loaded.finance || {}), id, billing:next.billing as unknown as Document, revision:next.revision, lastMutation:next.lastMutation, fingerprint, ...(next.status === 'APPROVED' ? {snapshotHash:(await makePortable(next)).integrity.value,approvedByUid:claims.uid} : {}) });
         // Lists contain small metadata, not report bodies. All revisions are guarded by the report transaction.
         if (
           !previous ||
@@ -552,7 +586,7 @@ export function workService(db: Database) {
             JSON.stringify(next.assignedTo)
         ) {
           tx.put("workOrders/" + id, {
-            schemaVersion: 2,
+            schemaVersion: 3,
             id,
             reportId: id,
             ownerUid: next.ownerUid,
@@ -575,7 +609,7 @@ export function workService(db: Database) {
             revision: next.revision,
             createdAt: now,
           });
-        return { report: next };
+        return { report: viewerReport(next,admin) };
       }, maxAttempts)
       .catch((error) => {
         // A fresh client request handles contention; don't multiply material reads past Free subrequest limits.
