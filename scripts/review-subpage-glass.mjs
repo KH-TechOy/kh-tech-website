@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import assert from 'node:assert/strict';
 import { chromium } from '@playwright/test';
+import { checkWebsiteBackgrounds } from './check-website-backgrounds.mjs';
 
 const pass = process.env.SUBPAGE_PASS || 'final';
 const production = process.env.WEBSITE_PRODUCTION === '1';
@@ -25,13 +26,7 @@ try {
   await mkdir(out, { recursive: true });
   await mkdir(checks, { recursive: true });
   const before = pass === 'before' ? null : JSON.parse(await readFile(`${checks}/before.json`, 'utf8'));
-  if (production) for (const folder of ['website23-checks', 'website24-checks']) {
-    const manifest = JSON.parse(await readFile(`docs/${folder}/background-assets.json`, 'utf8'));
-    for (const image of manifest.images) {
-      assert.equal(hash(await readFile(image.source)), image.sha256);
-      for (const asset of image.outputs) assert((await readFile(asset.path)).equals(await readFile(asset.path.replace('public/', 'dist/'))));
-    }
-  }
+  if (production) await checkWebsiteBackgrounds(base);
   browser = await chromium.launch({ headless: true, ...(process.env.GAME_BROWSER_EXECUTABLE ? { executablePath: process.env.GAME_BROWSER_EXECUTABLE } : {}) });
   const results = [], home = [];
   for (const [name, width, height] of [['mobile', 390, 844], ['tablet', 768, 1024], ['desktop', 1440, 900]]) {
@@ -40,7 +35,7 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     page.on('response', response => { if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`); });
     // Delay images to verify their decoding does not change the hero geometry.
-    await page.route('**/website/*.webp', async route => { await new Promise(resolve => setTimeout(resolve, 300)); await route.continue(); });
+    await page.route(/\.webp(?:\?.*)?$/, async route => { await new Promise(resolve => setTimeout(resolve, 300)); await route.continue(); });
     for (const route of routes) {
       await page.goto(`${origin}${base}${route}/`);
       const hero = page.locator('.page-hero');
@@ -93,7 +88,7 @@ try {
         assert(detail.focalVisible, 'The primary plumbing subject must remain visible outside the panel');
         assert(detail.contrast >= 4.5);
         assert.match(detail.blur, /blur/);
-        assert(detail.image.src.includes(base + 'website/'));
+        assert(detail.image.src.includes(base + (production ? 'assets/' : 'src/generated/website/')));
         assert.equal(detail.image.loading, 'eager');
         assert.equal(detail.image.priority, 'high');
         if (route === 'yhteystiedot') {

@@ -1,9 +1,12 @@
 import { readFile, writeFile, readdir } from "node:fs/promises";
 import { createHash } from "node:crypto";
-const assets = (await readdir("dist/assets"))
+const allAssets = (await readdir('dist/assets')).sort();
+const assets = allAssets
   .filter((name) => !/^(engine-|GamePage-|generation\.worker-)/.test(name))
+  // Public page photographs should not bloat the employee PWA's install/download.
+  .filter((name) => !/^(hero|company|game|services|about|contact|privacy)-(mobile-)?\d+-.*\.webp$/.test(name))
   .sort();
-const hash = createHash("sha256").update(assets.join("\n"));
+const hash = createHash("sha256").update(allAssets.join("\n"));
 const source = await readFile("public/sw.js", "utf8");
 hash.update(source);
 for (const name of [

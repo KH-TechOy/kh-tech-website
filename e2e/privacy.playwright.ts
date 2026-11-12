@@ -56,7 +56,8 @@ test("privacy notice: nineteen topics, metadata, glass, keyboard anchors and rea
   expect(visual.cabinetVisible, "The cabinet lock remains visible outside the glass").toBe(true);
   expect(visual.contrast).toBeGreaterThanOrEqual(4.5);
   expect(visual.blur).toContain("blur(");
-  expect(visual.src).toContain(base + "website/privacy-");
+  if (process.env.WEBSITE_PRODUCTION === '1') expect(visual.src).toMatch(new RegExp(base + 'assets/privacy-[0-9]+-[^/]+\\.webp$'));
+  else expect(visual.src).toContain(base + 'src/generated/website/privacy-');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   const name = test.info().project.name;
   await page.screenshot({ path: `${out}/${name}-privacy-fold.png`, animations: "disabled" });

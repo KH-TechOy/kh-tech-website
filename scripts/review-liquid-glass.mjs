@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { chromium } from '@playwright/test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { checkWebsiteBackgrounds } from './check-website-backgrounds.mjs';
 
 const pass = process.env.GLASS_PASS || 'final';
 const base = process.env.VITE_BASE_PATH || '/';
@@ -18,15 +19,7 @@ server.stdout.on('data', data => { logs += data; });
 server.stderr.on('data', data => { logs += data; });
 const results = [];
 try {
-  if (pass !== 'before') {
-    const manifest = JSON.parse(await readFile(`${checks}/background-assets.json`, 'utf8'));
-    for (const asset of manifest.images) {
-      assert.equal(createHash('sha256').update(await readFile(asset.source)).digest('hex'), asset.sha256, 'Supplied original PNG must remain unchanged');
-      if (production) for (const output of asset.outputs) {
-        assert((await readFile(output.path)).equals(await readFile(output.path.replace('public/', 'dist/'))), 'Production assets must match optimized sources');
-      }
-    }
-  }
+  if (production && pass !== 'before') await checkWebsiteBackgrounds(base);
   for (let i = 0; i < 100; i++) {
     try { if ((await fetch(origin + base)).ok) break; } catch {}
     await new Promise(resolve => setTimeout(resolve, 100));
@@ -87,7 +80,7 @@ try {
       if (pass !== 'before') {
         assert.equal(data.width, width, `${cls} must be full viewport width`);
         assert.equal(data.left, 0);
-        assert(data.image.src.includes(base + 'website/'));
+        assert(data.image.src.includes(base + (production ? 'assets/' : 'src/generated/website/')));
         assert.match(data.panel.blur, /blur/);
         assert.equal(await section.locator('.kh-glass').count(), 1);
         assert(data.minimumContrast >= 4.5, `${cls}: normal text contrast >= 4.5:1 even over white`);

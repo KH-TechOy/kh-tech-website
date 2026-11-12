@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Brand, company, services, url } from "./brand";
 import Contact from "./Contact";
+import { websiteBackground } from './websiteBackgrounds';
 import "./homepage-backgrounds.css";
 import "./subpage-backgrounds.css";
 import "./privacy.css";
@@ -30,7 +31,7 @@ function SectionBackground({
   image: "hero" | "company" | "game" | SubpageBackground;
   primary?: boolean;
 }) {
-  const asset = (suffix: string) => url(`website/${image}${suffix}.webp`);
+  const asset = (suffix: string) => websiteBackground(image, suffix);
   const subpage = image === "services" || image === "about" || image === "contact" || image === "privacy";
   const imageWidth = subpage ? 1672 : 1774;
   return (
