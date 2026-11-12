@@ -34,6 +34,10 @@ GAS ei tallenna raporttirunkoa, allekirjoituksia, kuvia, HMAC-lupia tai PDF:iä 
 
 ## Poisto
 
+Turvallisuustäsmennys: `ARCHIVE_CONFIRMED` on kahden itsenäisesti varmennetun arkistotiedoston tila, ei poistotapahtuma. Raportti, laskutus ja työtilaus säilyvät Firestoressa myös sen jälkeen. Säilytysajan täyttyminen ei käynnistä palvelin- tai selainpoistoa, ei myöskään kahden vuoden kohdalla. Vain erillinen Adminin poistorajapintapyyntö voi poistaa C-vaiheen turvaehtojen täyttyessä. Käyttöliittymän minuutin välein päivittyvä kelpoisuustieto ei tee verkkopyyntöä tai käynnistä poistoa. Peruttu tai hyväksymätön raportti ei pääse hyväksytyn työn arkistopolkuun.
+
+Ensimmäisen tiedostovarmennuksen kuittaus ja auditointitietue säilyvät muuttumattomina myös toistetussa vahvistuksessa. Poiston jälkeen rajattuun arkistomerkintään säilytetään alkuperäinen hyväksyntä (aika, näyttönimi, revisio) ja hyväksyjän UID sekä aiemmat tarpeelliset tarkiste-/auditointitiedot. Uudet korjaukset luodaan eri tunnuksella; alkuperäistä hyväksyntää ei avata muokkaukseen. C.2:n palautus-/säilytyshallinta on vain dokumentoitu suunnitelma.
+
 Oletus on estetty. Palvelin vaatii omistajan asetetun politiikan/version ja vähimmäisiän, nykyisen revision, molempien tiedostojen varmennuksen, palautettavuuden, kirjoitetun raporttitunnuksen sekä ratkaistun lähetys-/kuvatilan. Poistetaan atomisesti aktiivinen raportti, yksityinen laskutusdokumentti ja työtilaus. Jäljelle jäävät rajatut arkisto-/vastaanotto-/poistotiedot ja auditointi. Tombstone estää vanhan luonnoksen uudelleenluomisen alkuperäisellä tunnuksella. Paikallinen palautuskopio ei poistu automaattisesti; sitä voi tarkastella ja poistaa erikseen. Poisto ei lupaa palveluntarjoajan kaikkien varmuuskopioiden välitöntä tyhjentämistä.
 
 Metatietojen ja auditointien pitkän ajan poistomenettely sekä sähköpostin/laitearkistojen säilytys kuuluvat omistajan hyväksyttävään politiikkaan. Niitä ei keksitä koodissa. Ei automaattista poistoa MailApp-hyväksynnästä tai verkkoviiveestä.

@@ -275,11 +275,11 @@ test("mouse, touch and pen signature, explicit replacement, cloud restoration, o
     .click();
   await expect(page.locator(".cloud-toolbar")).toContainText("Tarkastettavana");
   // The browser's only Apps Script call is intercepted and executed in the isolated MailApp VM.
-  let sentBase64='';
+  let sentBase64 = "";
   await page.route(
     "https://script.google.com/macros/s/local-report-relay-fixture/exec",
     async (route) => {
-      sentBase64=route.request().postDataJSON().photos[0];
+      sentBase64 = route.request().postDataJSON().photos[0];
       const r = await request.post("http://127.0.0.1:8788/__photo-relay", {
         data: route.request().postDataJSON(),
       });
@@ -299,7 +299,9 @@ test("mouse, touch and pen signature, explicit replacement, cloud restoration, o
   await expect(page.locator(".photo-delivery")).toContainText(
     "Hyväksytty lähetykseen",
   );
-  await expect(page.getByRole('link',{name:'Lataa toimitusversio 1',exact:true})).toHaveAttribute('href','data:image/jpeg;base64,'+sentBase64);
+  await expect(
+    page.getByRole("link", { name: "Lataa toimitusversio 1", exact: true }),
+  ).toHaveAttribute("href", "data:image/jpeg;base64," + sentBase64);
 });
 test("Admin approval locks exact financial snapshot; archive acceptance, file verification, deletion and portable import", async ({
   page,
@@ -322,6 +324,12 @@ test("Admin approval locks exact financial snapshot; archive acceptance, file ve
   await expect(page.locator(".cloud-toolbar")).toContainText("Hyväksytty");
   await expect(page.locator("input[name=customer]")).toBeDisabled();
   const top = page.locator("[data-workflow=top]");
+  await expect(top.locator(".archive-preservation")).toContainText(
+    "Arkistoa ei ole vahvistettu",
+  );
+  await expect(top.locator(".retention-eligibility")).toContainText(
+    "Poisto estetty: PDF- ja .khtreport-kopioita ei ole itsenäisesti varmennettu",
+  );
   await expect(
     top.getByRole("button", { name: "Lataa lopullinen PDF", exact: true }),
   ).toBeVisible();
@@ -381,6 +389,18 @@ test("Admin approval locks exact financial snapshot; archive acceptance, file ve
     .getByRole("button", { name: "Vahvista arkiston vastaanotto", exact: true })
     .click();
   await expect(top).toContainText("Arkiston vastaanotto varmennettu");
+  await expect(top.locator(".archive-preservation")).toContainText(
+    "Raportti säilyy Firestoressa",
+  );
+  await expect(top.locator(".retention-eligibility")).toContainText(
+    "kelpoinen erikseen vahvistettavaan Admin-poistoon",
+  );
+  await expect(
+    page.locator("[data-workflow=bottom] .retention-eligibility"),
+  ).toContainText("kelpoinen erikseen vahvistettavaan Admin-poistoon");
+  expect(
+    (await api(request, "admin", { action: "load", id })).report.status,
+  ).toBe("APPROVED");
   await capture(page, "admin-archive-confirmed");
   await top
     .getByRole("button", {
@@ -391,13 +411,11 @@ test("Admin approval locks exact financial snapshot; archive acceptance, file ve
   await expect(page.locator(".work-heading")).toBeVisible();
   await expect(page.locator(".work-cards>li")).toHaveCount(0);
   await page.locator(".archive-import>summary").click();
-  await page
-    .getByLabel("Tuo .khtreport", { exact: true })
-    .setInputFiles({
-      name: "test.khtreport",
-      mimeType: "application/json",
-      buffer: Buffer.from(contents),
-    });
+  await page.getByLabel("Tuo .khtreport", { exact: true }).setInputFiles({
+    name: "test.khtreport",
+    mimeType: "application/json",
+    buffer: Buffer.from(contents),
+  });
   await expect(page.locator(".archive-import")).toContainText("346,38");
   await page
     .getByRole("button", {

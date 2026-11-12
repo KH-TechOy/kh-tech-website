@@ -1,5 +1,19 @@
 # Report 2.0 C – toteutustulos
 
+## Arkistoinnin ja poiston turvallisuustäsmennys
+
+Hyväksyntä, sähköpostin lähetys, arkistokopioiden riippumaton varmennus ja aktiivisen pilviraportin pysyvä poisto ovat eri toimia. Vain aktiivinen Admin voi arkistoida tai poistaa. Vasta hyväksytyn revision molempien tiedostojen varmennus muodostaa `ARCHIVE_CONFIRMED`-arkistotilan; peruttu tai hyväksymätön raportti ei pääse tähän työn valmistumisen arkistopolkuun. Kuvien erillinen lähetys ei arkistoi tekstiraporttia.
+
+Raportti säilyy Firestoressa lähetyksen ja arkistovahvistuksen jälkeen. Poisto vaatii erillisen Admin-pyynnön, tunnuksen ja palautettavuuden vahvistuksen, voimassa olevan säilytyspolitiikan, täyttyneen vähimmäisajan ja muut C-vaiheen turvaehdot. Mitään ei poisteta automaattisesti kahden vuoden tai muun ajan täytyttyä. Ajastettua retention-poistoa ei ole lisätty. Admin näkee nyt arkistotilan lisäksi politiikkaversion, vähimmäisajan, määräajan/täyttymisen sekä poistokelpoisuuden tai eston syyn molemmissa työnkulkupaneeleissa. Työntekijän paikallispoiston ja Adminin pysyvän pilvipoiston ero kerrotaan niiden yhteydessä.
+
+Korjattu samalla toistetun arkistovahvistuksen auditointikäytös: ensimmäistä vastaanottokuittausta ja sen auditointitietuetta ei enää korvata uudella ajalla tai toisella vahvistajalla. Hyväksyntämetatiedot ja hyväksyjän UID säilyvät myös pilvipoiston rajatussa arkistomerkinnässä. Alkuperäinen hyväksyntä on edelleen lukittu; korjaus luo uuden hallitun kopion. Koodi ei avaa perutun raportin palauttamista. C.2-jatkotyö on rajattu [suunnitelmaan](REPORT_2_0_C_2_REFINEMENT_PLAN.md).
+
+Täsmennyksen lähtö on `af7005a`, työ main-haaralla 13.11.2026. Aikarajojen kuormitustestissä korjattiin myös relay-luvan kahden kellonluvun välinen millisekuntiraja: voimassaolo lasketaan yhdestä `issuedAt`-arvosta. Tiukkaa viiden minuutin rajaa ei pidennetty. Mukana on erillinen kellon vaihtumisen regressiotesti. Ensimmäisen ajon relay-virhe korjattiin; sitä ei ohitettu tai kiintiö-/aikarajaa väljennetty.
+
+Täsmennyksen tarkistukset: **156/156** yksikkö-/malli-/relay-testiä, **42/42** Firebase-emulaattorien palvelin-/turvatestiä ja **6/6** C-selaintestiä kolmessa koossa (1440×900, 390×844, 768×1024). TypeScript, Pages-tuotantokäännös ja Workerin paikallinen dry run hyväksytty. Selaintestit tarkistavat säilyttämisen ja poistokelpoisuuden näkyvyyden molemmissa työnkulkupaneeleissa ennen erillistä poiston painallusta. Turvatestit todistavat myös perutun/hyväksymättömän työn arkistokiellon, alkuperäisen auditoinnin säilymisen ja yli kaksi vuotta vanhan varmennetun raportin säilymisen Firestoressa. Päivitetyt Admin-kaappaukset tarkastettu ja tallennettu `docs/report20c-checks/`-kansioon. Paikalliset ajolokit: `.playwright-artifacts/report-c-safety-*.log`. Alempana olevat alkuperäisen C-erän luvut kuvaavat sen aiempaa toteutusajoa.
+
+Ei pushia/deployta, oikeita sähköposteja, tuotantopoistoja tai maksullisia palveluja. Alkuperäisen C-vaiheen palveluasetusten ja oikean sähköpostin käyttöönottoportit säilyvät. C.2:n toiminnot ovat vain jatkosuunnitelma.
+
 Työ nykyisellä **main**-haaralla. Lähtöversio `8d87de1` (A/A.1/B/B.1). Ei pushia, käyttöönottoa, oikeita sähköposteja tai tuotantotietojen poistoa. Toteutus käyttää nykyistä Firebase Spark / Workers Free -pohjaa ja erillistä maksutonta MailApp-välitystä. Koodiin ei lisätty maksullista palvelua tai laskutuksen aktivointia.
 
 ## Toteutetut muutokset

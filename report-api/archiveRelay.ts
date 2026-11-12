@@ -46,11 +46,8 @@ export async function signRelay(
 }
 export async function relayPacket(c: RelayConfig, payload: object) {
   if (!relayReady(c)) throw new ApiError("archive_not_configured", 503);
-  const data = {
-    ...payload,
-    issuedAt: Date.now(),
-    expiresAt: Date.now() + 300000,
-  };
+  const issuedAt = Date.now();
+  const data = { ...payload, issuedAt, expiresAt: issuedAt + 300000 };
   return {
     version: 1,
     payload: data,

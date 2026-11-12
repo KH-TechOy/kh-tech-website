@@ -86,6 +86,23 @@ beforeAll(() => {
     stdio: "pipe",
   });
 });
+test("permit validity uses one clock reading even if the millisecond changes while constructing the request", async () => {
+  const now = Date.now(),
+    clock = vi
+      .spyOn(Date, "now")
+      .mockReturnValueOnce(now)
+      .mockReturnValueOnce(now + 1);
+  try {
+    const packet = await relayPacket(config, {
+      action: "status",
+      operationId: "single-clock-safety-0001",
+    });
+    expect(packet.payload.expiresAt - packet.payload.issuedAt).toBe(300000);
+  } finally {
+    clock.mockRestore();
+  }
+});
+
 test("portable approval includes exact signature/totals, detects tampering/version changes, and excludes authentication data", async () => {
   const portable = await makePortable(approvedFixture());
   expect(portable.totals).toMatchObject({

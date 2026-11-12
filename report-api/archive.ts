@@ -13,6 +13,7 @@ import {
   type ArchiveStatus,
 } from "../src/reportArchive";
 import { readWork, publicReport, type FullReport } from "./workStorage";
+import { retentionWindow } from "../src/reportRetention";
 import {
   callRelay,
   relayPacket,
@@ -196,7 +197,8 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
             p.role === "admin" &&
             !!config.deletionEnabled &&
             Number.isInteger(config.retentionDays) &&
-            config.retentionDays! >= 0 && config.retentionDays! <= 36500 &&
+            config.retentionDays! >= 0 &&
+            config.retentionDays! <= 36500 &&
             !!config.policyVersion,
           policyVersion: p.role === "admin" ? config.policyVersion || "" : "",
           retentionDays:
@@ -492,6 +494,7 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
             meta = await tx.get("archiveMetadata/" + id);
           if (
             !current.report ||
+            current.report.status !== "APPROVED" ||
             current.report.revision !== r.revision ||
             meta?.snapshotHash !== portable.integrity.value
           )
@@ -506,6 +509,11 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
             meta.status === "ARCHIVE_SENDING"
           )
             fail("archive_receipt_invalid", 409);
+          // Repeated confirmation must not rewrite the original receipt or audit history.
+          if (meta.status === "ARCHIVE_CONFIRMED") {
+            if (!meta.receipt) fail("archive_integrity", 409);
+            return { archive: meta };
+          }
           const unresolved =
             meta.status === "ARCHIVE_OUTCOME_UNKNOWN" ||
             meta.deliveryUncertain === true;
@@ -576,6 +584,7 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
           fail("retention_not_configured", 409);
         if (
           !current.report ||
+          current.report.status !== "APPROVED" ||
           current.report.revision !== r.revision ||
           input.confirmationId !== id ||
           input.recoverable !== true ||
@@ -592,11 +601,9 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
             ].includes(photos.status))
         )
           fail("archive_delete_blocked", 409);
-        if (
-          Date.now() - Date.parse(r.approval!.at) <
-          config.retentionDays! * 86400000
-        )
-          fail("retention_period", 409);
+        const retention = retentionWindow(r.approval!.at, config.retentionDays);
+        if (!retention) fail("archive_integrity", 409);
+        if (!retention.eligible) fail("retention_period", 409);
         if (!tx.delete) fail("delete_not_supported", 503);
         tx.delete!("reports/" + id);
         tx.delete!("reportFinances/" + id);
@@ -604,6 +611,10 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
         const kept = {
           id,
           revision: r.revision,
+          approval: r.approval,
+          ...(current.finance?.approvedByUid
+            ? { approvedByUid: current.finance.approvedByUid }
+            : {}),
           status: "ARCHIVE_CONFIRMED",
           snapshotHash: portable.integrity.value,
           pdfSha256: meta.pdfSha256,
@@ -669,7 +680,16 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
       return db.transaction(async (tx) => {
         await actor(tx, claims);
         const meta = await tx.get("archiveMetadata/" + id);
-        if(meta?.pdfSha256 && meta.pdfSha256!==result.pdfSha256 && ['ARCHIVE_SENT_UNVERIFIED','ARCHIVE_CONFIRMED','ARCHIVE_OUTCOME_UNKNOWN'].includes(String(meta.status)))fail('archive_integrity',409);
+        if (
+          meta?.pdfSha256 &&
+          meta.pdfSha256 !== result.pdfSha256 &&
+          [
+            "ARCHIVE_SENT_UNVERIFIED",
+            "ARCHIVE_CONFIRMED",
+            "ARCHIVE_OUTCOME_UNKNOWN",
+          ].includes(String(meta.status))
+        )
+          fail("archive_integrity", 409);
         const next = {
           ...meta,
           id,

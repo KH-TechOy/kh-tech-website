@@ -13,6 +13,7 @@ import { workService } from "./work";
 import { archiveService } from "./archive";
 import { makePortable, portableText, sha256 } from "../src/reportArchive";
 import { emptyBilling } from "../src/reportWorkModel";
+import { finnishTimestamp } from "../src/reportLocale";
 import {
   createRelayHarness,
   fixtureRelaySecret,
@@ -129,13 +130,11 @@ async function approved() {
 test("schema-2 finance migrates atomically, Employee API/Firestore/cache boundaries contain only operational values", async () => {
   const pending = await ready();
   const legacy = await w("admin", { action: "load", id });
-  await db
-    .doc("reports/" + id)
-    .set({
-      ...legacy.report,
-      schemaVersion: 2,
-      fingerprint: "protected-financial-fingerprint",
-    });
+  await db.doc("reports/" + id).set({
+    ...legacy.report,
+    schemaVersion: 2,
+    fingerprint: "protected-financial-fingerprint",
+  });
   await db.doc("reportFinances/" + id).delete();
   await assertFails(getDoc(doc(client("employee"), "reports", id)));
   const employee = (await w("employee", { action: "load", id })).report;
@@ -286,6 +285,28 @@ test("archive sends once, service acceptance is unverified, and exact file recei
     a("admin", { ...receipt, pdfSha256: "0".repeat(64) }),
   ).rejects.toMatchObject({ code: "archive_receipt_invalid" });
   expect((await a("admin", receipt)).archive.status).toBe("ARCHIVE_CONFIRMED");
+  const firstReceipt = (await db.doc("archiveMetadata/" + id).get()).data()!
+    .receipt;
+  const auditPath = "auditEvents/receipt-" + id + "-" + r.revision;
+  const firstAudit = (await db.doc(auditPath).get()).data();
+  // Confirmation and service status never delete, and retries preserve the first auditor/time.
+  await a("admin2", { ...receipt, receiptMethod: "download" });
+  await a("admin", { action: "status", id });
+  expect((await db.doc("reports/" + id).get()).exists).toBe(true);
+  expect((await db.doc("archiveMetadata/" + id).get()).data()!.receipt).toEqual(
+    firstReceipt,
+  );
+  expect((await db.doc(auditPath).get()).data()).toEqual(firstAudit);
+  await expect(
+    a("employee", {
+      action: "delete",
+      id,
+      revision: r.revision,
+      confirmationId: id,
+      recoverable: true,
+      policyVersion: "test-policy",
+    }),
+  ).rejects.toMatchObject({ code: "admin_required" });
   expect(
     (
       await a("admin", {
@@ -302,6 +323,9 @@ test("archive sends once, service acceptance is unverified, and exact file recei
   expect((await db.doc("reportFinances/" + id).get()).exists).toBe(false);
   expect((await db.doc("workOrders/" + id).get()).exists).toBe(false);
   const retained = (await db.doc("archiveMetadata/" + id).get()).data()!;
+  expect(retained.approval).toEqual(r.approval);
+  expect(retained.approvedByUid).toBe("admin");
+  expect((await db.doc(auditPath).get()).data()).toEqual(firstAudit);
   expect(retained).not.toHaveProperty("customer");
   expect(retained).not.toHaveProperty("form");
   await expect(
@@ -325,6 +349,95 @@ test("archive sends once, service acceptance is unverified, and exact file recei
       .unitPriceCents,
   ).toBe(2500);
 });
+test("unapproved and cancelled jobs cannot enter the completed-report archive", async () => {
+  const pending = await ready();
+  for (const status of ["PENDING_REVIEW", "CANCELLED"]) {
+    if (status === "CANCELLED")
+      await transition("admin", pending.revision, "CANCELLED", {
+        comment: "Synteettinen peruttu työ",
+      });
+    for (const action of ["snapshot", "prepare", "send", "confirm", "delete"])
+      await expect(
+        a("admin", {
+          action,
+          id,
+          ...(action === "snapshot" ? {} : { revision: pending.revision }),
+        }),
+      ).rejects.toMatchObject({ code: "approved_snapshot_required" });
+    expect((await db.doc("archiveMetadata/" + id).get()).exists).toBe(false);
+    expect(relay.state.mailbox).toHaveLength(0);
+  }
+  expect((await db.doc("reports/" + id).get()).data()!.status).toBe(
+    "CANCELLED",
+  );
+});
+
+test("two-year-old confirmed reports remain in Firestore; elapsed retention only permits an explicit Admin deletion request", async () => {
+  const r = await approved(),
+    at = new Date(Date.now() - 731 * 86400000).toISOString();
+  // Seed a synthetic historical fixture; production endpoints cannot edit approved dates.
+  const historical = {
+    ...r,
+    form: { ...r.form, date: at.slice(0, 10) },
+    approval: { ...r.approval, at, displayAt: finnishTimestamp(at) },
+  };
+  await db
+    .doc("reports/" + id)
+    .update({ form: historical.form, approval: historical.approval });
+  await db
+    .doc("reportFinances/" + id)
+    .update({ snapshotHash: (await makePortable(historical)).integrity.value });
+  const service = archiveService(deps.db, {
+    relayUrl: fixtureRelayUrl,
+    secret: fixtureRelaySecret,
+    fetcher: relay.fetcher,
+    deletionEnabled: true,
+    retentionDays: 730,
+    policyVersion: "owner-policy",
+  });
+  const call = (input: Document) =>
+    service(claims("admin"), input) as Promise<any>;
+  const sent = await call({ action: "send", id, revision: r.revision });
+  expect(sent.archive.status).toBe("ARCHIVE_SENT_UNVERIFIED");
+  expect((await db.doc("reports/" + id).get()).exists).toBe(true);
+  const [pdf, json] = relay.state.mailbox[0].attachments;
+  await call({
+    action: "confirm",
+    id,
+    revision: r.revision,
+    confirmationId: id,
+    recoverable: true,
+    receiptMethod: "mailbox",
+    pdfSha256: await sha256(new Uint8Array(pdf.getBytes())),
+    portableSha256: await sha256(json.getDataAsString()),
+  });
+  await call({ action: "status", id });
+  await call({ action: "snapshot", id });
+  expect((await db.doc("reports/" + id).get()).data()).toMatchObject({
+    status: "APPROVED",
+    revision: r.revision,
+    approval: historical.approval,
+  });
+  expect((await db.doc("reportFinances/" + id).get()).exists).toBe(true);
+  expect((await db.doc("workOrders/" + id).get()).exists).toBe(true);
+  const longer = archiveService(deps.db, {
+    deletionEnabled: true,
+    retentionDays: 1000,
+    policyVersion: "owner-policy",
+  });
+  await expect(
+    longer(claims("admin"), {
+      action: "delete",
+      id,
+      revision: r.revision,
+      confirmationId: id,
+      recoverable: true,
+      policyVersion: "owner-policy",
+    }),
+  ).rejects.toMatchObject({ code: "retention_period" });
+  expect((await db.doc("reports/" + id).get()).exists).toBe(true);
+});
+
 test("unknown MailApp outcome cannot resend; verified downloaded files and sealed operation resolve recovery without claiming inbox delivery", async () => {
   const r = await approved();
   relay.state.throwAfterSend = true;

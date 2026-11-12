@@ -969,6 +969,7 @@ export default function Report({
                 <Trash2 size={17} /> {cloudMode ? 'Poista paikallinen luonnos' : 'Poista luonnos'}
               </button>
             </div>
+              {cloudMode&&<p>Poista paikallinen luonnos poistaa vain tämän välilehden palautuskopion ja kuvat. Pilviraportti ja arkistotiedostot säilyvät. Pysyvä pilvipoisto tehdään erikseen ylläpitäjän arkistotoiminnoissa.</p>}
             </fieldset>
           </form>
           {photoActions?.(state.photos,photos=>{if(localGeneration===session.getGeneration())setState(s=>({...s,photos:[...s.photos,...photos].slice(0,6)}))})}

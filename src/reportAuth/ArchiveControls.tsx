@@ -13,7 +13,8 @@ import type { WorkReport } from "../reportWorkModel";
 import { createReportId } from "../utils";
 import { useFormDraft, FormDraftNotice } from "./useFormDraft";
 import { BillingSummary } from "./BillingPanels";
-import { finnishDate } from "../reportLocale";
+import { finnishDate, finnishTimestamp } from "../reportLocale";
+import { retentionWindow } from "../reportRetention";
 import { SignatureView } from "./SignaturePad";
 type Meta = {
   status: ArchiveStatus;
@@ -21,6 +22,7 @@ type Meta = {
   portableSha256?: string;
   removedAt?: string;
   deliveryResolved?: boolean;
+  receipt?: { at: string; byUid: string; method: string };
   error?: string;
   photo?: { status: ArchiveStatus };
 };
@@ -49,6 +51,13 @@ export function useArchiveControls(
     [busy, setBusy] = React.useState(false),
     [message, setMessage] = React.useState("");
   const [photoHashes, setPhotoHashes] = React.useState<string[]>([]);
+  const [now, setNow] = React.useState(Date.now);
+  React.useEffect(() => {
+    if (!admin || report?.status !== "APPROVED") return;
+    setNow(Date.now());
+    const timer = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(timer);
+  }, [admin, report?.status]);
   const running = React.useRef(false),
     [files, setFiles] = React.useState<{
       pdfSha256: string;
@@ -253,6 +262,7 @@ export function useArchiveControls(
     }
   };
   return {
+    retention: retentionWindow(report?.approval?.at, cap?.retentionDays, now),
     archive,
     cap,
     busy,
@@ -309,6 +319,7 @@ export function ArchiveControls({
     id,
     photoHashes,
     selectPhotos,
+    retention,
   } = model;
   return (
     <div className="archive-controls" aria-busy={busy}>
@@ -316,6 +327,58 @@ export function ArchiveControls({
         Hyväksynyt {report.approval?.byName} · {report.approval?.displayAt} ·
         versio {report.approval?.revision}
       </p>
+      <p className="archive-preservation">
+        {archive?.status === "ARCHIVE_CONFIRMED"
+          ? "Arkisto vahvistettu. Raportti säilyy Firestoressa."
+          : "Arkistoa ei ole vahvistettu. Hyväksyntä tai sähköpostin lähetys ei yksin merkitse raporttia arkistoiduksi."}{" "}
+        Automaattista poistoa ei ole, myöskään kahden vuoden kuluttua.
+      </p>
+      <div className="retention-eligibility" role="status">
+        {cap && !cap.canDelete && cap.policyVersion && retention && (
+          <p>
+            Säilytyspolitiikka: {cap.policyVersion}. Vähimmäisaika:{" "}
+            {retention.minimumDays} päivää. Vähimmäisajan raja:{" "}
+            {finnishTimestamp(retention.eligibleAt)}.
+          </p>
+        )}
+        {!cap ? (
+          "Selvitetään säilytysasetuksia…"
+        ) : !cap.canDelete ? (
+          "Pilvipoisto ei ole käytössä. Voimassa oleva omistajan vahvistama säilytyspolitiikka ja erillinen poistoasetus vaaditaan."
+        ) : !retention ? (
+          "Hyväksynnän säilytysaikaa ei voitu varmentaa. Poisto on estetty."
+        ) : (
+          <>
+            <p>
+              Säilytyspolitiikka: {cap.policyVersion}. Vähimmäisaika:{" "}
+              {retention.minimumDays} päivää hyväksynnästä.
+            </p>
+            <p>
+              {retention.eligible
+                ? "Vähimmäissäilytysaika on täyttynyt."
+                : "Vähimmäissäilytysaika täyttyy"}
+              {!retention.eligible && (
+                <> {finnishTimestamp(retention.eligibleAt)}.</>
+              )}
+            </p>
+            <p>
+              {archive?.status !== "ARCHIVE_CONFIRMED" || !archive.receipt
+                ? "Poisto estetty: PDF- ja .khtreport-kopioita ei ole itsenäisesti varmennettu."
+                : archive.deliveryResolved !== true ||
+                    (archive.photo &&
+                      [
+                        "ARCHIVE_PENDING",
+                        "ARCHIVE_SENDING",
+                        "ARCHIVE_OUTCOME_UNKNOWN",
+                      ].includes(archive.photo.status))
+                  ? "Poisto estetty: lähetys tai kuvaliitteiden vastaanotto on selvittämättä."
+                  : !retention.eligible
+                    ? "Poisto estetty vähimmäissäilytysajan loppuun."
+                    : "Raportti on kelpoinen erikseen vahvistettavaan Admin-poistoon. Mitään ei poisteta automaattisesti."}
+            </p>
+          </>
+        )}
+      </div>
       <p role="status">
         {busy
           ? "Arkistotoimintoa käsitellään…"
@@ -511,6 +574,8 @@ export function ArchiveControls({
           disabled={
             busy ||
             !cap?.canDelete ||
+            !retention?.eligible ||
+            !archive?.receipt ||
             archive?.status !== "ARCHIVE_CONFIRMED" ||
             archive.deliveryResolved !== true ||
             (!!archive.photo &&
@@ -526,6 +591,13 @@ export function ArchiveControls({
         >
           Poista arkistoitu raportti pilvestä
         </button>
+        <p>
+          Tämä poistaa hyväksytyn raportin ja laskutustiedot aktiivisesta
+          pilvitietokannasta. Poista paikallinen luonnos poistaa vain tämän
+          välilehden palautuskopion ja kuvat. Se ei poista pilviraporttia tai
+          arkistotiedostoja. Tarpeelliset hyväksynnän tarkisteet ja
+          auditointihistoria säilyvät erikseen.
+        </p>
         <FormDraftNotice draft={receipt.draft} />
       </details>
       {message && <p role="alert">{message}</p>}
