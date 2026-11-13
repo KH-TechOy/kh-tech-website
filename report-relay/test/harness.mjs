@@ -39,6 +39,7 @@ export function createRelayHarness() {
   const context = vm.createContext({
     // Fail if the shared PDF accidentally starts depending on browser/Node APIs or Intl formatting.
     Intl: undefined,
+    BigInt: undefined,
     fetch: undefined,
     window: undefined,
     navigator: undefined,

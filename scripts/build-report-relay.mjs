@@ -1,5 +1,6 @@
 import { build } from "esbuild";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
+import { validateGasScript } from "./check-report-gas.mjs";
 const out = ".playwright-artifacts/report-relay";
 await mkdir(out, { recursive: true });
 const result = await build({
@@ -8,7 +9,8 @@ const result = await build({
   write: false,
   format: "iife",
   globalName: "KhReportPdf",
-  target: "es2020",
+  target: "es2019",
+  charset: "ascii",
   legalComments: "inline",
   plugins: [
     {
@@ -32,14 +34,14 @@ const banner =
   'var atob=function(s){return Utilities.base64Decode(s).map(function(n){return String.fromCharCode(n&255)}).join("")};\nvar btoa=function(s){return Utilities.base64Encode(Array.prototype.map.call(s,function(c){var n=c.charCodeAt(0)&255;return n>127?n-256:n}))};\n';
 const textCode =
   'var TextEncoder=class{encode(s){return new Uint8Array(Utilities.newBlob(String(s)).getBytes().map(function(n){return n&255}))}};\nvar TextDecoder=class{constructor(label){this.label=label||"UTF-8"}decode(a){return Utilities.newBlob(Array.from(a||[],function(n){return n>127?n-256:n})).getDataAsString(this.label)}};\n';
-await writeFile(
-  out + "/PdfLibrary.gs",
-  textCode + banner + result.outputFiles[0].text,
-);
+const source = textCode + banner + result.outputFiles[0].text;
+const validation = validateGasScript(source, "PdfLibrary.gs");
+validateGasScript(await readFile("report-relay/Code.gs"), "Code.gs");
+await writeFile(out + "/PdfLibrary.gs", source, "utf8");
 console.log(
   "Trusted PDF library built locally: " +
     out +
     "/PdfLibrary.gs (" +
-    result.outputFiles[0].contents.length +
-    " bytes). No deployment.",
+    validation.bytes +
+    " bytes; validated ES2019 script syntax). No deployment.",
 );

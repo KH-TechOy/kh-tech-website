@@ -1,5 +1,7 @@
 # Report 2.0 C – turvallisuus ja maksuttomat palvelut
 
+PdfLibraryn generoinnissa on 13.11.2026 alkaen koko tulostiedoston ES2019-syntaksiportti ja BigInt-ajonaikariippuvuuden esto. Kanoninen laskenta säilyttää tarkan senttipyöristyksen kokonais-/jäännösosien avulla; alkuperäinen BigInt on vain Node-testiorakkeli. Sekä aiempien hyväksyttyjen vertailutiedostojen SHA-256:t että selain/GAS-generaattorien tavut tarkistetaan. Tämä korjaa editorin rivin 13727 `10n`-literaalivirheen, eikä muuta arkiston valtuutusta, hyväksyntää tai HMAC-salaisuuksia. Paikallinen kielioppi-/ajonaikatesti erotetaan Googlen oman editorin tallennuksesta. [Korjausraportti](REPORT_2_0_C_GAS_SYNTAX_FIX_RESULT.md).
+
 ## Luottamusrajat
 
 Firebase ID token, nykyinen Auth-tilin tila ja Firestore-profiili tarkistetaan aiemman A.1/B:n mukaisesti. Jokainen muuttava transaktio tarkistaa aktiivisen roolin uudelleen. Alkuperäiset viimeisen ylläpitäjän, käyttäjähallinnan ja pyyntörajoittimien suojat säilyvät. Ei julkista rekisteröitymistä yrityksen tietoihin tai selainpuolista salasanasuojausta.

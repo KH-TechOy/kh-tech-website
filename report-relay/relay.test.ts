@@ -9,6 +9,7 @@ import {
   sha256,
 } from "../src/reportArchive";
 import { billingTotals } from "../src/reportWorkModel";
+import { validateGasScript } from "../scripts/check-report-gas.mjs";
 import { buildFinalPdf } from "../src/finalPdf";
 import { relayPacket, callRelay, signRelay } from "../report-api/archiveRelay";
 import {
@@ -101,6 +102,38 @@ test("permit validity uses one clock reading even if the millisecond changes whi
   } finally {
     clock.mockRestore();
   }
+});
+
+test("GAS save-time grammar rejects the exact original line-13727 BigInt token and validates both complete generated scripts", () => {
+  const original =
+    'const divisor = 10n ** BigInt(fraction.length), units = BigInt(whole || "0") * divisor + BigInt(fraction || "0");';
+  expect(() => validateGasScript(original)).toThrow(
+    "incompatible Apps Script syntax",
+  );
+  expect(() => validateGasScript("var divisor = BigInt(10);")).toThrow(
+    "BigInt is outside",
+  );
+  expect(()=>validateGasScript(new Uint8Array([0xc3,0x28]))).toThrow();
+  for (const file of [
+    ".playwright-artifacts/report-relay/PdfLibrary.gs",
+    "report-relay/Code.gs",
+  ])
+    expect(validateGasScript(readFileSync(file), file).syntax).toBe(
+      "ES2019 script",
+    );
+});
+
+test("the syntax fix preserves the previously generated approved PDF, portable bytes and snapshot SHA-256", async () => {
+  const archive = await makePortable(approvedFixture());
+  expect(archive.integrity.value).toBe(
+    "3b65dbba3c0b2d479c0c472807176291e4139ae00f4a085a7f82e91a16fbc2ac",
+  );
+  expect(await sha256(portableText(archive))).toBe(
+    "b20b8bc1e1ed54dde51af174e73f55b238bdcceeb55324da06606c005c8f1a33",
+  );
+  expect(
+    await sha256(new Uint8Array(buildFinalPdf(archive).output("arraybuffer"))),
+  ).toBe("d4649035d8c9abd66bd22ca29850989c66e7eba4c94b13caf491aa5cefb311ce");
 });
 
 test("portable approval includes exact signature/totals, detects tampering/version changes, and excludes authentication data", async () => {

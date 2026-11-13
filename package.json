@@ -21,7 +21,9 @@
     "contact:bundle": "wrangler deploy --dry-run --config contact/wrangler.jsonc --outdir ../.playwright-artifacts/contact30-worker",
     "test:contact-ui": "playwright test --config playwright.contact.config.ts",
     "check:report": "tsc -p report-api/tsconfig.json",
+    "report:relay": "node scripts/build-report-relay.mjs",
     "report:relay:bundle": "node scripts/build-report-relay.mjs",
+    "check:report:relay": "node scripts/check-report-gas.mjs",
     "report:bundle": "wrangler deploy --dry-run --config report-api/wrangler.jsonc --outdir ../.playwright-artifacts/report/worker",
     "test:report": "node scripts/run-report-tests.mjs",
     "test:report:inside": "vitest run --config vitest.report.config.ts && playwright test --config playwright.report.config.ts"
@@ -43,6 +45,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^5.2.0",
+    "acorn": "8.17.0",
     "firebase-admin": "^14.5.0",
     "firebase-tools": "^15.34.2",
     "miniflare": "^5.20261101.0-beta",

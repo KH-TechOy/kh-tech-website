@@ -1,5 +1,7 @@
 # Report 2.0 C – toteutustulos
 
+13.11.2026: Googlen editorissa havaitun PdfLibraryn BigInt-syntaksivirheen juurisyy, kanonisen generoinnin korjaus, tavutarkka yhteensopivuus ja uudelleen kopioitava tiedosto on dokumentoitu [GAS-syntaksikorjauksen raporttiin](REPORT_2_0_C_GAS_SYNTAX_FIX_RESULT.md). Tallennusvirhettä ei korjata muuttamalla palvelusalaisuuksia tai hyväksyttyjä raportteja.
+
 ## Arkistoinnin ja poiston turvallisuustäsmennys
 
 Hyväksyntä, sähköpostin lähetys, arkistokopioiden riippumaton varmennus ja aktiivisen pilviraportin pysyvä poisto ovat eri toimia. Vain aktiivinen Admin voi arkistoida tai poistaa. Vasta hyväksytyn revision molempien tiedostojen varmennus muodostaa `ARCHIVE_CONFIRMED`-arkistotilan; peruttu tai hyväksymätön raportti ei pääse tähän työn valmistumisen arkistopolkuun. Kuvien erillinen lähetys ei arkistoi tekstiraporttia.

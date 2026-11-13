@@ -73,8 +73,11 @@ export function decimal(value: string) {
 export function scaledAmount(value: string, rate: number) {
   const [whole, fraction = ''] = String(value).replace(',', '.').split('.');
   if (!/^\d*$/.test(whole) || !/^\d{0,4}$/.test(fraction)) return 0;
-  const divisor = 10n ** BigInt(fraction.length), units = BigInt(whole || '0') * divisor + BigInt(fraction || '0');
-  return Number((units * BigInt(rate) + divisor / 2n) / divisor);
+  // Split whole/fractional products: all intermediates stay exact integers within
+  // validated report limits (rate <= 100000000 cents, <= 4 decimal places).
+  // This preserves BigInt rounding without requiring BigInt in Apps Script.
+  const divisor = 10 ** fraction.length;
+  return Number(whole || '0') * rate + Math.floor((Number(fraction || '0') * rate + divisor / 2) / divisor);
 }
 export function billingTotals(form: ReportForm, billing: Billing) {
   const materials = form.materials.map((row) =>
@@ -84,7 +87,10 @@ export function billingTotals(form: ReportForm, billing: Billing) {
   const travel = scaledAmount(String(billing.travelKm), billing.travelRateCents);
   const materialsTotal = materials.reduce((sum, value) => sum + value, 0);
   const net = work + travel + materialsTotal + billing.otherCents;
-  const vat = Number((BigInt(net) * BigInt(billing.vatBasisPoints) + 5000n) / 10000n);
+  // Multiplying the entire net by basis points can exceed Number's exact range.
+  // Divide first; the bounded remainder product is exact, including half cents.
+  const vat = Math.floor(net / 10000) * billing.vatBasisPoints +
+    Math.floor(((net % 10000) * billing.vatBasisPoints + 5000) / 10000);
   return {
     materials,
     materialsTotal,
