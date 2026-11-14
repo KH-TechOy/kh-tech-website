@@ -1,5 +1,19 @@
 # Tietovirta-auditointi — KH-Tech Oy, päivitetty 9.11.2026
 
+## REPORT 2.0 D — paikallinen muutos 14.11.2026
+
+Tämä päivätty osio kuvaa D:n lisäykset. Alla olevat A/C- ja CONTACT-havainnot ovat aikaisempien erien tilannekuvia; niitä ei pidä tulkita D:n käyttöönoton tai sopimusten vahvistukseksi.
+
+| Virta | Tiedot / suojaus / säilytys |
+| --- | --- |
+| Adminin käsintuonti → Report Worker → Firestore | Alkuperäisen CONTACT-sähköpostin nimi, email/puhelin, osoite, kuvaus, toivottu ajankohta ja viite; Adminin nimenomainen kopiointi. UID-kohtainen sessionStorage-lomakeluonnos; onnistumisen jälkeen vain pyynnön sama revisio tyhjennetään. `quotationRequests` on Adminin API:n takana, ei julkista kirjoitus- tai suoraa selainlukua. Ei automaattista poistoa tai CONTACT-taustasiirtoa. |
+| Päätös → uusi työtilaus | Hyväksyminen luo yhden uuden työn, säilyttää pyynnön ja auditoinnin. Yhteystiedot ja toivottu ajankohta tulevat työn huomioon, pyyntötunnus viitteeksi. Vastuut ja vahvistettu ajankohta valitaan erikseen. Hylkäys tallentaa perustelun. |
+| Adminin tiedostovakuutus → Worker | .khtreportin kanoninen sisältö tarkistetaan serverillä; PDF:n sisältö pysyy selaimessa, vain sen SHA-256 välittyy. Vastaanoton UID/aika/perustelu ja tarkisteet jäävät arkistometatietoihin ja auditointiin. Ei väitettä sähköpostitoimituksesta. |
+| Säilytyskäytäntö → Worker → Firestore | Versio, päivämäärä, vähimmäispäivät, perustelu ja toimijan UID. Ei TTL:ää tai oletettua säilytysaikaa. Hautakivet ja auditointi eivät poistu käytännön täyttyessä. |
+| Yhteenveto → Adminin selain → lataus | Rajatut raportti-/finanssisivut, kustannustiedon puutteet sekä CSV/PDF paikallisesti. Ei julkista raporttivarastoa tai latausten automaattista lähetystä. Käyttäjä huolehtii kopioiden säilytyksestä. |
+
+Julkinen CONTACT 3.1, Turnstile, vastaanottaja, välityslokit ja sähköpostin toimitus eivät muutu. Julkista tietosuojasivua ei uudistettu D:ssä. Omistajan on vahvistettava informoinnin kattavuus myös käsin tuotaville/hylätyille pyynnöille sekä todelliset säilytys- ja poistomenettelyt ennen niiden tuotantokäyttöä: [hyväksyntälista](PRIVACY_APPROVAL_CHECKLIST.md). Tekninen muutos ei vahvista oikeusperustetta tai palveluntarjoajasopimusta.
+
 ## REPORT 2.0 A — päivitys 10.11.2026
 
 Tämä osio korvaa alempien historiallisten raportti-/todennushavaintojen nykytilan. Firebase email/password ja Cloudflare Worker -roolihallinta on toteutettu paikallisesti; oikeaa projektia tai käyttöönottoa ei ole varmennettu. Konfiguroimattomassa buildissa raportin käyttö on suljettu. Julkisilla sivuilla ei alusteta Firebase SDK:ta eikä aloiteta Auth-/Firestore-yhteyksiä; tietosuojateksti käyttää vain julkista asetuslippua. Ei muutosta CONTACT 3.1:n viestien toimitukseen tai peliin.

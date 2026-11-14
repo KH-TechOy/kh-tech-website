@@ -13,6 +13,7 @@ import {
   type ArchiveStatus,
 } from "../src/reportArchive";
 import { readWork, publicReport, type FullReport } from "./workStorage";
+import { retentionPolicy } from "./retentionPolicy";
 import { retentionWindow } from "../src/reportRetention";
 import {
   callRelay,
@@ -20,6 +21,7 @@ import {
   relayReady,
   type RelayConfig,
   type RelayResult,
+  relayError,
 } from "./archiveRelay";
 export type ArchiveConfig = RelayConfig & {
   deletionEnabled?: boolean;
@@ -163,6 +165,16 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
         "confirmationId",
         "recoverable",
       ],
+      manualConfirm: [
+        "action",
+        "id",
+        "revision",
+        "confirmationId",
+        "recoverable",
+        "portable",
+        "pdfSha256",
+        "reason",
+      ],
       confirmPhotos: [
         "action",
         "id",
@@ -177,6 +189,7 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
         "confirmationId",
         "recoverable",
         "policyVersion",
+        "legalChecked",
       ],
       copy: ["action", "id", "targetId", "requestId"],
       import: ["action", "id", "targetId", "requestId", "portable"],
@@ -191,18 +204,19 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
     if (action === "capabilities")
       return db.transaction(async (tx) => {
         const p = await actor(tx, claims, false);
+        const policy = await retentionPolicy(tx, config);
         return {
           relayConfigured: relayReady(config),
           canDelete:
             p.role === "admin" &&
             !!config.deletionEnabled &&
-            Number.isInteger(config.retentionDays) &&
-            config.retentionDays! >= 0 &&
-            config.retentionDays! <= 36500 &&
-            !!config.policyVersion,
-          policyVersion: p.role === "admin" ? config.policyVersion || "" : "",
+            Number.isInteger(policy.retentionDays) &&
+            policy.retentionDays! >= 0 &&
+            policy.retentionDays! <= 36500 &&
+            !!policy.policyVersion,
+          policyVersion: p.role === "admin" ? policy.policyVersion || "" : "",
           retentionDays:
-            p.role === "admin" ? (config.retentionDays ?? null) : null,
+            p.role === "admin" ? (policy.retentionDays ?? null) : null,
         };
       }, 1);
     if (!idPattern.test(id)) fail();
@@ -329,11 +343,8 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
             action: "status",
             operationId: target.operationId,
           });
-        } catch {
-          result = {
-            operationId: target.operationId,
-            status: "OUTCOME_UNKNOWN",
-          };
+        } catch (e) {
+          return { status: target.status, error: relayError(e) };
         }
         const meta = await updateResult(
           claims,
@@ -458,6 +469,10 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
           p = latest?.photo as any;
         if (p?.operationId !== target.operationId)
           fail("revision_conflict", 409);
+        if(p.status==='ARCHIVE_CONFIRMED'){
+          if(!p.receipt)fail('archive_integrity',409);
+          return {archive:latest};
+        }
         const next = {
           ...latest,
           photo: {
@@ -471,6 +486,7 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
           },
         };
         tx.put("archiveMetadata/" + id, doc(next));
+        tx.put('auditEvents/photo-receipt-'+target.operationId,doc({action:'photo_archive_confirmed',targetId:id,operationId:target.operationId,actorUid:claims.uid,photoHashes:hashes,createdAt:next.photo.receipt.at}));
         return { archive: next };
       }, 2);
     }
@@ -482,10 +498,85 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
       fail("archive_integrity", 409);
     if (action === "snapshot") return { portable, archive: loaded.metadata };
     if (
-      ["prepare", "send", "confirm", "delete"].includes(action) &&
+      ["prepare", "send", "confirm", "manualConfirm", "delete"].includes(
+        action,
+      ) &&
       input.revision !== r.revision
     )
       fail("revision_conflict", 409);
+    if (action === "manualConfirm") {
+      // Explicit owner attestation, never evidence of email delivery. Verify portable
+      // bytes server-side; the owner's selected PDF digest is not an independent PDF
+      // attestation. Deletion remains blocked until the trusted relay matches it.
+      if (
+        input.confirmationId !== id ||
+        input.recoverable !== true ||
+        typeof input.reason !== "string" ||
+        input.reason.trim().length < 10 ||
+        input.reason.length > 500 ||
+        typeof input.portable !== "string" ||
+        !hashPattern.test(String(input.pdfSha256))
+      )
+        fail("archive_receipt_invalid", 409);
+      const selected = await parsePortable(input.portable);
+      if (
+        selected.integrity.value !== portable.integrity.value ||
+        (await sha256(input.portable)) !== expectedPortableHash
+      )
+        fail("archive_integrity", 409);
+      const pdfHash = String(input.pdfSha256);
+      return db.transaction(async (tx) => {
+        await actor(tx, claims);
+        const current = await readWork(tx, id),
+          meta = await tx.get("archiveMetadata/" + id);
+        if (
+          current.report?.status !== "APPROVED" ||
+          current.report.revision !== r.revision
+        )
+          fail("revision_conflict", 409);
+        if (meta?.pdfSha256 && meta.pdfSha256 !== pdfHash)
+          fail("archive_integrity", 409);
+        if (meta?.status === "ARCHIVE_CONFIRMED") return { archive: meta };
+        // A send in progress could still execute. Retain that uncertainty and block deletion.
+        const next = {
+          ...meta,
+          id,
+          revision: r.revision,
+          status: "ARCHIVE_CONFIRMED",
+          snapshotHash: portable.integrity.value,
+          expectedPortableHash,
+          portableSha256: expectedPortableHash,
+          pdfSha256: pdfHash,
+          deliveryResolved: !meta?.operationId,
+          deliveryUncertain: !!meta?.operationId,
+          ownerRecovery: true,
+          authoritativePdfVerified: !!meta?.pdfSha256,
+          receipt: {
+            at: new Date().toISOString(),
+            byUid: claims.uid,
+            method: "owner-recovery",
+            reason: String(input.reason).trim(),
+            pdfSha256: pdfHash,
+            portableSha256: expectedPortableHash,
+          },
+        };
+        tx.put("archiveMetadata/" + id, doc(next));
+        tx.put(
+          "auditEvents/receipt-" + id + "-" + r.revision,
+          doc({
+            action: "archive_owner_recovery",
+            actorUid: claims.uid,
+            targetId: id,
+            revision: r.revision,
+            reason: String(input.reason).trim(),
+            pdfSha256: pdfHash,
+            portableSha256: expectedPortableHash,
+            createdAt: new Date().toISOString(),
+          }),
+        );
+        return { archive: next };
+      }, 2);
+    }
     if (action === "confirm")
       return db
         .transaction(async (tx) => {
@@ -570,16 +661,17 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
     if (action === "delete")
       return db.transaction(async (tx) => {
         await actor(tx, claims);
+        const policy = await retentionPolicy(tx, config);
         const current = await readWork(tx, id),
           meta = await tx.get("archiveMetadata/" + id),
           now = new Date().toISOString(),
           photos = meta?.photo as any;
         if (
           !config.deletionEnabled ||
-          !config.policyVersion ||
-          !Number.isInteger(config.retentionDays) ||
-          config.retentionDays! < 0 ||
-          config.retentionDays! > 36500
+          !policy.policyVersion ||
+          !Number.isInteger(policy.retentionDays) ||
+          policy.retentionDays! < 0 ||
+          policy.retentionDays! > 36500
         )
           fail("retention_not_configured", 409);
         if (
@@ -588,9 +680,12 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
           current.report.revision !== r.revision ||
           input.confirmationId !== id ||
           input.recoverable !== true ||
-          input.policyVersion !== config.policyVersion ||
+          input.policyVersion !== policy.policyVersion ||
+          input.legalChecked !== true ||
           meta?.status !== "ARCHIVE_CONFIRMED" ||
           meta.deliveryResolved !== true ||
+          (meta.ownerRecovery === true &&
+            meta.authoritativePdfVerified !== true) ||
           !meta.receipt ||
           meta.snapshotHash !== portable.integrity.value ||
           (photos &&
@@ -601,7 +696,7 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
             ].includes(photos.status))
         )
           fail("archive_delete_blocked", 409);
-        const retention = retentionWindow(r.approval!.at, config.retentionDays);
+        const retention = retentionWindow(r.approval!.at, policy.retentionDays);
         if (!retention) fail("archive_integrity", 409);
         if (!retention.eligible) fail("retention_period", 409);
         if (!tx.delete) fail("delete_not_supported", 503);
@@ -620,10 +715,11 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
           pdfSha256: meta.pdfSha256,
           portableSha256: meta.portableSha256,
           receipt: meta.receipt,
+          ...(meta.photo?{photo:meta.photo}:{}),
           deliveryResolved: true,
           removedAt: now,
           removedBy: claims.uid,
-          policyVersion: config.policyVersion,
+          policyVersion: policy.policyVersion,
         };
         tx.put("archiveMetadata/" + id, doc(kept));
         tx.put(
@@ -633,7 +729,8 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
             actorUid: claims.uid,
             targetId: id,
             revision: r.revision,
-            policyVersion: config.policyVersion,
+            policyVersion: policy.policyVersion,
+            legalChecked: true,
             createdAt: now,
           }),
         );
@@ -648,11 +745,9 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
           action: "status",
           operationId: meta.operationId,
         });
-      } catch {
-        result = {
-          operationId: String(meta.operationId),
-          status: "OUTCOME_UNKNOWN",
-        };
+      } catch (e) {
+        // A failed status read says nothing about a previous successful send/receipt.
+        return { archive: meta, diagnostic: relayError(e) };
       }
       return {
         archive: await updateResult(
@@ -699,6 +794,7 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
           pdfSha256: result.pdfSha256!,
           portableSha256: expectedPortableHash,
           status: meta?.status || "ARCHIVE_PENDING",
+          ...(meta?.ownerRecovery ? { authoritativePdfVerified: true } : {}),
         };
         tx.put("archiveMetadata/" + id, doc(next));
         return { archive: next };
@@ -750,8 +846,8 @@ export function archiveService(db: Database, config: ArchiveConfig = {}) {
         operationId,
         portable: portableText(portable),
       });
-    } catch {
-      result = { operationId, status: "OUTCOME_UNKNOWN" };
+    } catch (e) {
+      result = { operationId, status: "OUTCOME_UNKNOWN", error: relayError(e) };
     }
     return { archive: await updateResult(claims, id, operationId, result) };
   };

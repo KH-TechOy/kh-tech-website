@@ -1,7 +1,7 @@
 import { afterEach, expect, test, vi } from "vitest";
 import { emptyReport, reportIsEmpty } from "./reportModel";
 import { billingTotals, emptyBilling } from "./reportWorkModel";
-import { signatureValid, signaturePath } from "./reportSignature";
+import { signatureValid, signaturePath,signatureBounds } from "./reportSignature";
 import {
   sanitizeEmployeeDrafts,
   stripFinancial,
@@ -10,6 +10,10 @@ import { validOperations } from "./reportArchive";
 import { readWork } from "../report-api/workStorage";
 import type { Document } from "../report-api/types";
 afterEach(() => vi.unstubAllGlobals());
+test('signature presentation trims unused canvas space with the original aspect ratio and never rewrites stored strokes',()=>{
+  const value={version:1 as const,strokes:[{points:[1000,4000,2000,2500,4000,5500,7000,3000]}],confirmedAt:'',context:{reportId:'KHT-20261114-ABCDEF',customer:'Testi',date:'2026-11-14'}};
+  const before=JSON.stringify(value);expect(signatureBounds(value)).toEqual({minX:1000,minY:1000,width:6000,height:1200});expect(JSON.stringify(value)).toBe(before);
+});
 test("VAT and fractional work/travel/material totals use deterministic cents and configured rate", () => {
   const form = {
     ...emptyReport().form,

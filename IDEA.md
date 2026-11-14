@@ -1,3 +1,6 @@
+REPORT 2.0 D — paikallinen tuotantovakautus
+Arkistopalautus erottaa tiedostovahvistuksen sähköpostituloksesta; epäselvää lähetystä ei uusita. Uusi PDF-allekirjoitus koskee vain pdfLayout=2-hyväksyntöjä, vanhojen PDF-tavut säilyvät. Adminin hallinta, sivutetut yhteenvedot ja versionoidut säilytysasetukset eivät anna työntekijälle talous- tai poisto-oikeuksia. CONTACT 3.1 säilyy: tarjouspyynnöt tuodaan Adminin kautta alkuperäisellä viitteellä. Ei TTL-poistoa, uusia maksupalveluja, pushia, deployta tai oikeaa postia. Ohjeet: REPORT_2_0_D_RESULT/SETUP/SECURITY/UX_REVIEW.md.
+
 # KH-Tech Oy – tuotteen määrittely
 
 ## CONTACT 3.1 — yksi lähetyspainallus, 10.11.2026

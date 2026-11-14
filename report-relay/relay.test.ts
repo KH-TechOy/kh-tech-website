@@ -113,7 +113,7 @@ test("GAS save-time grammar rejects the exact original line-13727 BigInt token a
   expect(() => validateGasScript("var divisor = BigInt(10);")).toThrow(
     "BigInt is outside",
   );
-  expect(()=>validateGasScript(new Uint8Array([0xc3,0x28]))).toThrow();
+  expect(() => validateGasScript(new Uint8Array([0xc3, 0x28]))).toThrow();
   for (const file of [
     ".playwright-artifacts/report-relay/PdfLibrary.gs",
     "report-relay/Code.gs",
@@ -134,6 +134,84 @@ test("the syntax fix preserves the previously generated approved PDF, portable b
   expect(
     await sha256(new Uint8Array(buildFinalPdf(archive).output("arraybuffer"))),
   ).toBe("d4649035d8c9abd66bd22ca29850989c66e7eba4c94b13caf491aa5cefb311ce");
+});
+test("D compact signature is versioned, deterministic and identical in the browser and GAS while legacy fixtures stay unchanged", async () => {
+  const r = approvedFixture();
+  const modern = await makePortable({
+    ...r,
+    approval: { ...r.approval, pdfLayout: 2 },
+  });
+  const bytes = new Uint8Array(buildFinalPdf(modern).output("arraybuffer"));
+  const h = createRelayHarness();
+  const result = await callRelay(
+    { ...config, fetcher: h.fetcher },
+    {
+      action: "prepare",
+      operationId: "modern-signature-0001",
+      portable: portableText(modern),
+    },
+  );
+  expect(result.pdfSha256).toBe(await sha256(bytes));
+  expect(await sha256(bytes)).toBe(
+    "7376661c2cda4064dda7faca299f63ac0d0483311997d8366486228159c3da74",
+  );
+  expect(h.state.mailbox).toHaveLength(0);
+});
+test("relay diagnostics distinguish network/timeout/HTTP authorization/rate/invalid body/HMAC without reflecting provider contents", async () => {
+  const body = { action: "status", operationId: "diagnostic-only-0001" };
+  for (const [fetcher, code] of [
+    [
+      async () => {
+        throw new Error("private transport URL");
+      },
+      "relay_network",
+    ],
+    [
+      async () => {
+        throw new DOMException("private timeout", "TimeoutError");
+      },
+      "relay_timeout",
+    ],
+    [
+      async () => new Response("private token", { status: 403 }),
+      "relay_unauthorized",
+    ],
+    [
+      async () => new Response("private quota", { status: 429 }),
+      "relay_rate_limit",
+    ],
+    [
+      async () => new Response("<html>private configuration</html>"),
+      "relay_response",
+    ],
+    [
+      async () =>
+        Response.json({
+          payload: { status: "PREPARED", operationId: body.operationId },
+          signature: "0".repeat(64),
+        }),
+      "relay_auth",
+    ],
+  ] as const) {
+    await expect(
+      callRelay({ ...config, fetcher: fetcher as typeof fetch }, body),
+    ).rejects.toMatchObject({ code, message: code });
+  }
+  const h = createRelayHarness();
+  h.state.quota = 0;
+  const p = await makePortable(approvedFixture());
+  expect(
+    (
+      await callRelay(
+        { ...config, fetcher: h.fetcher },
+        {
+          action: "archive",
+          operationId: "quota-diagnostic-0001",
+          portable: portableText(p),
+        },
+      )
+    ).error,
+  ).toBe("relay_quota");
 });
 
 test("portable approval includes exact signature/totals, detects tampering/version changes, and excludes authentication data", async () => {

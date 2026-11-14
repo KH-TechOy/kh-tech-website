@@ -1,5 +1,13 @@
 # Tietosuojan ja tuotantojulkaisun hyväksyntälista
 
+## REPORT 2.0 D — hallinta ja käsin tuotavat tarjouspyynnöt, 14.11.2026
+
+- [ ] Vahvista tietosuojainformointi ja säilytys myös Adminin alkuperäisestä CONTACT-sähköpostista käsin kopioimille tarjouspyynnöille: nimi, sähköposti/puhelin, osoite, kuvaus, toivottu ajankohta, viite ja päätösperustelu. Tiedot menevät Adminin API:n kautta Firestoreen; julkinen CONTACT-lomake ja sen lähetys-/välityslokit eivät muutu. Myös hylätyn pyynnön poistomenettely on sovittava; automaattista säilytysaikaa ei ole.
+- [ ] Hyväksy versionoitu säilytyskäytäntö kirjanpitäjän kanssa. Aikaraja ei poista tietoja automaattisesti eikä syrjäytä muita säilytysvelvoitteita. Auditointi ja poiston hautakivet säilyvät erikseen.
+- [ ] Hyväksy Adminin käsin talletetun arkiston vakuutuspolku, arkistotiedostojen todellinen palautettavuus ja vain tarpeellisten yhteenveto-/CSV-/PDF-kopioiden säilytys. Vakuutus ei väitä sähköpostin toimitusta tai riippumatonta PDF-varmennusta puuttuvan luotetun vertailun tilalle.
+
+Toteutus ja tuotannon tarkistusrajat: [REPORT_2_0_D_SETUP.md](REPORT_2_0_D_SETUP.md). Aikaisempia avoimia yritys-, sopimus-, käsittelyperuste- ja siirtosuojavahvistuksia ei merkitä hyväksytyiksi tämän teknisen päivityksen perusteella.
+
 ## REPORT 2.0 C — arkisto ja allekirjoitus, 12.11.2026
 
 - [ ] Hyväksy vapaaehtoisen allekirjoituksen tarkoitus, käsittelyperuste, informointi, pääsynvalvonta ja säilytysaika. Vektoripiirros/aikaleima ei varmenna henkilöllisyyttä eikä ole hyväksytty sähköinen allekirjoitus. Vanha kuittausteksti säilyy historiallisissa raporteissa.

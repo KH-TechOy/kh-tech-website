@@ -20,6 +20,7 @@ import {
   fixtureRelayUrl,
 } from "../report-relay/test/harness.mjs";
 import sharp from "sharp";
+import { buildFinalPdf } from "../src/finalPdf";
 let deps: Dependencies,
   work: ReturnType<typeof workService>,
   archive: ReturnType<typeof archiveService>,
@@ -79,6 +80,18 @@ const client = (uid: string) =>
   env
     .authenticatedContext(uid, { auth_time: Math.floor(Date.now() / 1000) })
     .firestore();
+test("new management settings and quotation bodies have no direct client or public Firestore write/read path", async () => {
+  for (const uid of ["employee", "outsider", "admin"])
+    for (const path of [
+      "settings/retention",
+      "quotationRequests/KHT-20261114-AABBCCDDEEFF",
+    ]) {
+      await assertFails(getDoc(doc(client(uid), path)));
+      await assertFails(
+        setDoc(doc(client(uid), path), { role: "admin", status: "ACCEPTED" }),
+      );
+    }
+});
 async function ready() {
   const created = await w("admin", {
     action: "createOrder",
@@ -127,6 +140,87 @@ async function approved() {
     })
   ).report;
 }
+test("owner-confirmed archive recovery works without relay but cannot authorize deletion or claim email success", async () => {
+  const r = await approved(),
+    portable = await makePortable(r),
+    bytes = new Uint8Array(buildFinalPdf(portable).output("arraybuffer"));
+  const deps = await dependencies(),
+    service = archiveService(deps.db, {
+      deletionEnabled: true,
+      retentionDays: 0,
+      policyVersion: "test-policy",
+    });
+  const input = {
+    action: "manualConfirm",
+    id,
+    revision: r.revision,
+    confirmationId: id,
+    recoverable: true,
+    portable: portableText(portable),
+    pdfSha256: await sha256(bytes),
+    reason: "Omistaja tallensi ja tarkisti molemmat alkuperäistiedostot",
+  };
+  await expect(service(claims("employee"), input)).rejects.toMatchObject({
+    code: "admin_required",
+  });
+  await expect(
+    service(claims("admin"), {
+      ...input,
+      portable: portableText(portable).replace("Testikatu", "Eri katu"),
+    }),
+  ).rejects.toThrow();
+  const first = (await service(claims("admin"), input)).archive!;
+  expect(first.status).toBe("ARCHIVE_CONFIRMED");
+  expect(first.ownerRecovery).toBe(true);
+  expect(first.authoritativePdfVerified).toBe(false);
+  expect(first).not.toHaveProperty("pdfBase64");
+  expect(relay.state.mailbox).toHaveLength(0);
+  expect((await service(claims("admin2"), input)).archive).toEqual(first);
+  await expect(
+    service(claims("admin"), {
+      action: "delete",
+      id,
+      revision: r.revision,
+      confirmationId: id,
+      recoverable: true,
+      legalChecked: true,
+      policyVersion: "test-policy",
+    }),
+  ).rejects.toMatchObject({ code: "archive_delete_blocked" });
+  expect((await db.doc("reports/" + id).get()).exists).toBe(true);
+});
+test("ambiguous send may be archived by owner receipt without resending; failed status reads preserve the receipt", async () => {
+  const r = await approved();
+  relay.state.throwAfterSend = true;
+  const sent = await a("admin", { action: "send", id, revision: r.revision });
+  expect(sent.archive.status).toBe("ARCHIVE_OUTCOME_UNKNOWN");
+  const portable = await makePortable(r),
+    pdf = relay.state.mailbox[0].attachments[0];
+  const input = {
+    action: "manualConfirm",
+    id,
+    revision: r.revision,
+    confirmationId: id,
+    recoverable: true,
+    portable: portableText(portable),
+    pdfSha256: await sha256(new Uint8Array(pdf.getBytes())),
+    reason: "Arkistosta ladatut alkuperäisliitteet on tarkistettu",
+  };
+  expect((await a("admin", input)).archive.deliveryResolved).toBe(false);
+  const deps = await dependencies(),
+    offline = archiveService(deps.db, {
+      relayUrl: fixtureRelayUrl,
+      secret: fixtureRelaySecret,
+      fetcher: async () => {
+        throw new Error("offline");
+      },
+    });
+  const status = await offline(claims("admin"), { action: "status", id });
+  expect(status.diagnostic).toBe("relay_network");
+  expect(status.archive?.status).toBe("ARCHIVE_CONFIRMED");
+  await a("admin", { action: "send", id, revision: r.revision });
+  expect(relay.state.mailbox).toHaveLength(1);
+});
 test("schema-2 finance migrates atomically, Employee API/Firestore/cache boundaries contain only operational values", async () => {
   const pending = await ready();
   const legacy = await w("admin", { action: "load", id });
@@ -266,6 +360,7 @@ test("archive sends once, service acceptance is unverified, and exact file recei
       revision: r.revision,
       confirmationId: id,
       recoverable: true,
+      legalChecked: true,
       policyVersion: "test-policy",
     }),
   ).rejects.toMatchObject({ code: "archive_delete_blocked" });
@@ -304,6 +399,7 @@ test("archive sends once, service acceptance is unverified, and exact file recei
       revision: r.revision,
       confirmationId: id,
       recoverable: true,
+      legalChecked: true,
       policyVersion: "test-policy",
     }),
   ).rejects.toMatchObject({ code: "admin_required" });
@@ -315,6 +411,7 @@ test("archive sends once, service acceptance is unverified, and exact file recei
         revision: r.revision,
         confirmationId: id,
         recoverable: true,
+        legalChecked: true,
         policyVersion: "test-policy",
       })
     ).removed,
@@ -432,6 +529,7 @@ test("two-year-old confirmed reports remain in Firestore; elapsed retention only
       revision: r.revision,
       confirmationId: id,
       recoverable: true,
+      legalChecked: true,
       policyVersion: "owner-policy",
     }),
   ).rejects.toMatchObject({ code: "retention_period" });
@@ -493,6 +591,7 @@ test("known pre-send quota failure retries safely, missing relay and unapproved 
       revision: r.revision,
       confirmationId: id,
       recoverable: true,
+      legalChecked: true,
       policyVersion: "none",
     }),
   ).rejects.toMatchObject({ code: "retention_not_configured" });
@@ -625,4 +724,8 @@ test("photos use bounded, revision-bound permits; exact independent photo receip
   expect((await a("employee", { action: "photoStatus", id })).status).toBe(
     "ARCHIVE_CONFIRMED",
   );
+  const firstPhoto=(await db.doc('archiveMetadata/'+id).get()).data()!.photo;
+  await a('admin2',{action:'confirmPhotos',id,photoHashes:[manifest[0].sha256],confirmationId:id,recoverable:true});
+  expect((await db.doc('archiveMetadata/'+id).get()).data()!.photo.receipt).toEqual(firstPhoto.receipt);
+  expect((await db.doc('auditEvents/photo-receipt-'+permit.packet.payload.operationId).get()).data()?.actorUid).toBe('admin');
 });

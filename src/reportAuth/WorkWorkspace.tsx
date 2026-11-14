@@ -37,6 +37,7 @@ type Card = Pick<
   | "updatedAt"
 > & { address?: string };
 type Props = {
+  initialId?:string;
   user: User;
   profile: EmployeeProfile;
   page: "home" | "editor";
@@ -47,6 +48,7 @@ type Props = {
 
 export default function WorkWorkspace({
   user,
+  initialId,
   profile,
   page,
   onPage,
@@ -116,6 +118,7 @@ export default function WorkWorkspace({
   const archiveSources=React.useMemo(()=>admin?[[]]:[],[admin]);
   const [archivePages,setArchivePages]=React.useState(1);
   const archiveList=useLivePages<{id:string;revision:number;status:import('../reportArchive').ArchiveStatus;removedAt?:string}>('archiveMetadata',archiveSources,'id','asc',25,archivePages);
+  const approvedArchives=archiveList.rows.filter(a=>Object.keys(archiveLabel).includes(a.status));
   const cards = workList.rows
     .filter((row) => row.status in statusLabel)
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
@@ -131,7 +134,7 @@ export default function WorkWorkspace({
   >([]);
   const [people, setPeople] = React.useState<EmployeeProfile[]>([]),
     [message, setMessage] = React.useState("");
-  const [selected, setSelected] = React.useState("legacy"),
+  const [selected, setSelected] = React.useState(initialId||"legacy"),
     [editingOrder, setEditingOrder] = React.useState<WorkReport | null>(null);
   const [loadingOrder, setLoadingOrder] = React.useState(false);
   const [catalogOpen, setCatalogOpen] = React.useState(false);
@@ -280,7 +283,7 @@ export default function WorkWorkspace({
             />
           )}
           {admin&&<ArchiveImport user={user}/>}
-          {admin&&<details className="archive-list"><summary>Hyväksyttyjen raporttien arkistotilat ({archiveList.rows.length})</summary><p>Vain erikseen varmennettu PDF- ja .khtreport-kopio merkitsee raportin arkistoiduksi. Raportti säilyy Firestoressa, kunnes ylläpitäjä vahvistaa sallitun pilvipoiston.</p><ul>{archiveList.rows.map(a=><li key={a.id}><strong>{a.id}</strong> · versio {a.revision} · {archiveLabel[a.status] || 'Arkistointi kesken'}{a.removedAt?<p>Poistettu aktiivisesta tietokannasta. Tuo tallennettu .khtreport tarkasteltavaksi.</p>:<button type="button" className="button outline" onClick={()=>open(a.id)}>{a.status==='ARCHIVE_CONFIRMED'?'Avaa arkistoitu raportti':'Avaa raportti'}</button>}</li>)}</ul>{archiveList.more&&<button className="button outline" onClick={()=>setArchivePages(n=>n+1)}>Lataa lisää arkistoja</button>}{archiveList.error&&<p role="alert">{archiveList.error}</p>}</details>}
+          {admin&&<details className="archive-list"><summary>Hyväksyttyjen raporttien arkistotilat ({approvedArchives.length})</summary><p>Vain erikseen varmennettu PDF- ja .khtreport-kopio merkitsee raportin arkistoiduksi. Raportti säilyy Firestoressa, kunnes ylläpitäjä vahvistaa sallitun pilvipoiston.</p><ul>{approvedArchives.map(a=><li key={a.id}><strong>{a.id}</strong> · versio {a.revision} · {archiveLabel[a.status] || 'Arkistointi kesken'}{a.removedAt?<p>Poistettu aktiivisesta tietokannasta. Tuo tallennettu .khtreport tarkasteltavaksi.</p>:<button type="button" className="button outline" onClick={()=>open(a.id)}>{a.status==='ARCHIVE_CONFIRMED'?'Avaa arkistoitu raportti':'Avaa raportti'}</button>}</li>)}</ul>{archiveList.more&&<button className="button outline" onClick={()=>setArchivePages(n=>n+1)}>Lataa lisää arkistoja</button>}{archiveList.error&&<p role="alert">{archiveList.error}</p>}</details>}
           {!!unfinishedOrders.length && (
             <details className="work-recoveries">
               <summary>

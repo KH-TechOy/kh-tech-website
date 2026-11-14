@@ -23,6 +23,7 @@ import { flushFormDrafts } from './formDraft';
 import { sanitizeEmployeeDrafts } from './employeePrivacy';
 import "./report-auth.css";
 const Workspace = React.lazy(() => import('./WorkWorkspace'));
+const Management=React.lazy(()=>import("./AdminManagement"));
 const AdminPanel = React.lazy(() => import("./employees"));
 
 export default function ReportApp() {
@@ -34,9 +35,10 @@ export default function ReportApp() {
   const [email, setEmail] = React.useState(""),
     [password, setPassword] = React.useState(""),
     [reset, setReset] = React.useState(false);
-  const [page, setPage] = React.useState<"home" | "editor" | "employees">(
+  const [page, setPage] = React.useState<"home" | "editor" | "employees" | "management" | "summaries">(
     "home",
   );
+  const [openReportId,setOpenReportId]=React.useState<string>();
   const [legacyOpen, setLegacyOpen] = React.useState(0);
   const drafts = React.useRef(new Map<string, DraftSession>()),
     draft = React.useRef<DraftSession | null>(null),
@@ -50,6 +52,7 @@ export default function ReportApp() {
     draft.current = null;
     store.current = null;
     verifiedUid.current = null;
+    setOpenReportId(undefined);
     setProfile(null);
     setPage("home");
   }, []);
@@ -315,12 +318,12 @@ export default function ReportApp() {
       </header>
       <main id="report-access-content">
         {user && profile && (
-          <p className="access-retention">
+          <details className="access-retention"><summary>Tallennus ja tietosuoja</summary><p>
             Raporttitiedot ja allekirjoitus synkronoidaan pilveen. Paikallinen palautuskopio
             ja kuvat ovat tämän välilehden salaamattomassa selainmuistissa.
             Uloskirjautuminen säilyttää ne omalla käyttäjätunnuksellasi.
             Kuvat eivät siirry laitteiden välillä. Käytä henkilökohtaista laitetta.
-          </p>
+          </p></details>
         )}
         {!reportConfigured ? (
           <section className="access-login">
@@ -411,6 +414,7 @@ export default function ReportApp() {
                 <button onClick={() => setPage("editor")}>
                   Raporttieditori
                 </button>
+                {profile.role === "admin" && <><button onClick={()=>setPage("management")}>Hallinta</button><button onClick={()=>setPage("summaries")}>Yhteenvedot</button></>}
                 {profile.role === "admin" && (
                   <button onClick={() => setPage("employees")}>
                     Työntekijät
@@ -419,7 +423,7 @@ export default function ReportApp() {
               </nav>
             </div>
             <React.Suspense fallback={<p role="status">Ladataan…</p>}>
-              {page === "employees" && profile.role === "admin" ? (
+              {(page==="management"||page==="summaries")&&profile.role==="admin" ? <Management key={user.uid} user={user} mode={page} onOpen={id=>{setOpenReportId(id);setPage("editor");}}/> : page === "employees" && profile.role === "admin" ? (
                 <AdminPanel key={user.uid} user={user} />
               ) : (
                 <section className="access-dashboard" hidden={page !== 'home'}>
@@ -456,7 +460,7 @@ export default function ReportApp() {
                   )}
                 </section>
               )}
-              {page !== 'employees' && draft.current && <Workspace key={user.uid + ':' + legacyOpen} user={user} profile={profile} page={page} onPage={setPage} legacy={draft.current} sessions={drafts.current} />}
+              {(page === 'home'||page==='editor') && draft.current && <Workspace initialId={openReportId} key={user.uid + ':' + legacyOpen} user={user} profile={profile} page={page} onPage={setPage} legacy={draft.current} sessions={drafts.current} />}
             </React.Suspense>
           </>
         )}

@@ -6,6 +6,12 @@ export type ReportSignature = {
   context: { reportId: string; customer: string; date: string };
 };
 export const SIGNATURE_POINTS = 1024;
+/** Bounds in the original 2.5:1 drawing surface, without changing stored points. */
+export function signatureBounds(signature:ReportSignature){
+  let minX=10000,minY=4000,maxX=0,maxY=0;
+  for(const {points} of signature.strokes)for(let i=0;i<points.length;i+=2){minX=Math.min(minX,points[i]);maxX=Math.max(maxX,points[i]);minY=Math.min(minY,points[i+1]*.4);maxY=Math.max(maxY,points[i+1]*.4);}
+  return {minX,minY,width:Math.max(1,maxX-minX),height:Math.max(1,maxY-minY)};
+}
 export function signatureValid(value: unknown): value is ReportSignature {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const s = value as ReportSignature;

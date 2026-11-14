@@ -13,6 +13,8 @@ export function buildFinalPdf(archive: PortableReport) {
     comment: r.comment,
     photos: [],
     compact: true,
+    // Original C archives remain byte-identical. Only new approvals opt in.
+    legacySignature: r.approval.pdfLayout !== 2,
   });
   pdf.setCreationDate(
     "D:" + r.approval.at.slice(0, 19).replace(/[-:T]/g, "") + "+00'00'",

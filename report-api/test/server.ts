@@ -7,10 +7,11 @@ import {createRelayHarness,fixtureRelaySecret,fixtureRelayUrl} from '../../repor
 let relay=createRelayHarness();
 const deps = await dependencies();
 let rejectEmail = false;
+let archiveOffline=false;
 const handler = reportHandler(
   {
     ...deps,
-    archive:{relayUrl:fixtureRelayUrl,secret:fixtureRelaySecret,fetcher:(url,init)=>relay.fetcher(url,init),deletionEnabled:true,retentionDays:0,policyVersion:'isolated-emulator-policy'},
+    archive:{relayUrl:fixtureRelayUrl,secret:fixtureRelaySecret,fetcher:(url,init)=>{if(archiveOffline)throw new Error('isolated network failure');return relay.fetcher(url,init);},deletionEnabled:true,retentionDays:0,policyVersion:'isolated-emulator-policy'},
     identity: {
       ...deps.identity,
       reset: async (email, ip) => {
@@ -26,6 +27,7 @@ createServer(async (incoming, outgoing) => {
     if (incoming.url === "/__reset" && incoming.method === "POST") {
       await seed();
       rejectEmail = false;
+      archiveOffline=false;
       relay=createRelayHarness();
       outgoing.end("ready");
       return;
@@ -44,6 +46,7 @@ createServer(async (incoming, outgoing) => {
       outgoing.end("ready");
       return;
     }
+    if(incoming.url==='/__archive-offline'&&incoming.method==='POST'){archiveOffline=true;outgoing.end('ready');return;}
     if(incoming.url==='/__photo-relay'&&incoming.method==='POST'){const chunks=[];for await(const chunk of incoming)chunks.push(Buffer.from(chunk));outgoing.setHeader('Content-Type','application/json');outgoing.end(JSON.stringify(relay.post(JSON.parse(Buffer.concat(chunks).toString('utf8')))));return;}
     const chunks: Buffer[] = [];
     for await (const part of incoming) chunks.push(Buffer.from(part));

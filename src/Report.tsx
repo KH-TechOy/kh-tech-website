@@ -540,7 +540,7 @@ export default function Report({
             <span>
               {cloudMode ? 'Työraportti ja paikallinen PDF' : 'Paikallinen PDF-työkalu'}
               <small>
-                {cloudMode ? 'Teksti tallentuu pilveen. Kuvat ja PDF pysyvät laitteella; sähköpostitoimitus ei ole käytössä.' : draftStorage
+                {cloudMode ? 'Teksti tallentuu automaattisesti. Kuvat säilyvät tällä laitteella ja ne voi toimittaa erikseen.' : draftStorage
                   ? "Henkilökohtainen istunto. PDF ladataan laitteelle; pilvitallennus ja sähköpostitoimitus eivät ole käytössä."
                   : "Henkilöstötodennus ja sähköpostitoimitus eivät ole käytössä. Ei tuotantokäyttöön asiakastiedoilla."}
               </small>
@@ -972,8 +972,8 @@ export default function Report({
               {cloudMode&&<p>Poista paikallinen luonnos poistaa vain tämän välilehden palautuskopion ja kuvat. Pilviraportti ja arkistotiedostot säilyvät. Pysyvä pilvipoisto tehdään erikseen ylläpitäjän arkistotoiminnoissa.</p>}
             </fieldset>
           </form>
-          {photoActions?.(state.photos,photos=>{if(localGeneration===session.getGeneration())setState(s=>({...s,photos:[...s.photos,...photos].slice(0,6)}))})}
         </div>
+          {photoActions?.(state.photos,photos=>{if(localGeneration===session.getGeneration())setState(s=>({...s,photos:[...s.photos,...photos].slice(0,6)}))})}
       </main>
       {admin && preview && (
         <Preview

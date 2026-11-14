@@ -2,13 +2,16 @@ import React from "react";
 import {
   SIGNATURE_POINTS,
   signaturePath,
+  signatureBounds,
   type ReportSignature,
 } from "../reportSignature";
 import { finnishTimestamp } from "../reportLocale";
 export function SignatureView({ value }: { value: ReportSignature }) {
+  const bounds=signatureBounds(value),w=bounds.width+200,h=bounds.height+200;
   return (
     <svg
-      viewBox="0 0 10000 4000"
+      viewBox={`${bounds.minX-100} ${bounds.minY-100} ${w} ${h}`}
+      style={{aspectRatio:String(w/h),maxHeight:104}}
       className="signature-view"
       role="img"
       aria-label="Asiakkaan allekirjoitus"

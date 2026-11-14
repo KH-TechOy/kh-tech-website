@@ -233,7 +233,8 @@ export function validatePortableShape(v: unknown): asserts v is PortableReport {
     !validOperations(r.operations) ||
     !validBilling(r.billing) ||
     !record(a) ||
-    !only(a, ["at", "byName", "revision", "displayAt"]) ||
+    !only(a, ["at", "byName", "revision", "displayAt", "pdfLayout"]) ||
+    (a.pdfLayout !== undefined && a.pdfLayout !== 2) ||
     a.revision !== r.revision ||
     typeof a.byName !== "string" ||
     a.byName.length > 120 ||

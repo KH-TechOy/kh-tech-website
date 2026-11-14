@@ -59,14 +59,14 @@ export default function PhotoDelivery({
     [status, setStatus] = React.useState<ArchiveStatus | null>(null),
     running = React.useRef(false);
   const [category, setCategory] = React.useState("after");
-  const [prepared,setPrepared]=React.useState<ReportPhoto[]>([]);
+  const [prepared, setPrepared] = React.useState<ReportPhoto[]>([]);
   const check = async () => {
-    const r = await reportRequest<{ status: ArchiveStatus | null }>(
-      user,
-      "/archive",
-      { action: "photoStatus", id },
-    );
+    const r = await reportRequest<{
+      status: ArchiveStatus | null;
+      error?: string;
+    }>(user, "/archive", { action: "photoStatus", id });
     setStatus(r.status);
+    if (r.error) setMessage(reportError({ code: r.error }));
     return r.status;
   };
   return (
@@ -172,7 +172,12 @@ export default function PhotoDelivery({
                   category: photos[i].category,
                 })),
               });
-              setPrepared(images.map((image,i)=>({...photos[i],data:'data:image/jpeg;base64,'+image.base64})));
+              setPrepared(
+                images.map((image, i) => ({
+                  ...photos[i],
+                  data: "data:image/jpeg;base64," + image.base64,
+                })),
+              );
               setStatus("ARCHIVE_SENDING");
               // Apps Script cannot supply arbitrary CORS headers. Opaque HTTP success is never delivery proof.
               await fetch(permit.relayUrl, {
@@ -217,7 +222,30 @@ export default function PhotoDelivery({
       </div>
       {status && <p role="status">{archiveLabel[status]} · Kuvat</p>}
       {message && <p role="alert">{message}</p>}
-      {!!prepared.length&&<div className="prepared-photo-files"><p>Valmistellut toimitusversiot ovat samat tavut kuin kuvalähetyksessä. Tallenna ne palautettavaan arkistoon ennen sivun päivitystä tai välilehden sulkemista, jos vastaanotto on epäselvä. Näitä lähetysversioita ei tallenneta pilveen tai selainluonnokseen.</p><div className="work-actions">{prepared.map((p,i)=><a key={p.id} href={p.data} download={id+'_toimitus_'+p.category+'_'+(i+1)+'.jpg'} className="button outline">Lataa toimitusversio {i+1}</a>)}</div></div>}
+      {!!prepared.length && (
+        <div className="prepared-photo-files">
+          <p>
+            Valmistellut toimitusversiot ovat samat tavut kuin kuvalähetyksessä.
+            Tallenna ne palautettavaan arkistoon ennen sivun päivitystä tai
+            välilehden sulkemista, jos vastaanotto on epäselvä. Näitä
+            lähetysversioita ei tallenneta pilveen tai selainluonnokseen.
+          </p>
+          <div className="work-actions">
+            {prepared.map((p, i) => (
+              <a
+                key={p.id}
+                href={p.data}
+                download={
+                  id + "_toimitus_" + p.category + "_" + (i + 1) + ".jpg"
+                }
+                className="button outline"
+              >
+                Lataa toimitusversio {i + 1}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
       <p>
         Jos palvelu ei ole käytössä tai kuvat ovat liian suuria, lataa ne ja
         lähetä käsin yrityksen sovittuun arkisto-osoitteeseen. Käytä viestin

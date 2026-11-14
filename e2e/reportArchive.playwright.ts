@@ -324,15 +324,8 @@ test("Admin approval locks exact financial snapshot; archive acceptance, file ve
   await expect(page.locator(".cloud-toolbar")).toContainText("Hyväksytty");
   await expect(page.locator("input[name=customer]")).toBeDisabled();
   const top = page.locator("[data-workflow=top]");
-  await expect(top.locator(".archive-preservation")).toContainText(
-    "Arkistoa ei ole vahvistettu",
-  );
-  await expect(top.locator(".retention-eligibility")).toContainText(
-    "Poisto estetty: PDF- ja .khtreport-kopioita ei ole itsenäisesti varmennettu",
-  );
-  await expect(
-    top.getByRole("button", { name: "Lataa lopullinen PDF", exact: true }),
-  ).toBeVisible();
+  await expect(top).toContainText("Arkistointi kesken");
+  await top.getByText("Lataa arkistotiedostot", { exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Luo ja lataa PDF", exact: true }),
   ).toHaveCount(0);
@@ -356,12 +349,14 @@ test("Admin approval locks exact financial snapshot; archive acceptance, file ve
     gross: 34638,
   });
   await top
-    .getByText("Arkistointi ja vastaanoton varmennus", { exact: true })
+    .locator("summary")
+    .filter({ hasText: /^Merkitse arkistoiduksi$/ })
     .click();
   await top
-    .getByRole("button", { name: "Lähetä arkistosähköposti", exact: true })
+    .getByRole("button", { name: "Lähetä arkistoon", exact: true })
     .click();
-  await expect(top).toContainText("Hyväksytty lähetykseen");
+  await expect(top).toContainText("hyväksytty lähetykseen");
+  await top.getByText("Säilytys ja poiston tarkistus", { exact: true }).click();
   await expect(
     top.getByRole("button", {
       name: "Poista arkistoitu raportti pilvestä",
@@ -384,20 +379,26 @@ test("Admin approval locks exact financial snapshot; archive acceptance, file ve
     ]);
   await top.getByLabel("Arkiston sijainti").selectOption("download");
   await top.getByLabel("Kirjoita vahvistukseksi raporttitunnus " + id).fill(id);
-  await top.getByRole("checkbox").check();
   await top
-    .getByRole("button", { name: "Vahvista arkiston vastaanotto", exact: true })
+    .getByLabel(
+      "Varmistin molempien tiedostojen saatavuuden ja palautettavuuden.",
+    )
+    .check();
+  await top
+    .getByLabel(
+      "Varmistin, ettei raporttiin liity muita lakisääteisiä tai toiminnallisia säilytysvelvoitteita.",
+    )
+    .check();
+  await top
+    .getByRole("button", { name: "Merkitse arkistoiduksi", exact: true })
     .click();
-  await expect(top).toContainText("Arkiston vastaanotto varmennettu");
-  await expect(top.locator(".archive-preservation")).toContainText(
-    "Raportti säilyy Firestoressa",
-  );
-  await expect(top.locator(".retention-eligibility")).toContainText(
-    "kelpoinen erikseen vahvistettavaan Admin-poistoon",
-  );
+  await expect(top).toContainText("Arkistoitu");
   await expect(
-    page.locator("[data-workflow=bottom] .retention-eligibility"),
-  ).toContainText("kelpoinen erikseen vahvistettavaan Admin-poistoon");
+    top.getByRole("button", {
+      name: "Poista arkistoitu raportti pilvestä",
+      exact: true,
+    }),
+  ).toBeEnabled();
   expect(
     (await api(request, "admin", { action: "load", id })).report.status,
   ).toBe("APPROVED");

@@ -52,7 +52,7 @@ export async function reportRequest<T>(
         ...(data ? { "Content-Type": "application/json" } : {}),
       },
       ...(data ? { body: JSON.stringify(data) } : {}),
-      signal: AbortSignal.timeout(25_000),
+      signal: AbortSignal.timeout(path==='/archive'?60_000:25_000),
     });
   } catch {
     throw new ReportApiError("network");
@@ -97,6 +97,21 @@ export function reportError(error: unknown): string {
     return "Toiminnon tulos on epäselvä. Tarkista tilanne ennen uutta pyyntöä.";
   if (code === "invalid_request") return "Tarkista antamasi tiedot.";
   const messages: Record<string, string> = {
+    relay_network:'Arkistopalveluun ei saada yhteyttä. Tarkista lähetys myöhemmin tai tallenna arkistotiedostot käsin. (R01)',
+    relay_timeout:'Arkistopalvelun vastaus viivästyi. Tarkista lähetys ennen uutta yritystä. (R02)',
+    relay_unauthorized:'Arkistopalvelun käyttöoikeus on tarkistettava. Ota yhteys ylläpitoon. (R03)',
+    relay_auth:'Arkistopalvelun asetukset eivät vastaa toisiaan. Ota yhteys ylläpitoon. (R04)',
+    relay_configuration:'Arkistopalvelun julkaisuasetukset on tarkistettava. (R05)',
+    relay_response:'Arkistopalvelu palautti odottamattoman vastauksen. Tarkista julkaistu versio. (R06)',
+    relay_rate_limit:'Arkistopalvelun pyyntöraja täyttyi. Odota ja tarkista lähetys. (R07)',
+    relay_quota:'Päivän sähköpostikiintiö on täyttynyt. Tallenna tiedostot tai odota seuraavaan päivään. (R08)',
+    relay_busy:'Arkistopalvelu on varattu. Tarkista lähetys hetken kuluttua. (R09)',
+    relay_journal_full:'Arkistopalvelun toimitusloki on täynnä. Ota yhteys ylläpitoon. (R10)',
+    relay_record_missing:'Aiemman lähetyksen tulos vaatii tarkistuksen. Varmista alkuperäiset arkistotiedostot. (R11)',
+    relay_outcome_unknown:'Sähköpostin tulos on epäselvä. Tarkista arkisto; älä lähetä uudelleen. (R12)',
+    relay_rejected:'Arkistopalvelu ei hyväksynyt pyyntöä. Tarkista palvelun versio. (R13)',
+    quotation_conflict:'Samalla pyyntötunnuksella on jo eri tiedot. Tarkista alkuperäinen CONTACT-viesti.',
+    policy_history_limit:'Säilytyskäytäntöjen historiaraja täyttyi. Ota yhteys ylläpitoon; historiaa ei poistettu.',
     archive_not_configured:'Arkistopalvelun asetukset puuttuvat. Lataa molemmat tiedostot ja säilytä raportti pilvessä.',
     approved_snapshot_required:'Toiminto vaatii palvelimella hyväksytyn raporttiversion.',
     archive_format:'Arkistotiedoston muotoa tai versiota ei tueta.',

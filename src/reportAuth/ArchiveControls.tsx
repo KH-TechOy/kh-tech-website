@@ -25,6 +25,8 @@ type Meta = {
   receipt?: { at: string; byUid: string; method: string };
   error?: string;
   photo?: { status: ArchiveStatus };
+  ownerRecovery?: boolean;
+  authoritativePdfVerified?: boolean;
 };
 type Capabilities = {
   relayConfigured: boolean;
@@ -50,6 +52,8 @@ export function useArchiveControls(
     [cap, setCap] = React.useState<Capabilities | null>(null),
     [busy, setBusy] = React.useState(false),
     [message, setMessage] = React.useState("");
+  const [recoveryReason, setRecoveryReason] = React.useState(""),
+    [legalChecked, setLegalChecked] = React.useState(false);
   const [photoHashes, setPhotoHashes] = React.useState<string[]>([]);
   const [now, setNow] = React.useState(Date.now);
   React.useEffect(() => {
@@ -63,6 +67,7 @@ export function useArchiveControls(
       pdfSha256: string;
       portableSha256: string;
       names: string;
+      portable: string;
     } | null>(null);
   const id = report?.id || "none",
     receipt = useFormDraft(user.uid, "receipt:" + id, () => ({
@@ -120,6 +125,7 @@ export function useArchiveControls(
       | "send"
       | "status"
       | "confirm"
+      | "manualConfirm"
       | "confirmPhotos"
       | "delete"
       | "copy",
@@ -179,47 +185,61 @@ export function useArchiveControls(
         )
       )
         return;
-      const result = await reportRequest<{ archive?: Meta; removed?: boolean }>(
-        user,
-        "/archive",
-        {
+      const result = await reportRequest<{
+        archive?: Meta;
+        removed?: boolean;
+        diagnostic?: string;
+      }>(user, "/archive", {
+        action,
+        id,
+        ...(["prepare", "send", "confirm", "manualConfirm", "delete"].includes(
           action,
-          id,
-          ...(["prepare", "send", "confirm", "delete"].includes(action)
-            ? { revision: report.revision }
-            : {}),
-          ...(action === "confirm"
-            ? {
-                pdfSha256: files?.pdfSha256,
-                portableSha256: files?.portableSha256,
-                receiptMethod: receipt.value.method,
-                confirmationId: receipt.value.confirmationId,
-                recoverable: receipt.value.recoverable,
-              }
-            : {}),
-          ...(action === "delete"
-            ? {
-                confirmationId: receipt.value.confirmationId,
-                recoverable: receipt.value.recoverable,
-                policyVersion: cap?.policyVersion,
-              }
-            : {}),
-          ...(action === "confirmPhotos"
-            ? {
-                photoHashes,
-                confirmationId: receipt.value.confirmationId,
-                recoverable: receipt.value.recoverable,
-              }
-            : {}),
-        },
-      );
+        )
+          ? { revision: report.revision }
+          : {}),
+        ...(action === "confirm"
+          ? {
+              pdfSha256: files?.pdfSha256,
+              portableSha256: files?.portableSha256,
+              receiptMethod: receipt.value.method,
+              confirmationId: receipt.value.confirmationId,
+              recoverable: receipt.value.recoverable,
+            }
+          : {}),
+        ...(action === "manualConfirm"
+          ? {
+              portable: files?.portable,
+              pdfSha256: files?.pdfSha256,
+              confirmationId: receipt.value.confirmationId,
+              recoverable: receipt.value.recoverable,
+              reason: recoveryReason,
+            }
+          : {}),
+        ...(action === "delete"
+          ? {
+              confirmationId: receipt.value.confirmationId,
+              recoverable: receipt.value.recoverable,
+              policyVersion: cap?.policyVersion,
+              legalChecked,
+            }
+          : {}),
+        ...(action === "confirmPhotos"
+          ? {
+              photoHashes,
+              confirmationId: receipt.value.confirmationId,
+              recoverable: receipt.value.recoverable,
+            }
+          : {}),
+      });
       if (result.archive) setArchive(result.archive);
+      if (result.diagnostic)
+        setMessage(reportError({ code: result.diagnostic }));
       if (result.removed) {
         setMessage(
           "Raportti poistettu aktiivisesta pilvitietokannasta. Arkistotiedostot ja tarpeelliset tarkistusmetatiedot säilyvät.",
         );
         onRemoved();
-      } else if (action === "confirm") {
+      } else if (action === "confirm" || action === "manualConfirm") {
         receipt.draft.flush();
         setMessage("Ylläpitäjä vahvisti vastaavien tiedostojen vastaanoton.");
       }
@@ -248,7 +268,11 @@ export function useArchiveControls(
       const parsed = await parsePortable(await portable.text());
       if (parsed.report.id !== id || parsed.report.revision !== report.revision)
         throw new Error("Tiedostot kuuluvat eri raporttiin tai versioon.");
+      const bytes = new Uint8Array(await pdf.arrayBuffer());
+      if (new TextDecoder().decode(bytes.slice(0, 5)) !== "%PDF-")
+        throw new Error("Valitse alkuperäinen PDF-tiedosto.");
       setFiles({
+        portable: await portable.text(),
         pdfSha256: await sha256(new Uint8Array(await pdf.arrayBuffer())),
         portableSha256: await sha256(
           new Uint8Array(await portable.arrayBuffer()),
@@ -262,6 +286,10 @@ export function useArchiveControls(
     }
   };
   return {
+    recoveryReason,
+    setRecoveryReason,
+    legalChecked,
+    setLegalChecked,
     retention: retentionWindow(report?.approval?.at, cap?.retentionDays, now),
     archive,
     cap,
@@ -308,6 +336,10 @@ export function ArchiveControls({
   report: WorkReport;
 }) {
   const {
+    recoveryReason,
+    setRecoveryReason,
+    legalChecked,
+    setLegalChecked,
     archive,
     cap,
     busy,
@@ -321,87 +353,47 @@ export function ArchiveControls({
     selectPhotos,
     retention,
   } = model;
+  const confirmed = archive?.status === "ARCHIVE_CONFIRMED";
+  const canSend =
+    cap?.relayConfigured &&
+    ![
+      "ARCHIVE_SENDING",
+      "ARCHIVE_SENT_UNVERIFIED",
+      "ARCHIVE_CONFIRMED",
+      "ARCHIVE_OUTCOME_UNKNOWN",
+    ].includes(archive?.status || "");
+  const verifiedInput =
+    !!files && receipt.value.confirmationId === id && receipt.value.recoverable;
   return (
     <div className="archive-controls" aria-busy={busy}>
       <p>
-        Hyväksynyt {report.approval?.byName} · {report.approval?.displayAt} ·
-        versio {report.approval?.revision}
+        Hyväksynyt {report.approval?.byName} · {report.approval?.displayAt}
       </p>
-      <p className="archive-preservation">
-        {archive?.status === "ARCHIVE_CONFIRMED"
-          ? "Arkisto vahvistettu. Raportti säilyy Firestoressa."
-          : "Arkistoa ei ole vahvistettu. Hyväksyntä tai sähköpostin lähetys ei yksin merkitse raporttia arkistoiduksi."}{" "}
-        Automaattista poistoa ei ole, myöskään kahden vuoden kuluttua.
-      </p>
-      <div className="retention-eligibility" role="status">
-        {cap && !cap.canDelete && cap.policyVersion && retention && (
-          <p>
-            Säilytyspolitiikka: {cap.policyVersion}. Vähimmäisaika:{" "}
-            {retention.minimumDays} päivää. Vähimmäisajan raja:{" "}
-            {finnishTimestamp(retention.eligibleAt)}.
-          </p>
-        )}
-        {!cap ? (
-          "Selvitetään säilytysasetuksia…"
-        ) : !cap.canDelete ? (
-          "Pilvipoisto ei ole käytössä. Voimassa oleva omistajan vahvistama säilytyspolitiikka ja erillinen poistoasetus vaaditaan."
-        ) : !retention ? (
-          "Hyväksynnän säilytysaikaa ei voitu varmentaa. Poisto on estetty."
-        ) : (
-          <>
-            <p>
-              Säilytyspolitiikka: {cap.policyVersion}. Vähimmäisaika:{" "}
-              {retention.minimumDays} päivää hyväksynnästä.
-            </p>
-            <p>
-              {retention.eligible
-                ? "Vähimmäissäilytysaika on täyttynyt."
-                : "Vähimmäissäilytysaika täyttyy"}
-              {!retention.eligible && (
-                <> {finnishTimestamp(retention.eligibleAt)}.</>
-              )}
-            </p>
-            <p>
-              {archive?.status !== "ARCHIVE_CONFIRMED" || !archive.receipt
-                ? "Poisto estetty: PDF- ja .khtreport-kopioita ei ole itsenäisesti varmennettu."
-                : archive.deliveryResolved !== true ||
-                    (archive.photo &&
-                      [
-                        "ARCHIVE_PENDING",
-                        "ARCHIVE_SENDING",
-                        "ARCHIVE_OUTCOME_UNKNOWN",
-                      ].includes(archive.photo.status))
-                  ? "Poisto estetty: lähetys tai kuvaliitteiden vastaanotto on selvittämättä."
-                  : !retention.eligible
-                    ? "Poisto estetty vähimmäissäilytysajan loppuun."
-                    : "Raportti on kelpoinen erikseen vahvistettavaan Admin-poistoon. Mitään ei poisteta automaattisesti."}
-            </p>
-          </>
-        )}
-      </div>
-      <p role="status">
+      <p className="work-status" role="status">
         {busy
-          ? "Arkistotoimintoa käsitellään…"
-          : archive
-            ? archiveLabel[archive.status]
-            : "Arkistoa ei ole vielä lähetetty."}
+          ? "Käsitellään…"
+          : confirmed
+            ? "Arkistoitu"
+            : archive?.status === "ARCHIVE_OUTCOME_UNKNOWN"
+              ? "Vaatii tarkistuksen"
+              : "Arkistointi kesken"}
       </p>
       <div className="work-actions">
         <button
           type="button"
           className="button primary"
-          disabled={busy}
-          onClick={() => void run("pdf")}
+          disabled={busy || !canSend}
+          onClick={() => void run("send")}
         >
-          Lataa lopullinen PDF
+          Lähetä arkistoon
         </button>
         <button
           type="button"
           className="button outline"
-          disabled={busy}
-          onClick={() => void run("portable")}
+          disabled={busy || !cap?.relayConfigured}
+          onClick={() => void run("status")}
         >
-          Lataa .khtreport
+          Tarkista lähetys
         </button>
         <button
           type="button"
@@ -412,57 +404,54 @@ export function ArchiveControls({
           Luo korjauskopio
         </button>
       </div>
+      {!cap?.relayConfigured && (
+        <p>
+          Sähköpostiarkisto ei ole käytettävissä. Lataa ja tallenna molemmat
+          arkistotiedostot.
+        </p>
+      )}
+      {archive?.status === "ARCHIVE_OUTCOME_UNKNOWN" && (
+        <p>
+          Lähetyksen tulos on epäselvä. Tarkista arkistopostilaatikko ja
+          lähetyksen tila. Älä lähetä samaa viestiä uudelleen.
+        </p>
+      )}
+      {archive?.status === "ARCHIVE_SENT_UNVERIFIED" && (
+        <p>
+          Viesti on hyväksytty lähetykseen. Varmista molempien liitteiden
+          saatavuus ennen arkistointia.
+        </p>
+      )}
       <details>
-        <summary>Arkistointi ja vastaanoton varmennus</summary>
-        {!cap?.relayConfigured && (
-          <p>
-            Arkistosähköpostin palveluasetukset puuttuvat. Lataa molemmat
-            tiedostot ja säilytä raportti pilvessä. Lähetystä tai vastaanottoa
-            ei ilmoiteta onnistuneeksi.
-          </p>
-        )}
+        <summary>Lataa arkistotiedostot</summary>
+        <p>
+          Tallenna molemmat alkuperäiset tiedostot palautettavaan arkistoon.
+        </p>
         <div className="work-actions">
           <button
             type="button"
             className="button outline"
-            disabled={busy || !cap?.relayConfigured}
-            onClick={() => void run("prepare")}
+            disabled={busy}
+            onClick={() => void run("pdf")}
           >
-            Valmistele arkiston tarkisteet
-          </button>
-          <button
-            type="button"
-            className="button primary"
-            disabled={
-              busy ||
-              !cap?.relayConfigured ||
-              (!!archive &&
-                [
-                  "ARCHIVE_SENDING",
-                  "ARCHIVE_SENT_UNVERIFIED",
-                  "ARCHIVE_CONFIRMED",
-                  "ARCHIVE_OUTCOME_UNKNOWN",
-                ].includes(archive.status))
-            }
-            onClick={() => void run("send")}
-          >
-            {archive?.status === "ARCHIVE_FAILED"
-              ? "Yritä arkistolähetystä uudelleen"
-              : "Lähetä arkistosähköposti"}
+            Lataa lopullinen PDF
           </button>
           <button
             type="button"
             className="button outline"
-            disabled={busy || !cap?.relayConfigured}
-            onClick={() => void run("status")}
+            disabled={busy}
+            onClick={() => void run("portable")}
           >
-            Tarkista arkistolähetyksen tila
+            Lataa .khtreport
           </button>
         </div>
+      </details>
+      <details>
+        <summary>Merkitse arkistoiduksi</summary>
         <p>
-          Lähetyspalvelun hyväksyntä ei todista postilaatikon vastaanottoa.
-          Valitse itsenäisesti arkistosta tai viestistä ladatut molemmat
-          tiedostot; tarkisteiden on vastattava hyväksyttyä versiota.
+          Valitse arkistoon tallettamasi alkuperäiset PDF- ja
+          .khtreport-tiedostot. Raportti säilyy sovelluksessa arkistoinnin
+          jälkeen.
         </p>
         <label>
           Vastaanotetut PDF- ja .khtreport-tiedostot
@@ -511,34 +500,51 @@ export function ArchiveControls({
         </label>
         <button
           type="button"
-          className="button outline"
-          disabled={
-            busy ||
-            !files ||
-            !archive?.pdfSha256 ||
-            receipt.value.confirmationId !== id ||
-            !receipt.value.recoverable
-          }
+          className="button primary"
+          disabled={busy || !verifiedInput || !archive?.pdfSha256}
           onClick={() => void run("confirm")}
         >
-          Vahvista arkiston vastaanotto
+          Merkitse arkistoiduksi
         </button>
-        {archive?.status === "ARCHIVE_CONFIRMED" &&
-          archive.deliveryResolved !== true && (
-            <p role="alert">
-              Tiedostot on varmennettu, mutta lähetysoperaation sulkemista ei
-              vielä varmistettu. Tarkista tila tai vahvista vastaanotto
-              uudelleen. Poistaminen on estetty.
-            </p>
-          )}
+        <details>
+          <summary>Käsin talletetun arkiston vahvistus</summary>
+          <p>
+            Käytä tätä, jos lähetyspalvelua ei saada varmennettua. Tarkista
+            PDF:n sisältö ja varmista, että molemmat valitut alkuperäistiedostot
+            vastaavat hyväksyttyä raporttia. Vahvistus kirjataan omalla
+            nimelläsi. Se ei vahvista sähköpostin toimitusta eikä yksin salli
+            pysyvää poistoa.
+          </p>
+          <label>
+            Vahvistuksen perustelu
+            <input
+              value={recoveryReason}
+              minLength={10}
+              maxLength={500}
+              onChange={(e) => setRecoveryReason(e.target.value)}
+            />
+          </label>
+          <button
+            type="button"
+            className="button outline"
+            disabled={
+              busy || !verifiedInput || recoveryReason.trim().length < 10
+            }
+            onClick={() => void run("manualConfirm")}
+          >
+            Vahvista käsin talletettu arkisto
+          </button>
+        </details>
+        {confirmed && archive.deliveryResolved !== true && (
+          <p role="alert">
+            Tiedostot on arkistoitu. Sähköpostin tulos on vielä selvittämättä;
+            pysyvä poisto on estetty.
+          </p>
+        )}
         {archive?.photo && (
           <fieldset>
-            <legend>Erillisen kuvalähetyksen varmennus</legend>
-            <p>
-              {archiveLabel[archive.photo.status]}. Valitse arkistosta saamasi
-              alkuperäiset kuvaliitteet. Tarkisteiden on vastattava lähetettyä
-              aineistoa.
-            </p>
+            <legend>Työkuvien vastaanotto</legend>
+            <p>{archiveLabel[archive.photo.status]}</p>
             <input
               type="file"
               aria-label="Vastaanotetut kuvaliitteet"
@@ -550,34 +556,52 @@ export function ArchiveControls({
             <button
               type="button"
               className="button outline"
-              disabled={
-                busy ||
-                !photoHashes.length ||
-                receipt.value.confirmationId !== id ||
-                !receipt.value.recoverable
-              }
+              disabled={busy || !photoHashes.length || !verifiedInput}
               onClick={() => void run("confirmPhotos")}
             >
               Vahvista kuvaliitteiden vastaanotto
             </button>
           </fieldset>
         )}
-        {!cap?.canDelete && (
-          <p>
-            Poisto on estetty, kunnes omistajan säilytyspolitiikka ja
-            vähimmäisaika on asetettu palvelimelle.
-          </p>
-        )}
+        <FormDraftNotice draft={receipt.draft} />
+      </details>
+      <details>
+        <summary>Säilytys ja poiston tarkistus</summary>
+        <label className="work-checkbox">
+          <input
+            type="checkbox"
+            checked={legalChecked}
+            onChange={(e) => setLegalChecked(e.target.checked)}
+          />
+          Varmistin, ettei raporttiin liity muita lakisääteisiä tai
+          toiminnallisia säilytysvelvoitteita.
+        </label>
+        <p>
+          Arkistointi ei poista raporttia. Mitään ei poisteta automaattisesti.
+        </p>
+        <p>
+          {!retention
+            ? "Säilytysaikaa ei ole määritetty. Poisto on estetty."
+            : retention.eligible
+              ? "Vähimmäissäilytysaika on täyttynyt. Tarkista muut säilytysvelvoitteet ennen poistoa."
+              : "Vähimmäissäilytysaika täyttyy " +
+                finnishTimestamp(retention.eligibleAt) +
+                "."}
+        </p>
+        {!cap?.canDelete && <p>Pysyvä poisto ei ole käytössä.</p>}
         <button
           type="button"
           className="button danger"
           disabled={
             busy ||
             !cap?.canDelete ||
+            !legalChecked ||
             !retention?.eligible ||
             !archive?.receipt ||
-            archive?.status !== "ARCHIVE_CONFIRMED" ||
+            !confirmed ||
             archive.deliveryResolved !== true ||
+            (archive.ownerRecovery === true &&
+              archive.authoritativePdfVerified !== true) ||
             (!!archive.photo &&
               [
                 "ARCHIVE_PENDING",
@@ -592,18 +616,30 @@ export function ArchiveControls({
           Poista arkistoitu raportti pilvestä
         </button>
         <p>
-          Tämä poistaa hyväksytyn raportin ja laskutustiedot aktiivisesta
-          pilvitietokannasta. Poista paikallinen luonnos poistaa vain tämän
-          välilehden palautuskopion ja kuvat. Se ei poista pilviraporttia tai
-          arkistotiedostoja. Tarpeelliset hyväksynnän tarkisteet ja
-          auditointihistoria säilyvät erikseen.
+          Poistaa raportin pysyvästi sovelluksesta. Arkistotiedostot ja
+          hyväksyntähistoria säilyvät. Poista paikallinen luonnos poistaa
+          erikseen vain tämän välilehden kopion.
         </p>
-        <FormDraftNotice draft={receipt.draft} />
       </details>
       {message && <p role="alert">{message}</p>}
-      {archive?.error && (
+      {archive?.error && !confirmed && (
         <p role="alert">{reportError({ code: archive.error })}</p>
       )}
+      <details>
+        <summary>Kehittäjän vianmääritys</summary>
+        <button
+          type="button"
+          className="button outline"
+          disabled={busy || !cap?.relayConfigured}
+          onClick={() => void run("prepare")}
+        >
+          Valmistele arkiston tarkisteet
+        </button>
+        <p>
+          Koodi: {archive?.error || "ei virhekoodia"}. Tila:{" "}
+          {archive?.status || "ei lähetyst?"}.
+        </p>
+      </details>
     </div>
   );
 }
@@ -611,18 +647,22 @@ export function ArchiveImport({ user }: { user: User }) {
   const [file, setFile] = React.useState<PortableReport | null>(null),
     [error, setError] = React.useState(""),
     [busy, setBusy] = React.useState(false);
+  const inputRef = React.useRef<HTMLInputElement>(null),
+    selection = React.useRef(0);
   return (
     <details className="archive-import">
       <summary>Tuo .khtreport tarkasteltavaksi</summary>
       <p>
-        Tuonti on vain luku. Tarkiste varmistaa eheyden, ei lähettäjän
-        henkilöllisyyttä. Hyväksyttyä alkuperäistä ei korvata.
+        Tarkastele arkistotiedostoa tai luo siitä uusi työ. Alkuperäinen säilyy
+        muuttumattomana.
       </p>
       <input
         type="file"
         accept=".khtreport"
+        ref={inputRef}
         aria-label="Tuo .khtreport"
         onChange={async (e) => {
+          const current = ++selection.current;
           setError("");
           setFile(null);
           try {
@@ -630,12 +670,27 @@ export function ArchiveImport({ user }: { user: User }) {
             if (!selected) return;
             if (selected.size > 150000)
               throw new Error("Tiedosto on liian suuri.");
-            setFile(await parsePortable(await selected.text()));
+            const parsed = await parsePortable(await selected.text());
+            if (current === selection.current) setFile(parsed);
           } catch (e) {
-            setError(e instanceof Error ? e.message : "Tuonti epäonnistui.");
+            if (current === selection.current)
+              setError(e instanceof Error ? e.message : "Tuonti epäonnistui.");
           }
         }}
       />
+      <button
+        type="button"
+        className="button outline"
+        disabled={busy}
+        onClick={() => {
+          selection.current++;
+          setFile(null);
+          setError("");
+          if (inputRef.current) inputRef.current.value = "";
+        }}
+      >
+        Tyhjennä valinta
+      </button>
       {file && (
         <section>
           <h3>

@@ -9,6 +9,7 @@
   padding: 0 24px;
   font-size: 13px;
 }
+.access-retention summary { min-height:44px; padding-block:12px; cursor:pointer; color:#315e75; font-size:14px; }
 .access-name-form {
   margin: 14px 0 !important;
 }
@@ -264,6 +265,36 @@
 .management-draft .access-link { padding:8px 0; min-height:44px; font-size:13px; }
 .catalog-search { display:flex; align-items:stretch; gap:0; margin-top:8px; }
 .catalog-search input { flex:1; border-radius:8px 0 0 8px; margin:0; }
+.report-access .catalog-search { border-radius:8px; }
+.report-access .catalog-search:focus-within { outline:2px solid #315e75; outline-offset:3px; }
+.report-access .catalog-search input:focus,.report-access .catalog-search button:focus { outline:none; box-shadow:none; }
+.report-access :is(button,a,summary,input,select,textarea):focus-visible { outline:2px solid #315e75; outline-offset:3px; }
+.report-access .catalog-search :is(input,button):focus-visible { outline:none; }
+.report-access .photo-delivery { width:100%; max-width:none; margin:24px auto; grid-column:1/-1; }
+.report-access .signature-view { max-width:260px; border:0; border-bottom:1px solid #aebdc6; border-radius:0; }
+.admin-management { max-width:1152px; margin:24px auto; padding:24px; background:#fff; border:1px solid #dce3e3; border-radius:16px; min-width:0; overflow-wrap:anywhere; }
+.management-tabs { display:flex; flex-wrap:wrap; gap:8px; margin:24px 0; }
+.management-tabs button { padding:12px 16px; border:1px solid #afbec5; border-radius:8px; color:#234252; background:white; font:inherit; cursor:pointer; }
+.management-tabs [aria-pressed=true] { background:#234252; color:white; }
+.management-filters { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; align-items:end; }
+.report-access .management-filters label { margin:0; min-width:0; }
+.admin-management :is(input,select,textarea) { width:100%; min-width:0; }
+.admin-management select { min-height:48px; padding:12px 14px; margin-top:8px; border:1px solid #b9c9ce; border-radius:6px; background:#fff; color:#223139; font:inherit; font-size:16px; }
+.admin-management textarea { min-height:120px; padding:13px 14px; margin-top:8px; border:1px solid #b9c9ce; border-radius:6px; background:#fff; color:#223139; font:inherit; font-size:16px; line-height:1.6; resize:vertical; }
+.admin-management label { display:block; font-size:14px; font-weight:600; }
+.admin-management .management-filters { margin-block:24px; }
+.management-fields { border:0; padding:0; margin:0; min-width:0; }
+.admin-management label.work-checkbox { display:flex; align-items:flex-start; gap:10px; min-height:44px; }
+.admin-management label.work-checkbox input { flex:0 0 auto; width:20px; height:20px; padding:0; margin:3px 0 0; }
+.management-list { list-style:none; padding:0; display:grid; gap:16px; }
+.management-list>li { border:1px solid #dce3e3; border-radius:12px; padding:20px; overflow-wrap:anywhere; }
+.summary-totals { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.summary-totals>div { background:#f3f6f7; border-radius:10px; padding:16px; min-width:0; overflow-wrap:anywhere; }
+.summary-totals dt { font-size:13px; }.summary-totals dd { margin:8px 0 0; font-size:21px; font-weight:700; }
+.summary-table { max-width:100%; overflow:auto; margin:24px 0; }.summary-table table { border-collapse:collapse; width:100%; }.summary-table :is(th,td) { padding:12px; text-align:left; border-bottom:1px solid #dce3e3; white-space:nowrap; }
+.summary-preview iframe { width:100%; height:70vh; margin-top:16px; border:1px solid #afbec5; }
+@media(max-width:800px){.management-filters,.summary-totals{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-management{margin:16px; padding:20px}}
+@media(max-width:480px){.management-filters{grid-template-columns:1fr}.summary-totals{gap:8px}.summary-totals>div{padding:12px}.summary-totals dd{font-size:18px}.management-tabs button{flex:1 1 40%;}.admin-management .work-actions>.button{width:100%}}
 .catalog-toggle { flex:0 0 48px; min-height:48px; display:grid; place-items:center; border:1px solid #b5c2c8; border-left:0; border-radius:0 8px 8px 0; background:#eef3f5; color:#223139; cursor:pointer; }
 .catalog-options { border:1px solid #b5c2c8; border-radius:10px; padding:12px; margin-block:8px 18px; max-height:360px; overflow-y:auto; }
 .catalog-options ul { margin:0; }

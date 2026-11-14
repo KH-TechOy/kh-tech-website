@@ -5,7 +5,8 @@ const securityOnly = process.argv[2] === "--security-only";
 const workOnly = process.argv[2] === "--work-only";
 const refinementOnly = process.argv[2] === "--refinement-only";
 const archiveOnly = process.argv[2] === "--archive-only";
-if (process.argv.length > (securityOnly || workOnly || refinementOnly || archiveOnly ? 3 : 2))
+const stabilizationOnly = process.argv[2] === '--stabilization-only';
+if (process.argv.length > (securityOnly || workOnly || refinementOnly || archiveOnly || stabilizationOnly ? 3 : 2))
   throw new Error("Unknown test option");
 // Firebase CLI debug mode otherwise prints the entire inherited environment.
 const env = {
@@ -44,6 +45,8 @@ const child = spawn(
     "auth,firestore",
     securityOnly
       ? "node node_modules/vitest/vitest.mjs run --config vitest.report.config.ts"
+      : stabilizationOnly
+        ? "node node_modules/playwright/cli.js test --config playwright.report-d.config.ts"
       : archiveOnly
         ? "node node_modules/playwright/cli.js test --config playwright.report.config.ts e2e/reportArchive.playwright.ts"
       : refinementOnly

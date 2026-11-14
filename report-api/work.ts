@@ -16,6 +16,7 @@ import {
   type Billing,
   type WorkReport,
   type WorkStatus,
+  scaledAmount,
 } from "../src/reportWorkModel";
 import { approvalProblems, makePortable, validOperations, canonical } from '../src/reportArchive';
 import { signatureValid } from '../src/reportSignature';
@@ -559,7 +560,7 @@ export function workService(db: Database) {
             next.comment = comment;
           else if (comment) fail();
           next.status = target;
-          if (target === 'APPROVED') next.approval = {at:now,byName:String(actor.displayName),revision:next.revision+1,displayAt:finnishTimestamp(now)};
+          if (target === 'APPROVED') next.approval = {at:now,byName:String(actor.displayName),revision:next.revision+1,displayAt:finnishTimestamp(now),pdfLayout:2};
           audit = {
             action: "transition",
             before: previous!.status,
@@ -573,7 +574,18 @@ export function workService(db: Database) {
         next.updatedBy = claims.uid;
         next.lastMutation = String(input.requestId);
         tx.put(path, asDocument(publicReport(next)));
-        tx.put('reportFinances/'+id, { ...(loaded.finance || {}), id, billing:next.billing as unknown as Document, revision:next.revision, lastMutation:next.lastMutation, fingerprint, ...(next.status === 'APPROVED' ? {snapshotHash:(await makePortable(next)).integrity.value,approvedByUid:claims.uid} : {}) });
+        let purchaseSnapshot:Document|undefined;
+        if(next.status==='APPROVED'){
+          let materialsCents=0,missingRows=0;
+          const ids=[...new Set(next.form.materials.flatMap(m=>m.name&&m.catalogId?[m.catalogId]:[]))].slice(0,20);
+          const costs=new Map(await Promise.all(ids.map(async key=>[key,await tx.get('materialCosts/'+key)] as const)));
+          for(const row of next.form.materials.filter(m=>m.name)){
+            const cost=row.catalogId?costs.get(row.catalogId)?.purchaseCents:null;
+            if(typeof cost==='number'&&Number.isSafeInteger(cost)&&cost>=0)materialsCents+=scaledAmount(row.quantity,cost);else missingRows++;
+          }
+          purchaseSnapshot={materialsCents,missingRows,capturedAt:now};
+        }
+        tx.put('reportFinances/'+id, { ...(loaded.finance || {}), id, billing:next.billing as unknown as Document, revision:next.revision, lastMutation:next.lastMutation, fingerprint, ...(next.status === 'APPROVED' ? {snapshotHash:(await makePortable(next)).integrity.value,approvedByUid:claims.uid,purchaseSnapshot:purchaseSnapshot!} : {}) });
         // Lists contain small metadata, not report bodies. All revisions are guarded by the report transaction.
         if (
           !previous ||

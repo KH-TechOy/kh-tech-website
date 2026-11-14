@@ -25,7 +25,7 @@ export type Billing = {
 };
 export type Operations = Pick<Billing, 'travelKm' | 'otherCents' | 'otherDescription'>;
 export const emptyOperations = (): Operations => ({ travelKm: 0, otherCents: 0, otherDescription: '' });
-export type Approval = { at: string; byName: string; revision: number; displayAt: string };
+export type Approval = { at: string; byName: string; revision: number; displayAt: string; pdfLayout?: 2 };
 export const emptyBilling = (): Billing => ({
   hourRateCents: 0,
   travelKm: 0,

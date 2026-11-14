@@ -4,6 +4,7 @@ import { firebaseVerifier } from "./jwt";
 import { createService, publicProfile } from "./service";
 import { workService } from './work';
 import { archiveService } from './archive';
+import { managementService } from './management';
 import { ApiError, type Dependencies, type Document } from "./types";
 export interface Env {
   FIREBASE_PROJECT_ID: string;
@@ -71,6 +72,7 @@ export function reportHandler(deps: Dependencies, origins: string[]) {
   const service = createService(deps);
   const work = workService(deps.db);
   const archive = archiveService(deps.db,deps.archive);
+  const management=managementService(deps.db,deps.archive);
   return async (request: Request): Promise<Response> => {
     const origin = request.headers.get("Origin") || "";
     if (!origins.includes(origin)) return json({ error: "origin" }, 403);
@@ -123,6 +125,11 @@ export function reportHandler(deps: Dependencies, origins: string[]) {
         const input=await body(request,200000);
         if(profile.role!=='admin'&&!['photoPermit','photoStatus','capabilities'].includes(String(input.action)))throw new ApiError('admin_required',403);
         return cors(json(await archive(claims,input)));
+      }
+      if(path==='/management'&&request.method==='POST'){
+        if(profile.role!=='admin')throw new ApiError('admin_required',403);
+        if(!(await deps.rate(claims.uid,'work')))throw new ApiError('rate_limited',429);
+        return cors(json(await management(claims,await body(request,32768))));
       }
       if (profile.role !== "admin") throw new ApiError("admin_required");
       if (!(await deps.rate(claims.uid)))

@@ -2,7 +2,7 @@ import { jsPDF } from "jspdf";
 import { brandLogoData } from "./brand-logo-data";
 import { billingTotals, money, type Billing } from './reportWorkModel';
 import type { ReportForm } from './reportModel';
-import type { ReportSignature } from './reportSignature';
+import { signatureBounds,type ReportSignature } from './reportSignature';
 import type { Approval } from './reportWorkModel';
 type ReportPhoto = string | { data: string; category?: string };
 export type PdfInput = {
@@ -15,9 +15,10 @@ export type PdfInput = {
   quotationReference?: string;
   comment?: string;
   compact?: boolean;
+  legacySignature?: boolean;
 };
 
-export function buildPdf({ id, form, photos, billing, signature, approval, quotationReference, comment, compact=false }: PdfInput) {
+export function buildPdf({ id, form, photos, billing, signature, approval, quotationReference, comment, compact=false, legacySignature=false }: PdfInput) {
   const doc = new jsPDF({ format: "a4", unit: "mm", compress:compact }),
     left = 16,
     right = 194,
@@ -200,16 +201,20 @@ export function buildPdf({ id, form, photos, billing, signature, approval, quota
   if (form.followup) section("Jatkotoimet", form.followup);
   if (form.acknowledgement) section("Asiakkaan kuittaus", form.acknowledgement);
   if (signature?.confirmedAt) {
-    ensure(68);label('Asiakkaan allekirjoitus');
-    const top=y, width=100,height=40;
-    doc.setDrawColor('#b7c5cd');doc.rect(left,top,width,height);
+    ensure(legacySignature?68:46);label('Asiakkaan allekirjoitus');
+    const bounds=signatureBounds(signature),scale=Math.min(65/bounds.width,20/bounds.height);
+    const top=y, width=legacySignature?100:65,height=legacySignature?40:Math.max(1,bounds.height*scale);
+    const x=(n:number)=>legacySignature?left+n/10000*width:left+(n-bounds.minX)*scale;
+    const sy=(n:number)=>legacySignature?top+n/10000*height:top+(n*.4-bounds.minY)*scale;
+    if(legacySignature){doc.setDrawColor('#b7c5cd');doc.rect(left,top,width,height);}
+    else {doc.setDrawColor('#b7c5cd');doc.setLineWidth(.2);doc.line(left,top+height+1,left+80,top+height+1);}
     doc.setDrawColor('#1e2529');doc.setLineWidth(.4);
     for(const item of signature.strokes) {
       const stroke=item.points;
-      let px=left+stroke[0]/10000*width,py=top+stroke[1]/10000*height;
+      let px=x(stroke[0]),py=sy(stroke[1]);
       const path:{op:string;c:number[]}[]=[{op:'m',c:[px,py]}];
       if(stroke.length===2)path.push({op:'l',c:[px+.1,py+.1]});
-      for(let i=2;i<stroke.length;i+=2){const cx=left+stroke[i]/10000*width,cy=top+stroke[i+1]/10000*height,nx=i+2<stroke.length?left+(stroke[i]+stroke[i+2])/2/10000*width:cx,ny=i+3<stroke.length?top+(stroke[i+1]+stroke[i+3])/2/10000*height:cy;path.push({op:'c',c:[px+(cx-px)*2/3,py+(cy-py)*2/3,nx+(cx-nx)*2/3,ny+(cy-ny)*2/3,nx,ny]});px=nx;py=ny;}
+      for(let i=2;i<stroke.length;i+=2){const cx=x(stroke[i]),cy=sy(stroke[i+1]),nx=i+2<stroke.length?x((stroke[i]+stroke[i+2])/2):cx,ny=i+3<stroke.length?sy((stroke[i+1]+stroke[i+3])/2):cy;path.push({op:'c',c:[px+(cx-px)*2/3,py+(cy-py)*2/3,nx+(cx-nx)*2/3,ny+(cy-ny)*2/3,nx,ny]});px=nx;py=ny;}
       doc.path(path).stroke();
     }
     const signatureTime=signature.confirmedAt.slice(0,10).split('-').reverse().join('.')+' '+signature.confirmedAt.slice(11,16)+' UTC';
